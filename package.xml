@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>hector_math</name>
+  <version>0.0.0</version>
+  <description>The hector_math package</description>
+
+  <maintainer email="fabian@sim.tu-darmstadt.de">Stefan Fabian</maintainer>
+
+
+  <license>MIT</license>
+
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>urdf</build_depend>
+  <build_export_depend>urdf</build_export_depend>
+</package>
