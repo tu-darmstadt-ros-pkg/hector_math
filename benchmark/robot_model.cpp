@@ -22,13 +22,21 @@ static void centerOfMass( benchmark::State &state )
   {
     throw std::runtime_error( "Failed to load robot description!" );
   }
-  UrdfRobotModel<Scalar> robot_model( model );
+  std::vector<std::string> joint_names;
+  std::vector<Scalar> joint_values;
+  for ( const auto &joint : model.joints_ )
+  {
+    joint_names.push_back( joint.first );
+    joint_values.push_back( 0 );
+  }
+  UrdfRobotModel<Scalar> robot_model( model, joint_names, joint_values );
 
   for ( auto _ : state )
   {
-    robot_model.updateJointPositions(std::unordered_map<std::string, Scalar>{});
+    robot_model.updateJointPositions( std::vector<Scalar>{} );
     Vector3<Scalar> com = robot_model.centerOfMass();
-    benchmark::DoNotOptimize( com );
+    if (!com.template isApprox(Vector3<Scalar>(-0.01612981, 0.004683246, 0.4767422), 0.00001))
+      throw std::runtime_error("COM is not where it should be!");
   }
 }
 

@@ -24,7 +24,8 @@ public:
   RobotModel( std::vector<std::string> joint_names, std::vector<Scalar> joint_positions )
     : joint_names_( std::move( joint_names )), joint_positions_( std::move( joint_positions ))
   {
-    initStateHash();
+    // Ensure joint positions has the same length as joint names
+    joint_positions.resize( joint_names_.size(), 0 );
   }
 
   explicit RobotModel( std::unordered_map<std::string, Scalar> joint_states )
@@ -36,7 +37,6 @@ public:
       joint_names_.push_back( it.first );
       joint_positions_.push_back( it.second );
     }
-    initStateHash();
   }
 
   //! Updates the joint positions of the robot model with the given values for the corresponding joint name.
@@ -49,7 +49,6 @@ public:
       joint_positions_[i] = it->second;
     }
     center_of_mass_valid_ = false;
-    ++state_hash_;
     onJointStatesUpdated();
   }
 
@@ -57,9 +56,10 @@ public:
   //! Indices have to correspond to names in getJointNames().
   virtual void updateJointPositions( const std::vector<Scalar> &positions )
   {
-    joint_positions_ = positions;
+    auto end = positions.size() > joint_positions_.size() ? positions.begin() + joint_positions_.size()
+                                                          : positions.end();
+    std::copy( positions.begin(), end, joint_positions_.begin());
     center_of_mass_valid_ = false;
-    ++state_hash_;
     onJointStatesUpdated();
   }
 
@@ -69,7 +69,7 @@ public:
   std::vector<Scalar> getJointPositions() const { return joint_positions_; }
 
   //! The position of the center of mass in the robot coordinate frame.
-  Vector3 <Scalar> centerOfMass()
+  Vector3<Scalar> centerOfMass()
   {
     if ( center_of_mass_valid_ ) return center_of_mass_;
     center_of_mass_ = computeCenterOfMass();
@@ -77,7 +77,7 @@ public:
     return center_of_mass_;
   }
 
-  Polygon <Scalar> footprint()
+  Polygon<Scalar> footprint()
   {
     if ( footprint_valid_ ) return footprint_;
     footprint_ = computeFootprint();
@@ -85,33 +85,20 @@ public:
     return footprint_;
   }
 
-  //! Indicates whether centerOfMass and footprint are still valid
-  int stateHash() const { return state_hash_; }
-
 protected:
-  virtual void onJointStatesUpdated() { }
+  //! Use to invalidate footprint and center of mass
+  virtual void onJointStatesUpdated() = 0;
 
-  virtual Vector3 <Scalar> computeCenterOfMass() const = 0;
+  virtual Vector3<Scalar> computeCenterOfMass() const = 0;
 
-  virtual Polygon <Scalar> computeFootprint() const = 0;
+  virtual Polygon<Scalar> computeFootprint() const = 0;
 
   std::vector<std::string> joint_names_;
   std::vector<Scalar> joint_positions_;
-  Polygon <Scalar> footprint_;
-  Vector3 <Scalar> center_of_mass_;
-  int state_hash_;
+  Polygon<Scalar> footprint_;
+  Vector3<Scalar> center_of_mass_;
   bool footprint_valid_ = false;
   bool center_of_mass_valid_ = false;
-
-private:
-  void initStateHash()
-  {
-    state_hash_ = 0;
-    for ( const auto position : joint_positions_ )
-    {
-      state_hash_ += *reinterpret_cast<const int *>(&position);
-    }
-  }
 };
 }
 
