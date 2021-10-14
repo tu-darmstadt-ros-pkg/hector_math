@@ -9,8 +9,7 @@
 
 using namespace hector_math;
 
-template<typename Scalar>
-static void centerOfMass( benchmark::State &state )
+urdf::Model loadUrdf()
 {
   std::string package_path = ros::package::getPath( ROS_PACKAGE_NAME );
   // Inefficient, doesn't matter here but don't copy this approach
@@ -22,6 +21,13 @@ static void centerOfMass( benchmark::State &state )
   {
     throw std::runtime_error( "Failed to load robot description!" );
   }
+  return model;
+}
+
+template<typename Scalar>
+static void centerOfMass( benchmark::State &state )
+{
+  urdf::Model model = loadUrdf();
   std::vector<std::string> joint_names;
   std::vector<Scalar> joint_values;
   for ( const auto &joint : model.joints_ )
@@ -35,12 +41,39 @@ static void centerOfMass( benchmark::State &state )
   {
     robot_model.updateJointPositions( std::vector<Scalar>{} );
     Vector3<Scalar> com = robot_model.centerOfMass();
-    if (!com.template isApprox(Vector3<Scalar>(-0.01612981, 0.004683246, 0.4767422), 0.00001))
-      throw std::runtime_error("COM is not where it should be!");
+    if ( !com.template isApprox( Vector3<Scalar>( -0.01612981, 0.004683246, 0.4767422 ), 0.00001 ))
+      throw std::runtime_error( "COM is not where it should be!" );
+  }
+}
+
+template<typename Scalar>
+static void boundingBox( benchmark::State &state )
+{
+  urdf::Model model = loadUrdf();
+  std::vector<std::string> joint_names;
+  std::vector<Scalar> joint_values;
+  for ( const auto &joint : model.joints_ )
+  {
+    joint_names.push_back( joint.first );
+    joint_values.push_back( 0 );
+  }
+  UrdfRobotModel<Scalar> robot_model( model, joint_names, joint_values );
+
+  for ( auto _ : state )
+  {
+    robot_model.updateJointPositions( std::vector<Scalar>{} );
+    Eigen::AlignedBox<Scalar, 3> bb = robot_model.axisAlignedBoundingBox();
+    if ( !bb.isApprox( Eigen::AlignedBox<Scalar, 3>( Vector3<Scalar>( -0.315, -0.3484, -0.0005 ),
+                                                     Vector3<Scalar>( 0.7715, 0.3484, 1.241625 )),
+                       0.0001 ))
+      throw std::runtime_error( "Bounding box is not what it should be!" );
+    benchmark::DoNotOptimize( bb );
   }
 }
 
 BENCHMARK_TEMPLATE( centerOfMass, float )->Unit( benchmark::kMicrosecond );
 BENCHMARK_TEMPLATE( centerOfMass, double )->Unit( benchmark::kMicrosecond );
+BENCHMARK_TEMPLATE( boundingBox, float )->Unit( benchmark::kMicrosecond );
+BENCHMARK_TEMPLATE( boundingBox, double )->Unit( benchmark::kMicrosecond );
 
 BENCHMARK_MAIN();

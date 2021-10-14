@@ -11,10 +11,18 @@
 namespace hector_math
 {
 
+struct UrdfRobotModelSettings
+{
+  //! If there is no collision geometry, fall back on visual geometries for bounding box and footprint computation.
+  bool fallback_on_visual = false;
+};
+
 template<typename Scalar>
 class UrdfRobotModel : public RobotModel<Scalar>
 {
 public:
+  using Ptr = std::shared_ptr<UrdfRobotModel<Scalar> >;
+  using ConstPtr = std::shared_ptr<const UrdfRobotModel<Scalar> >;
 
   /*!
    * @param model The urdf model of the robot.
@@ -41,13 +49,32 @@ public:
 
   const urdf::Model &urdfModel() const { return model_; }
 
+
 protected:
   struct Joint;
+  struct LinkGeometry
+  {
+    Isometry3<Scalar> origin;
+    Vector3<Scalar> dims;
+    int type;
+#if __cplusplus < 201703L
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+#endif
+  };
   struct LinkTree
   {
+#if __cplusplus >= 201703L // In C++17 the alignment macros and allocators are not necessary anymore
     std::vector<Joint> children;
+    std::vector<LinkGeometry> geometries;
+#else
+    std::vector<Joint, Eigen::aligned_allocator<Joint>> children;
+    std::vector<LinkGeometry, Eigen::aligned_allocator<LinkGeometry>> geometries;
+#endif
     Vector3<Scalar> inertial_origin;
     double inertial_mass;
+#if __cplusplus < 201703L
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+#endif
   };
   struct Joint
   {
@@ -59,27 +86,44 @@ protected:
     double mimic_offset;
     int type;
     bool is_mimic;
+#if __cplusplus < 201703L
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+#endif
   };
 
   Vector3<Scalar> computeCenterOfMass() const override;
 
   Polygon<Scalar> computeFootprint() const override
   {
-    return Polygon<Scalar>();
+    Polygon<Scalar> result(2, 4);
+    const Eigen::AlignedBox<Scalar, 3> &bb = this->axisAlignedBoundingBox();
+    result.col(0) << bb.min().x(), bb.min().y();
+    result.col(1) << bb.min().x(), bb.max().y();
+    result.col(2) << bb.max().x(), bb.max().y();
+    result.col(3) << bb.max().x(), bb.min().y();
+    return result;
   }
+
+  Eigen::AlignedBox<Scalar, 3>
+  computeAxisAlignedBoundingBox( const LinkTree &root, const Isometry3<Scalar> &transform ) const;
+
+  Eigen::AlignedBox<Scalar, 3> computeAxisAlignedBoundingBox() const override;
 
   void onJointStatesUpdated() override;
 
-  Isometry3<Scalar> transformForJoint( const Joint &joint,
-                                       const std::vector<Scalar> &joint_positions ) const;
+  Isometry3<Scalar> transformForJoint( const Joint &joint ) const;
 
   Scalar computeWeightedCenterOfMass( const LinkTree &root, const Isometry3<Scalar> &transform,
-                                      const std::vector<Scalar> &joint_positions, Vector3<Scalar> &com ) const;
+                                      Vector3<Scalar> &com ) const;
 
   LinkTree buildLinkTree( const urdf::LinkSharedPtr &root );
 
   urdf::Model model_;
   LinkTree link_tree_;
+  UrdfRobotModelSettings settings_;
+#if __cplusplus < 201703L
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+#endif
 };
 }
 
