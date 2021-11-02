@@ -6,6 +6,7 @@
 #define HECTOR_MATH_BOUNDED_VECTOR_H
 
 #include <array>
+#include <assert.h>
 
 namespace hector_math
 {
