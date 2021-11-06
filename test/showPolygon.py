@@ -12,6 +12,10 @@ INPUT_STRING = """hector_math::Polygon<Scalar> result(2, 8);
         result.col(6) << 5,0;
         result.col(7) << 3.6,3.5;"""
 
+# LIMITS (row_min, row_max, column_min, column_max)
+#LIMITS = (0, 6, -6, 6)
+LIMITS = (-4, 2, -3, 1)
+
 
 def get_corners(string):
     corners = []
@@ -73,10 +77,6 @@ def get_real_points(corners):
     y = np.floor(miny) - 0.5
     while y < maxy + 1.5:
         relevant_lines = [x for x in lines if min(x[1], x[3]) <= y < max(x[1], x[3])]
-        for x in relevant_lines:
-            a = min(x[1], x[3]) <= y <= max(x[1], x[3])
-            b = x[1] == y
-            c = x[3] == y
         if len(relevant_lines) == 0:
             y += 1
             continue
@@ -101,11 +101,18 @@ def get_real_points(corners):
                 real_points.append((x - 0.5, y - 0.5))
             x += 1
         y += 1
-    print(real_points)
-    return real_points
+    # filter by index limitations
+    valid_real_points = []
+    for point in real_points:
+        if LIMITS[2] <= point[1] < LIMITS[3] and LIMITS[0] <= point[0] < LIMITS[1]:
+            valid_real_points.append(point)
+    print(valid_real_points)
+    return valid_real_points
 
 
 def get_real_positions_lazy(real_points):
+    if len(real_points)==0:
+        print("{};")
     s = "{"
     y_old = real_points[0][1]
     for point in real_points:
