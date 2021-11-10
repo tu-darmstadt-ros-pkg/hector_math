@@ -4,8 +4,42 @@
 
 #include <ros/ros.h>
 #include <gtest/gtest.h>
+#include <fstream>
+#include <ros/package.h>
 
 using namespace hector_math;
+
+template<typename Scalar>
+void writeReportToFile(const std::vector<Vector2<Scalar>> iteratedPositions,const std::vector<Vector2<Scalar>> realPositions,hector_math::Polygon<Scalar> polygon,
+                       Eigen::Index row_min, Eigen::Index row_max, Eigen::Index col_min, Eigen::Index col_max, const std::string &name){
+    std::string package_path = ros::package::getPath( ROS_PACKAGE_NAME );
+    std::string path = package_path + "/test/tmp/" + name;
+    std::cerr<<path<<std::endl;
+    std::ofstream output( path, std::ios_base::out );
+    if ( !output.is_open())
+    {
+        std::cerr << "Couldn't open file to dump report!" << std::endl;
+        return;
+    }
+    output<<"Limitations"<<std::endl;
+    output<<row_min<<", "<<row_max<<std::endl;
+    output<<col_min<<", "<<col_max<<std::endl;
+    output<<"iterated Positions"<<std::endl;
+    for(auto corner :iteratedPositions){
+        output<<corner[0]<<", "<<corner[1]<<std::endl;
+    }
+    output<<"real Positions"<<std::endl;
+    for(auto corner :realPositions){
+        output<<corner[0]<<", "<<corner[1]<<std::endl;
+    }
+    output<<"Corners"<<std::endl;
+    for(int i=0; i< polygon.cols();i++){
+        output<<polygon(0,i)<<", "<<polygon(1,i)<<std::endl;
+    }
+    output.flush();
+    output.close();
+    std::cout<<"Wrote file"<<path<<std::endl;
+}
 
 template<typename Scalar>
 hector_math::Polygon<Scalar> createPolygon(int which)
@@ -52,11 +86,28 @@ hector_math::Polygon<Scalar> createPolygon(int which)
         result.col(6) << 5, 0;
         result.col(7) << 3.6, 3.5;
         return result;
+    }else if (which == 3) {
+        // Z structure
+        hector_math::Polygon<Scalar> result(2, 11);
+        result.col(0) << -3.5, 4.2;
+        result.col(1) << -2, 4.2;
+        result.col(2) << -2, -0.5;
+        result.col(3) << 1, -0.5;
+        result.col(4) << 1, 4.2;
+        result.col(5) << 3.5, 4.2;
+        result.col(6) << 5.5, -0.5;
+        result.col(7) << 4.5, -2;
+        result.col(8) << 2.4, 3.5;
+        result.col(9) << 2.4, -2;
+        result.col(10) << -3.5, -2;
+        return result;
     }
+    return hector_math::Polygon<Scalar>(2, 0);
 }
 
 template<typename Scalar>
-void verifyPositions(const std::vector<Vector2<Scalar>> &encounteredPositions, const std::vector<Vector2<Scalar>> &realPositions,std::string msg){
+bool verifyPositions(const std::vector<Vector2<Scalar>> &encounteredPositions, const std::vector<Vector2<Scalar>> &realPositions,std::string msg){
+    bool noErrorsFound = true;
     int a = (int) encounteredPositions.size();
     //ASSERT_EQ(encounteredPositions.size(),realPositions.size())<<"Number of encountered positions and real positions doesn't match";
     for (auto encounteredPosition:encounteredPositions){
@@ -65,6 +116,7 @@ void verifyPositions(const std::vector<Vector2<Scalar>> &encounteredPositions, c
             if (encounteredPosition == real_position) exist=true;
         }
         EXPECT_TRUE(exist)<<encounteredPosition[0]<<", "<<encounteredPosition[1]<<" not in real Positions in "<<msg;
+        if (!exist) noErrorsFound = false;
     }
     for(auto real_position:realPositions) {
         bool exist = false;
@@ -73,6 +125,7 @@ void verifyPositions(const std::vector<Vector2<Scalar>> &encounteredPositions, c
             if (encounteredPosition == real_position) exist=true;
         }
         EXPECT_TRUE(exist)<<real_position[0]<<", "<<real_position[1]<<" not in encounterd Positions in "<<msg;
+        if (!exist) noErrorsFound = false;
     }
     // verify that every entry is only once in encountered positions
     for(auto i = encounteredPositions.begin(); i != encounteredPositions.end(); ++i){
@@ -82,8 +135,12 @@ void verifyPositions(const std::vector<Vector2<Scalar>> &encounteredPositions, c
             if(*i == *j) not_twice= false;
         }
         EXPECT_TRUE(not_twice)<<*i<<"exists twice in the list of encountered Positions while iterating through the polygon/circle in "<<msg;
+        if (!not_twice) noErrorsFound = false;
     }
+    std::cout<<"No errors found"<<noErrorsFound<<"true is ..."<<true<<std::endl;
+    return noErrorsFound;
 }
+
 
 template<typename Scalar>
 class IteratorTest : public testing::Test
@@ -181,7 +238,12 @@ TYPED_TEST( IteratorTest, polygonTest ) {
     std::vector<Vector2> position;
     Polygon<Scalar> polygon = createPolygon<Scalar>(0);
     //normal case in area x: -4 bis 4 and y: -4 bis 4, center (0,0) and radius 2,
-    iteratePolygon<Scalar>(polygon,Eigen::Index(-6),Eigen::Index(6),Eigen::Index(-6),Eigen::Index(6) ,[ &position ]( Eigen::Index x, Eigen::Index y )
+    Eigen::Index row_min = -6;
+    Eigen::Index row_max = 6;
+    Eigen::Index col_min = -6;
+    Eigen::Index col_max = 6;
+    bool correctlyWorking = true;
+    iteratePolygon<Scalar>(polygon,row_min,row_max,col_min,col_max ,[ &position ]( Eigen::Index x, Eigen::Index y )
     {
         position.push_back(Vector2(x,y));
     } );
@@ -192,11 +254,12 @@ TYPED_TEST( IteratorTest, polygonTest ) {
                                        {-4,0},{-3,0},{-2,0},{-1,0},{0,0},{1,0},
                                        {-4,-1},{-3,-1},{-2,-1},{-1,-1},
                                        {-2,-2}};//,{-1,-2}};
-    //verifyPositions<Scalar>(position,realPositions," case with 'random shape");
+    correctlyWorking = verifyPositions<Scalar>(position,realPositions," case with 'random shape");
+    if (!correctlyWorking) writeReportToFile(position, realPositions, polygon,row_min,row_max,col_min,col_max,"TestCasePolygonRandom.txt");
     // case Z
     polygon = createPolygon<Scalar>(1);
     position.clear();
-    iteratePolygon<Scalar>(polygon,Eigen::Index(-6),Eigen::Index(6),Eigen::Index(-6),Eigen::Index(6) ,[ &position ]( Eigen::Index x, Eigen::Index y )
+    iteratePolygon<Scalar>(polygon,row_min,row_max,col_min,col_max,[ &position ]( Eigen::Index x, Eigen::Index y )
     {
         position.push_back(Vector2(x,y));
     } );
@@ -208,11 +271,13 @@ TYPED_TEST( IteratorTest, polygonTest ) {
                   {-3,-2},{-2,-2},
                    {-4,-3},
                    {-5,-4},{-4,-4},{-3,-4},{-2,-4},{-1,-4},{0,-4}};
-    //verifyPositions<Scalar>(position,realPositions," case with Z-shape");
+    correctlyWorking = verifyPositions<Scalar>(position,realPositions," case with Z-shape");
+    if (!correctlyWorking) writeReportToFile(position, realPositions, polygon,row_min,row_max,col_min,col_max,"TestCasePolygonZShape.txt");
+
     // circle approximation
     polygon = createPolygon<Scalar>(2);
     position.clear();
-    iteratePolygon<Scalar>(polygon,Eigen::Index(-6),Eigen::Index(6),Eigen::Index(-6),Eigen::Index(6) ,[ &position ]( Eigen::Index x, Eigen::Index y )
+    iteratePolygon<Scalar>(polygon,row_min,row_max,col_min,col_max,[ &position ]( Eigen::Index x, Eigen::Index y )
     {
         position.push_back(Vector2(x,y));
     } );
@@ -226,12 +291,16 @@ TYPED_TEST( IteratorTest, polygonTest ) {
                    {-4.0,2.0},{-3.0,2.0},{-2.0,2.0},{-1.0,2.0},{0.0,2.0},{1.0,2.0},{2.0,2.0},{3.0,2.0},
                    {-4.0,3.0},{-3.0,3.0},{-2.0,3.0},{-1.0,3.0},{0.0,3.0},{1.0,3.0},{2.0,3.0},{3.0,3.0},
                    {-1.0,4.0},{0.0,4.0}};
-    verifyPositions<Scalar>(position,realPositions," case with circle shape");
-
+    correctlyWorking = verifyPositions<Scalar>(position,realPositions," case with circle shape");
+    if (!correctlyWorking) writeReportToFile(position, realPositions, polygon,row_min,row_max,col_min,col_max,"TestCaseCircleShape.txt");
     // circle approximation with limited indexes
     polygon = createPolygon<Scalar>(2);
     position.clear();
-    iteratePolygon<Scalar>(polygon,Eigen::Index(-4),Eigen::Index(2),Eigen::Index(-3),Eigen::Index(1) ,[ &position ]( Eigen::Index x, Eigen::Index y )
+    row_min =-4;
+    row_max = 2;
+    col_min = -3;
+    col_max = 1;
+    iteratePolygon<Scalar>(polygon,row_min,row_max,col_min,col_max ,[ &position ]( Eigen::Index x, Eigen::Index y )
     {
         position.push_back(Vector2(x,y));
     } );
@@ -240,13 +309,30 @@ TYPED_TEST( IteratorTest, polygonTest ) {
                     {-4.0,-1.0},{-3.0,-1.0},{-2.0,-1.0},{-1.0,-1.0},{0.0,-1.0},{1.0,-1.0},
                     {-4.0,0.0},{-3.0,0.0},{-2.0,0.0},{-1.0,0.0},{0.0,0.0},{1.0,0.0}};
 
-    verifyPositions<Scalar>(position,realPositions," case with circle shape and limited indexes");
+    correctlyWorking = verifyPositions<Scalar>(position,realPositions," case with circle shape and limited indexes");
+    if (!correctlyWorking) writeReportToFile(position, realPositions, polygon,row_min,row_max,col_min,col_max,"TestCaseCircleShapeLimitedIndexes.txt");
+    // u - shape
+    polygon = createPolygon<Scalar>(3);
+    position.clear();
+    iteratePolygon<Scalar>(polygon,row_min,row_max,col_min,col_max ,[ &position ]( Eigen::Index x, Eigen::Index y )
+    {
+        position.push_back(Vector2(x,y));
+    } );
+    realPositions={{-3.0,-2.0},{-2.0,-2.0},{-1.0,-2.0},{0.0,-2.0},{1.0,-2.0},{4.0,-2.0},
+                   {-3.0,-1.0},{1.0,-1.0},{4.0,-1.0},
+                   {-3.0,0.0},{1.0,0.0},{4.0,0.0},
+                   {-3.0,1.0},{1.0,1.0},{3.0,1.0},{4.0,1.0},
+                   {-3.0,2.0},{1.0,2.0},{3.0,2.0},
+                   {-3.0,3.0},{1.0,3.0},{2.0,3.0},{3.0,3.0}};
+    correctlyWorking = verifyPositions<Scalar>(position,realPositions," case with u-shape");
+    if (!correctlyWorking) writeReportToFile(position, realPositions, polygon,row_min,row_max,col_min,col_max,"TestCaseUShape.txt");
+
     // TODO: first shape and Z-shape fails, in circle index limitations lowest row seems to be missing
 }
 
 int main( int argc, char **argv )
 {
-    ros::init( argc, argv, "test_graph_map" );
+    ros::init( argc, argv, "test_hector_iterators" );
     testing::InitGoogleTest( &argc, argv );
     return RUN_ALL_TESTS();
 }

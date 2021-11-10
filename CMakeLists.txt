@@ -97,7 +97,7 @@ endif()
 ## Testing ##
 #############
 
-if (TARGET ${PROJECT_NAME}-test)
+#[[if (TARGET ${PROJECT_NAME}-test)
   find_package(roscpp REQUIRED)
   find_package(rostest REQUIRED)
 
@@ -105,4 +105,21 @@ if (TARGET ${PROJECT_NAME}-test)
   ## Add gtest based cpp test target and link libraries
   add_rostest_gtest(test_math_iterator test/test_hector_iterators.test test/test_hector_iterators.cpp)
   target_link_libraries(test_math_iterator ${PROJECT_NAME} ${catkin_LIBRARIES} ${roscpp_LIBRARIES} ${rostest_LIBRARIES})
-endif()
+endif()]]
+if (CATKIN_ENABLE_TESTING)
+  find_package(roscpp REQUIRED)
+  find_package(rostest REQUIRED)
+  find_package(roslib REQUIRED) # Provides ros::package
+
+  include_directories(
+          ${eigen_checks_INCLUDE_DIRS}
+          ${catkin_INCLUDE_DIRS}
+          ${EIGEN3_INCLUDE_DIRS}
+          ${roscpp_INCLUDE_DIRS}
+          ${rostest_INCLUDE_DIRS}
+  )
+  ## Add gtest based cpp test target and link libraries
+  add_rostest_gtest(test_hector_iterators test/test_hector_iterators.test test/test_hector_iterators.cpp)
+  target_link_libraries(test_hector_iterators ${PROJECT_NAME} ${catkin_LIBRARIES} ${roscpp_LIBRARIES})
+
+endif ()
