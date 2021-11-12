@@ -5,16 +5,16 @@ import time
 
 """ You can use this script to visualize the results from test_hector_iterators.cpp
 It shows the found points inside the polygon as well as the groundtruth used during testing
-also the LIMITS are visualized. The function will iterate over all Testcase reports present in test/tmp
+also the LIMITS are visualized. The function will iterate over all Testcase reports present in 'test/tmp'
 
 Alternativley the script can be used to build up new test cases, given an INPUT_STRING (corners)
 ist should detect all points inside the polygon (neither optimized not perfect). The results can be visualized and the
 detected points are printed so that they can be easily copied as 'real_points' of the new test case
 """
 
-
+## Settings for groundtruth generation
 # corners should be in correct order (random direction)
-INPUT_STRING = """hector_math::Polygon<Scalar> result(2, 8);
+INPUT_STRING = """hector_math::Polygon<Scalar> result(2, 11);
         result.col(0) << -3.5, 4.2;
         result.col(1) << -2, 4.2;
         result.col(2) << -2, -0.5;
@@ -27,11 +27,9 @@ INPUT_STRING = """hector_math::Polygon<Scalar> result(2, 8);
         result.col(9) << 2.4, -2;
         result.col(10) << -3.5, -2;"""
 
-# LIMITS (row_min, row_max, column_min, column_max)
-LIMITS = [-6, 6, -6, 6]
-
-
-
+# LIMITS (row_min, row_max, column_min, column_max) only important for groundtruth generation
+# LIMITS = [-6, 6, -6, 6]
+LIMITS = [-4, 2, -3, 1]
 
 
 def get_corners(string):
@@ -82,7 +80,7 @@ def draw_polygon(corners):
     draw_nice_visualisation(corners, real_points)
 
 
-def draw_nice_visualisation(corners, real_points, iterated_points=[],name="Visualisation"):
+def draw_nice_visualisation(corners, real_points, iterated_points=[], name="Visualization"):
     x = np.zeros(len(corners) + 1)
     y = np.zeros(len(corners) + 1)
     for i in range(len(corners)):
@@ -98,7 +96,9 @@ def draw_nice_visualisation(corners, real_points, iterated_points=[],name="Visua
     minx = int(np.floor(min([x[0] for x in corners]))) - 1
     maxx = int(np.ceil(max([x[0] for x in corners]))) + 1
     # draw centers
-    centers = np.array(np.meshgrid(np.arange(minx, maxx)+0.5, np.arange(miny, maxy)+0.5)).reshape(2, (maxx-minx)*(maxy-miny))
+    centers = np.array(np.meshgrid(np.arange(minx, maxx) + 0.5, np.arange(miny, maxy) + 0.5)).reshape(2,
+                                                                                                      (maxx - minx) * (
+                                                                                                                  maxy - miny))
     plt.scatter(centers[0, :], centers[1, :])
     # draw iterated points (found during testing)
     plt.scatter([x[0] + 0.5 for x in iterated_points], [x[1] + 0.5 for x in iterated_points], s=100,
@@ -106,16 +106,18 @@ def draw_nice_visualisation(corners, real_points, iterated_points=[],name="Visua
     # draw 'groundtruth' data
     plt.scatter([x[0] + 0.5 for x in real_points], [x[1] + 0.5 for x in real_points], c="green", label="groundtruth")
     # draw Limits
-    plt.plot([LIMITS[0], LIMITS[0], LIMITS[1]-0.25, LIMITS[1]-0.25,LIMITS[0]], [LIMITS[2], LIMITS[3]-0.25, LIMITS[3]-0.25, LIMITS[2],LIMITS[2]],
+    plt.plot([LIMITS[0], LIMITS[0], LIMITS[1] - 0.25, LIMITS[1] - 0.25, LIMITS[0]],
+             [LIMITS[2], LIMITS[3] - 0.25, LIMITS[3] - 0.25, LIMITS[2], LIMITS[2]],
              linestyle='dashed', label="LIMITS")
-    plt.legend()#bbox_to_anchor=(0.75, 1.15), ncol=2)
-    plt.xlim((minx,maxx))
-    plt.ylim((miny,maxy))
+    plt.legend()  # bbox_to_anchor=(0.75, 1.15), ncol=2)
+    plt.xlim((minx, maxx))
+    plt.ylim((miny, maxy))
     plt.title(name)
     plt.show()
 
 
 def get_real_points(corners):
+    assert(len(LIMITS) == 4)
     lines = []
     real_points = []
     for i in range(len(corners) - 1):
@@ -155,6 +157,7 @@ def get_real_points(corners):
     # filter by index limitations
     valid_real_points = []
     for point in real_points:
+        print(LIMITS)
         if LIMITS[2] <= point[1] < LIMITS[3] and LIMITS[0] <= point[0] < LIMITS[1]:
             valid_real_points.append(point)
     print(valid_real_points)
@@ -205,20 +208,28 @@ def read_from_file(path):
     return iterated_points, real_points, corners
 
 
-if __name__ == "__main__":
+def show_all_failure_cases():
     all_files = os.listdir("tmp")
-    files = ["tmp/" +file for file in all_files]
+    files = ["tmp/" + file for file in all_files]
     print(files)
     while len(files) > 0:
         file = max(files, key=os.path.getctime)
-        modificationTime = time.strftime('%d/%m/%Y %H:%M', time.localtime(os.path.getmtime(file)))
+        modification_time = time.strftime('%d/%m/%Y %H:%M', time.localtime(os.path.getmtime(file)))
         iterated_points, real_points, corners = read_from_file(file)
-        draw_nice_visualisation(corners, real_points, iterated_points,file[4:]+" \n changed last at "+modificationTime)
+        draw_nice_visualisation(corners, real_points, iterated_points,
+                                file[4:] + " \n changed last at " + modification_time)
         files.remove(file)
-    exit()
-    if True:
-        # Visualising results from Tests
-        file = "TestCaseCircleShape.txt"# "TestCasePolygonZShape.txt"# "TestCaseCircleShapeLimitedIndexes.txt"  # "TestCasePolygonRandom.txt"
+
+
+if __name__ == "__main__":
+    modes = ["showAllFailureCases", "showOneFailureCase", "constructNewCase"]
+    mode = 0
+    if mode == 0:
+        # visualize all failure cases
+        show_all_failure_cases()
+    elif mode == 1:
+        # Visualising results from 1 test
+        file = "tmp/TestCaseCircleShape.txt"  # "TestCasePolygonZShape.txt"# "TestCaseCircleShapeLimitedIndexes.txt"  # "TestCasePolygonRandom.txt"
         iterated_points, real_points, corners = read_from_file(file)
         draw_nice_visualisation(corners, real_points, iterated_points)
         print(LIMITS)

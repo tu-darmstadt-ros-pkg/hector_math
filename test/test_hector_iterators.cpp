@@ -75,7 +75,7 @@ hector_math::Polygon<Scalar> createPolygon(int which)
         result.col(7) << -3,-3;
         return result;
     }else if (which == 2) {
-        // Z structure
+        // circle structure
         hector_math::Polygon<Scalar> result(2, 8);
         result.col(0) << 0, 5;
         result.col(1) << -3.6, 3.5;
@@ -87,7 +87,7 @@ hector_math::Polygon<Scalar> createPolygon(int which)
         result.col(7) << 3.6, 3.5;
         return result;
     }else if (which == 3) {
-        // Z structure
+        // u structure
         hector_math::Polygon<Scalar> result(2, 11);
         result.col(0) << -3.5, 4.2;
         result.col(1) << -2, 4.2;
@@ -137,7 +137,6 @@ bool verifyPositions(const std::vector<Vector2<Scalar>> &encounteredPositions, c
         EXPECT_TRUE(not_twice)<<*i<<"exists twice in the list of encountered Positions while iterating through the polygon/circle in "<<msg;
         if (!not_twice) noErrorsFound = false;
     }
-    std::cout<<"No errors found"<<noErrorsFound<<"true is ..."<<true<<std::endl;
     return noErrorsFound;
 }
 
@@ -293,6 +292,24 @@ TYPED_TEST( IteratorTest, polygonTest ) {
                    {-1.0,4.0},{0.0,4.0}};
     correctlyWorking = verifyPositions<Scalar>(position,realPositions," case with circle shape");
     if (!correctlyWorking) writeReportToFile(position, realPositions, polygon,row_min,row_max,col_min,col_max,"TestCaseCircleShape.txt");
+    // u - shape
+    /*polygon = createPolygon<Scalar>(3);
+    position.clear();
+    std::cout<<"u1"<<std::endl;
+    iteratePolygon<Scalar>(polygon,row_min,row_max,col_min,col_max ,[ &position ]( Eigen::Index x, Eigen::Index y )
+    {
+        position.push_back(Vector2(x,y));
+    } );
+    std::cout<<"u2"<<std::endl;
+    realPositions={{-3.0,-2.0},{-2.0,-2.0},{-1.0,-2.0},{0.0,-2.0},{1.0,-2.0},{4.0,-2.0},
+                   {-3.0,-1.0},{1.0,-1.0},{4.0,-1.0},
+                   {-3.0,0.0},{1.0,0.0},{4.0,0.0},
+                   {-3.0,1.0},{1.0,1.0},{3.0,1.0},{4.0,1.0},
+                   {-3.0,2.0},{1.0,2.0},{3.0,2.0},
+                   {-3.0,3.0},{1.0,3.0},{2.0,3.0},{3.0,3.0}};
+    correctlyWorking = verifyPositions<Scalar>(position,realPositions," case with u-shape");
+    if (!correctlyWorking) writeReportToFile(position, realPositions, polygon,row_min,row_max,col_min,col_max,"TestCaseUShape.txt");*/
+
     // circle approximation with limited indexes
     polygon = createPolygon<Scalar>(2);
     position.clear();
@@ -311,21 +328,18 @@ TYPED_TEST( IteratorTest, polygonTest ) {
 
     correctlyWorking = verifyPositions<Scalar>(position,realPositions," case with circle shape and limited indexes");
     if (!correctlyWorking) writeReportToFile(position, realPositions, polygon,row_min,row_max,col_min,col_max,"TestCaseCircleShapeLimitedIndexes.txt");
-    // u - shape
+    // u - shape limited index
     polygon = createPolygon<Scalar>(3);
     position.clear();
     iteratePolygon<Scalar>(polygon,row_min,row_max,col_min,col_max ,[ &position ]( Eigen::Index x, Eigen::Index y )
     {
         position.push_back(Vector2(x,y));
     } );
-    realPositions={{-3.0,-2.0},{-2.0,-2.0},{-1.0,-2.0},{0.0,-2.0},{1.0,-2.0},{4.0,-2.0},
-                   {-3.0,-1.0},{1.0,-1.0},{4.0,-1.0},
-                   {-3.0,0.0},{1.0,0.0},{4.0,0.0},
-                   {-3.0,1.0},{1.0,1.0},{3.0,1.0},{4.0,1.0},
-                   {-3.0,2.0},{1.0,2.0},{3.0,2.0},
-                   {-3.0,3.0},{1.0,3.0},{2.0,3.0},{3.0,3.0}};
-    correctlyWorking = verifyPositions<Scalar>(position,realPositions," case with u-shape");
-    if (!correctlyWorking) writeReportToFile(position, realPositions, polygon,row_min,row_max,col_min,col_max,"TestCaseUShape.txt");
+    realPositions={{-3.0,-2.0},{-2.0,-2.0},{-1.0,-2.0},{0.0,-2.0},{1.0,-2.0},
+                   {-3.0,-1.0},{1.0,-1.0},
+                   {-3.0,0.0},{1.0,0.0}};
+    correctlyWorking = verifyPositions<Scalar>(position,realPositions," case with u-shape and limited indexes");
+    if (!correctlyWorking) writeReportToFile(position, realPositions, polygon,row_min,row_max,col_min,col_max,"TestCaseUShapeLimitedIndexes.txt");
 
     // TODO: first shape and Z-shape fails, in circle index limitations lowest row seems to be missing
 }
