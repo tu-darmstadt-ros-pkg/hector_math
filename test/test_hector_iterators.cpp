@@ -1,6 +1,7 @@
 
 #include <hector_math/iterators/circle_iterator.h>
 #include <hector_math/iterators/polygon_iterator.h>
+#include "iterator_test_input.h"
 
 #include <ros/ros.h>
 #include <gtest/gtest.h>
@@ -10,99 +11,48 @@
 using namespace hector_math;
 
 template<typename Scalar>
+std::string jsonVector(const std::vector<Vector2<Scalar>> data){
+    std::string s= "[";
+    for(int i = 0; i<data.size();i++){
+        s = s + "[" + std::to_string(data[i][0]) + ", " + std::to_string(data[i][1]);
+        if (i != data.size()-1){
+            s = s +"],";
+        }else{
+            s = s + "]],\n";
+        }
+    }
+    return s;
+}
+
+template<typename Scalar>
 void writeReportToFile(const std::vector<Vector2<Scalar>> iteratedPositions,const std::vector<Vector2<Scalar>> realPositions,hector_math::Polygon<Scalar> polygon,
                        Eigen::Index row_min, Eigen::Index row_max, Eigen::Index col_min, Eigen::Index col_max, const std::string &name){
     std::string package_path = ros::package::getPath( ROS_PACKAGE_NAME );
     std::string path = package_path + "/test/tmp/" + name;
-    std::cerr<<path<<std::endl;
     std::ofstream output( path, std::ios_base::out );
     if ( !output.is_open())
     {
         std::cerr << "Couldn't open file to dump report!" << std::endl;
         return;
     }
-    output<<"Limitations"<<std::endl;
-    output<<row_min<<", "<<row_max<<std::endl;
-    output<<col_min<<", "<<col_max<<std::endl;
-    output<<"iterated Positions"<<std::endl;
-    for(auto corner :iteratedPositions){
-        output<<corner[0]<<", "<<corner[1]<<std::endl;
-    }
-    output<<"real Positions"<<std::endl;
-    for(auto corner :realPositions){
-        output<<corner[0]<<", "<<corner[1]<<std::endl;
-    }
-    output<<"Corners"<<std::endl;
+    output<<"{\n \"limits\": [";
+    output<<row_min<<", "<<row_max<<", "<<col_min<<", "<<col_max<<"],"<<std::endl;
+    output<<"\"iterated positions\":";
+    output<<jsonVector(iteratedPositions);
+    output<<"\"real positions\":";
+    output<<jsonVector(realPositions);
+    output<<"\"corners\": [";
     for(int i=0; i< polygon.cols();i++){
-        output<<polygon(0,i)<<", "<<polygon(1,i)<<std::endl;
+        output<<"["<< polygon(0,i)<< ", "<<polygon(1,i);
+        if (i != polygon.cols()-1){
+            output <<"],";
+        }else{
+            output<<"]]"<<std::endl<<"}";
+        }
     }
     output.flush();
     output.close();
     std::cout<<"Wrote file"<<path<<std::endl;
-}
-
-template<typename Scalar>
-hector_math::Polygon<Scalar> createPolygon(int which)
-{
-    if (which == 0) {
-        hector_math::Polygon<Scalar> result(2, 15);
-        result.col(0) << 0, 4.9;
-        result.col(1) << 3.5, 4.9;
-        result.col(2) << 4.3333, 3.3333;
-        result.col(3) << 4, 2.3333;
-        result.col(4) << 0, 2;
-        result.col(5) << 0, 0.95;
-        result.col(6) << 4, 0;
-        result.col(7) << 0, 0;
-        result.col(8) << -0.8, -1.0;
-        result.col(9) << -0, -2.0;
-        result.col(10) << -4.01, -0.99;
-        result.col(11) << -4, 1;
-        result.col(12) << -3, 4;
-        result.col(13) << -2, 4;
-        result.col(14) << -1.0, 2.5;
-        return result;
-    }else if (which == 1){
-        // Z structure
-        hector_math::Polygon<Scalar> result(2, 8);
-        result.col(0) << 1.66666, 4;
-        result.col(1) << -5,4;
-        result.col(2) << -5,3;
-        result.col(3) << 0,3;
-        result.col(4) << -4.66666, -4;
-        result.col(5) << 2, -4;
-        result.col(6) << 2,-3;
-        result.col(7) << -3,-3;
-        return result;
-    }else if (which == 2) {
-        // circle structure
-        hector_math::Polygon<Scalar> result(2, 8);
-        result.col(0) << 0, 5;
-        result.col(1) << -3.6, 3.5;
-        result.col(2) << -5, 0;
-        result.col(3) << -3.6, -3.5;
-        result.col(4) << 0, -5;
-        result.col(5) << 3.6, -3.5;
-        result.col(6) << 5, 0;
-        result.col(7) << 3.6, 3.5;
-        return result;
-    }else if (which == 3) {
-        // u structure
-        hector_math::Polygon<Scalar> result(2, 11);
-        result.col(0) << -3.5, 4.2;
-        result.col(1) << -2, 4.2;
-        result.col(2) << -2, -0.5;
-        result.col(3) << 1, -0.5;
-        result.col(4) << 1, 4.2;
-        result.col(5) << 3.5, 4.2;
-        result.col(6) << 5.5, -0.5;
-        result.col(7) << 4.5, -2;
-        result.col(8) << 2.4, 3.5;
-        result.col(9) << 2.4, -2;
-        result.col(10) << -3.5, -2;
-        return result;
-    }
-    return hector_math::Polygon<Scalar>(2, 0);
 }
 
 template<typename Scalar>
@@ -112,7 +62,7 @@ bool verifyPositions(const std::vector<Vector2<Scalar>> &encounteredPositions, c
     //ASSERT_EQ(encounteredPositions.size(),realPositions.size())<<"Number of encountered positions and real positions doesn't match";
     for (auto encounteredPosition:encounteredPositions){
         bool exist = false;
-        for(auto real_position:realPositions){
+        for(const auto& real_position:realPositions){
             if (encounteredPosition == real_position) exist=true;
         }
         EXPECT_TRUE(exist)<<encounteredPosition[0]<<", "<<encounteredPosition[1]<<" not in real Positions in "<<msg;
@@ -120,7 +70,7 @@ bool verifyPositions(const std::vector<Vector2<Scalar>> &encounteredPositions, c
     }
     for(auto real_position:realPositions) {
         bool exist = false;
-        for (auto encounteredPosition:encounteredPositions){
+        for (const auto& encounteredPosition:encounteredPositions){
             //if (pow(encounteredPosition[0]-real_position[0]+0.5,2),pow(encounteredPosition[1]-real_position[1]+0.5,2)<0.3) exist=true;
             if (encounteredPosition == real_position) exist=true;
         }
@@ -139,6 +89,7 @@ bool verifyPositions(const std::vector<Vector2<Scalar>> &encounteredPositions, c
     }
     return noErrorsFound;
 }
+
 
 
 template<typename Scalar>

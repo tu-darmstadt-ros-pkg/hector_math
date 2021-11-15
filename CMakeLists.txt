@@ -78,34 +78,10 @@ install(DIRECTORY include/${PROJECT_NAME}/
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 # )
 
-#############
-## Testing ##
-#############
-
-## Add gtest based cpp test target and link libraries
-catkin_add_gtest(${PROJECT_NAME}-test test/test_hector_math.cpp test/test_hector_iterators.cpp)
-#catkin_add_gtest(${PROJECT_NAME}-test test/test_hector_iterators.cpp)
-
-if(TARGET ${PROJECT_NAME}-test)
- target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME} ${catkin_LIBRARIES})
-endif()
-
-## Add folders to be run by python nosetests
-# catkin_add_nosetests(test)
 
 #############
 ## Testing ##
 #############
-
-#[[if (TARGET ${PROJECT_NAME}-test)
-  find_package(roscpp REQUIRED)
-  find_package(rostest REQUIRED)
-
-  include_directories(include ${catkin_INCLUDE_DIRS} ${roscpp_INCLUDE_DIRS} ${rostest_INCLUDE_DIRS})
-  ## Add gtest based cpp test target and link libraries
-  add_rostest_gtest(test_math_iterator test/test_hector_iterators.test test/test_hector_iterators.cpp)
-  target_link_libraries(test_math_iterator ${PROJECT_NAME} ${catkin_LIBRARIES} ${roscpp_LIBRARIES} ${rostest_LIBRARIES})
-endif()]]
 if (CATKIN_ENABLE_TESTING)
   find_package(roscpp REQUIRED)
   find_package(rostest REQUIRED)
@@ -121,5 +97,4 @@ if (CATKIN_ENABLE_TESTING)
   ## Add gtest based cpp test target and link libraries
   add_rostest_gtest(test_hector_iterators test/test_hector_iterators.test test/test_hector_iterators.cpp)
   target_link_libraries(test_hector_iterators ${PROJECT_NAME} ${catkin_LIBRARIES} ${roscpp_LIBRARIES})
-
 endif ()
