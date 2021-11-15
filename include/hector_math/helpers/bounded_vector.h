@@ -23,14 +23,16 @@ public:
   // push and pop
   void push_back( T val )
   {
-    if ( size_ == MaxSize ) throw std::length_error( "Maximum size reached!" );
+    if ( size_ == MaxSize )
+      throw std::length_error( "Maximum size reached!" );
     items_[size_++] = val;
   }
 
   template<typename... Args>
   void emplace_back( Args... args )
   {
-    if ( size_ == MaxSize ) throw std::length_error( "Maximum size reached!" );
+    if ( size_ == MaxSize )
+      throw std::length_error( "Maximum size reached!" );
     items_[size_++] = T( args... );
   }
 
@@ -43,18 +45,18 @@ public:
 
   void erase( const_iterator position )
   {
-    assert( position - begin() < (long) (size_));
+    assert( position - begin() < (long)( size_ ) );
     position->~T();
-    iterator start = begin() + (position - begin());
+    iterator start = begin() + ( position - begin() );
     for ( auto it = position + 1; it != end(); ++it, ++start ) *start = std::move( *it );
     --size_;
   }
 
   void erase( const_iterator first, const_iterator last )
   {
-    assert( first >= begin());
-    assert( last - begin() <= (long) (size_));
-    iterator start = begin() + (first - begin());
+    assert( first >= begin() );
+    assert( last - begin() <= (long)( size_ ) );
+    iterator start = begin() + ( first - begin() );
     for ( auto it = start; it != last; ++it ) it->~T();
     for ( auto it = last + 1; it != end(); ++it, ++start ) *start = std::move( *it );
     --size_;
@@ -62,8 +64,10 @@ public:
 
   void clear()
   {
-    if ( std::is_trivially_destructible<T>::value ) size_ = 0;
-    else while ( size_ > 0 ) pop_back();
+    if ( std::is_trivially_destructible<T>::value )
+      size_ = 0;
+    else
+      while ( size_ > 0 ) pop_back();
   }
 
   // front
@@ -96,12 +100,15 @@ public:
 
   const T *data() const { return items_.data(); }
 
-  void reserve( size_t ) { /* Nothing to do */ }
+  void reserve( size_t size )
+  {
+    assert( size <= MaxSize && "Bounded vector can not reserve more than max size!" );
+  }
 
 private:
   std::array<T, MaxSize> items_;
   size_t size_ = 0;
 };
-}
+} // namespace hector_math
 
-#endif //HECTOR_MATH_BOUNDED_VECTOR_H
+#endif // HECTOR_MATH_BOUNDED_VECTOR_H

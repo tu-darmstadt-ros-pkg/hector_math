@@ -2,8 +2,8 @@
 // Created by stefan on 20.08.21.
 //
 
-#include "iterators_input.h"
 #include "hector_math/iterators/polygon_iterator.h"
+#include "iterators_input.h"
 #include <fstream>
 #include <iostream>
 
@@ -15,15 +15,12 @@ template<typename Derived>
 void dumpEigenDenseBase( const Eigen::DenseBase<Derived> &dense, const std::string &path )
 {
   std::ofstream output( path, std::ios_base::out );
-  if ( !output.is_open())
-  {
+  if ( !output.is_open() ) {
     std::cerr << "Couldn't open file to dump heightmap!" << std::endl;
     return;
   }
-  for ( Eigen::Index x = 0; x < dense.rows(); ++x )
-  {
-    for ( Eigen::Index y = 0; y < dense.cols(); ++y )
-    {
+  for ( Eigen::Index x = 0; x < dense.rows(); ++x ) {
+    for ( Eigen::Index y = 0; y < dense.cols(); ++y ) {
       output << dense( x, y );
       if ( y != dense.cols() - 1 )
         output << ",";
@@ -41,19 +38,15 @@ int main( int argc, char **argv )
   GridMap<Scalar> map( 20, 20 );
   map.setConstant( 0 );
 
-  iteratePolygon<Scalar>( polygon, map.rows(), map.cols(), [ &map ]( Eigen::Index x, Eigen::Index y )
-  {
-    map( x, y ) = 1;
-  } );
+  iteratePolygon<Scalar>( polygon, map.rows(), map.cols(),
+                          [&map]( Eigen::Index x, Eigen::Index y ) { map( x, y ) = 1; } );
 
   dumpEigenDenseBase( map, "polygon.txt" );
   polygon = createSkewedQuadranglePolygon<Scalar>() / Scalar( 0.05 );
   map.setConstant( 0 );
 
-  iteratePolygon<Scalar>( polygon, map.rows(), map.cols(), [ &map ]( Eigen::Index x, Eigen::Index y )
-  {
-    map( x, y ) = 1;
-  } );
+  iteratePolygon<Scalar>( polygon, map.rows(), map.cols(),
+                          [&map]( Eigen::Index x, Eigen::Index y ) { map( x, y ) = 1; } );
 
   dumpEigenDenseBase( map, "quadrangle_polygon.txt" );
 

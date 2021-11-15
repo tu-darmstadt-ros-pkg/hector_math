@@ -29,11 +29,11 @@ template<typename Scalar>
 hector_math::Polygon<Scalar> createSkewedQuadranglePolygon()
 {
   hector_math::Polygon<Scalar> result( 2, 4 );
-  result.col(0) << 0.035, 0.035;
-  result.col(1) << 0, 0.96;
-  result.col(2) << 1, 1;
-  result.col(3) << 0.95, 0;
+  result.col( 0 ) << 0.035, 0.035;
+  result.col( 1 ) << 0, 0.96;
+  result.col( 2 ) << 1, 1;
+  result.col( 3 ) << 0.95, 0;
   return result;
 }
 
-#endif //HECTOR_MATH_ITERATORS_INPUT_H
+#endif // HECTOR_MATH_ITERATORS_INPUT_H

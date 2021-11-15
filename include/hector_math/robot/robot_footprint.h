@@ -15,8 +15,9 @@ template<typename Scalar>
 class RobotFootprint
 {
 public:
-  virtual Scalar getMinimum( const GridMap<Scalar> &map, const Vector2<Scalar> &pos, Scalar orientation, Scalar maximum ) const = 0;
+  virtual Scalar getMinimum( const GridMap<Scalar> &map, const Vector2<Scalar> &pos,
+                             Scalar orientation, Scalar maximum ) const = 0;
 };
-}
+} // namespace hector_math
 
-#endif //HECTOR_MATH_FOOTPRINT_ACCESSOR_H
+#endif // HECTOR_MATH_FOOTPRINT_ACCESSOR_H

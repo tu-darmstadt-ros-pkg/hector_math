@@ -3,7 +3,6 @@ import numpy as np
 from matplotlib.patches import Polygon
 import matplotlib.pyplot as plt
 
-
 if __name__ == '__main__':
     polygon_map = np.loadtxt("polygon.txt", delimiter=',')
     quadrangle_map = np.loadtxt("quadrangle_polygon.txt", delimiter=',')
@@ -30,8 +29,8 @@ if __name__ == '__main__':
     plt.figure()
     ax = plt.subplot(121)
     ax.imshow(polygon_map[:, :])
-    ax.set_xticks(np.arange(0, 20)-0.5)
-    ax.set_yticks(np.arange(0, 20)-0.5)
+    ax.set_xticks(np.arange(0, 20) - 0.5)
+    ax.set_yticks(np.arange(0, 20) - 0.5)
     ax.grid(True)
     centers = np.array(np.meshgrid(np.arange(0, 20), np.arange(0, 20))).reshape(2, 20 * 20)
     ax.scatter(centers[0, :], centers[1, :])
@@ -39,8 +38,8 @@ if __name__ == '__main__':
 
     ax = plt.subplot(122)
     ax.imshow(quadrangle_map[:, :])
-    ax.set_xticks(np.arange(0, 20)-0.5)
-    ax.set_yticks(np.arange(0, 20)-0.5)
+    ax.set_xticks(np.arange(0, 20) - 0.5)
+    ax.set_yticks(np.arange(0, 20) - 0.5)
     ax.grid(True)
     centers = np.array(np.meshgrid(np.arange(0, 20), np.arange(0, 20))).reshape(2, 20 * 20)
     ax.scatter(centers[0, :], centers[1, :])
