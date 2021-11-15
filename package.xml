@@ -11,6 +11,4 @@
 
 
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>urdf</build_depend>
-  <build_export_depend>urdf</build_export_depend>
 </package>
