@@ -37,6 +37,15 @@ using Vector3fList = Vector3List<float>;
 using Vector3dList = Vector3List<double>;
 
 template<typename Scalar>
+using Vector4 = Eigen::Matrix<Scalar, 4, 1>;
+using Vector4f = Vector4<float>;
+using Vector4d = Vector4<double>;
+template<typename Scalar>
+using Vector4List = std::vector<Vector4<Scalar> >;
+using Vector4fList = Vector4List<float>;
+using Vector4dList = Vector4List<double>;
+
+template<typename Scalar>
 using VectorX = Eigen::Matrix<Scalar, Eigen::Dynamic, 1>;
 using VectorXf = VectorX<float>;
 using VectorXd = VectorX<double>;

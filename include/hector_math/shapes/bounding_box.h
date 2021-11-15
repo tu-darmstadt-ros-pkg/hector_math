@@ -9,6 +9,27 @@
 
 namespace hector_math
 {
+
+template<typename Scalar>
+inline Eigen::AlignedBox<Scalar, 3> computeBoundingBoxForSphere( Scalar radius,
+                                                                 const Isometry3<Scalar> &transform );
+
+template<typename Scalar>
+inline Eigen::AlignedBox<Scalar, 3> computeBoundingBoxForBox( const Vector3<Scalar> &dim,
+                                                              const Isometry3<Scalar> &transform );
+
+template<typename Scalar>
+inline Eigen::AlignedBox<Scalar, 3> computeBoundingBoxForCylinder( Scalar radius, Scalar length,
+                                                                   const Isometry3<Scalar> &transform );
+
+template<typename Scalar>
+inline Eigen::AlignedBox<Scalar, 3> transformBoundingBox( const Eigen::AlignedBox<Scalar, 3> &box,
+                                                          const Isometry3<Scalar> &transform );
+
+/// ====================================================
+/// ================== IMPLEMENTATION ==================
+/// ====================================================
+
 template<typename Scalar>
 inline Eigen::AlignedBox<Scalar, 3> computeBoundingBoxForSphere( Scalar radius,
                                                                  const Isometry3 <Scalar> &transform )
@@ -27,10 +48,10 @@ inline Eigen::AlignedBox<Scalar, 3> computeBoundingBoxForBox( const Vector3 <Sca
              dim_2.y(),  dim_2.y(), -dim_2.y(), -dim_2.y(),  dim_2.y(),  dim_2.y(), -dim_2.y(), -dim_2.y(),
              dim_2.z(),  dim_2.z(),  dim_2.z(), -dim_2.z(), -dim_2.z(), -dim_2.z(), -dim_2.z(),  dim_2.z();
   // @formatter:on
-  Eigen::Matrix<Scalar, 3, 8> transformed_corners = transform * corners;
-  auto row_wise = transformed_corners.rowwise();
-  Vector3<Scalar> min = row_wise.minCoeff();
-  Vector3<Scalar> max = row_wise.maxCoeff();
+  const Eigen::Matrix<Scalar, 3, 8> &transformed_corners = transform * corners;
+  const auto &row_wise = transformed_corners.rowwise();
+  const Vector3<Scalar> &min = row_wise.minCoeff();
+  const Vector3<Scalar> &max = row_wise.maxCoeff();
   return Eigen::AlignedBox<Scalar, 3>( min, max );
 }
 
@@ -38,7 +59,9 @@ template<typename Scalar>
 inline Eigen::AlignedBox<Scalar, 3> computeBoundingBoxForCylinder( Scalar radius, Scalar length,
                                                                    const Isometry3 <Scalar> &transform )
 {
+  // Length is in z direction
   const Vector3<Scalar> tz = transform.linear() * Vector3<Scalar>::UnitZ();
+  // Compute projection of length and radius in each axis
   Vector3<Scalar> dim_2( std::abs( tz.x()) * length / 2 + std::sqrt( 1 - tz.x() * tz.x()) * radius,
                          std::abs( tz.y()) * length / 2 + std::sqrt( 1 - tz.y() * tz.y()) * radius,
                          std::abs( tz.z()) * length / 2 + std::sqrt( 1 - tz.z() * tz.z()) * radius );
@@ -57,10 +80,10 @@ inline Eigen::AlignedBox<Scalar, 3> transformBoundingBox( const Eigen::AlignedBo
              dim_2.y(),  dim_2.y(), -dim_2.y(), -dim_2.y(),  dim_2.y(),  dim_2.y(), -dim_2.y(), -dim_2.y(),
              dim_2.z(),  dim_2.z(),  dim_2.z(), -dim_2.z(), -dim_2.z(), -dim_2.z(), -dim_2.z(),  dim_2.z();
   // @formatter:on
-  Eigen::Matrix<Scalar, 3, 8> transformed_corners = transform * corners;
-  auto row_wise = transformed_corners.rowwise();
-  Vector3<Scalar> min = row_wise.minCoeff();
-  Vector3<Scalar> max = row_wise.maxCoeff();
+  const Eigen::Matrix<Scalar, 3, 8> &transformed_corners = transform * corners;
+  const auto &row_wise = transformed_corners.rowwise();
+  const Vector3<Scalar> &min = row_wise.minCoeff();
+  const Vector3<Scalar> &max = row_wise.maxCoeff();
   return { min, max };
 }
 }
