@@ -56,8 +56,8 @@ hector_math::Polygon<Scalar> createPolygon(int which)
         result.col(3) << 1, -0.5;
         result.col(4) << 1, 4.2;
         result.col(5) << 3.5, 4.2;
-        result.col(6) << 5.5, -0.5;
-        result.col(7) << 4.5, -2;
+        result.col(6) << 4.5, -0.5;
+        result.col(7) << 4.0, -2;
         result.col(8) << 2.4, 3.5;
         result.col(9) << 2.4, -2;
         result.col(10) << -3.5, -2;

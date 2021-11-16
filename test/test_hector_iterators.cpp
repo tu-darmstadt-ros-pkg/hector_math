@@ -3,6 +3,7 @@
 #include <hector_math/iterators/polygon_iterator.h>
 #include "iterator_test_input.h"
 
+#include "eigen_tests.h"
 #include <ros/ros.h>
 #include <gtest/gtest.h>
 #include <fstream>
@@ -11,22 +12,23 @@
 using namespace hector_math;
 
 template<typename Scalar>
-std::string jsonVector(const std::vector<Vector2<Scalar>> data){
+std::string jsonVector(const GridMap<Scalar> map, int offset){
     std::string s= "[";
-    for(int i = 0; i<data.size();i++){
-        s = s + "[" + std::to_string(data[i][0]) + ", " + std::to_string(data[i][1]);
-        if (i != data.size()-1){
-            s = s +"],";
-        }else{
-            s = s + "]],\n";
+    for( int i=0; i<map.rows(); i++){
+        for(int j=0;j<map.cols();j++){
+            if ( map(i,j) > 0 ){
+                s +=  "[" + std::to_string(i-offset) + ", " + std::to_string(j-offset)+"], ";
+            }
         }
     }
+    s = s.substr(0,s.size()-2) + "],\n";
     return s;
 }
-
+// writes JSON File for polygon Test cases, can be visualized with showPolygon.py
+// visualizes the polygon, the groundtruth and the points found using the polygon iterator
 template<typename Scalar>
-void writeReportToFile(const std::vector<Vector2<Scalar>> iteratedPositions,const std::vector<Vector2<Scalar>> realPositions,hector_math::Polygon<Scalar> polygon,
-                       Eigen::Index row_min, Eigen::Index row_max, Eigen::Index col_min, Eigen::Index col_max, const std::string &name){
+void writeReportToFile(const GridMap<Scalar> iteratedMap,const GridMap<Scalar> realMap,hector_math::Polygon<Scalar> polygon,
+                       Eigen::Index row_min, Eigen::Index row_max, Eigen::Index col_min, Eigen::Index col_max,int offset, const std::string &name){
     std::string package_path = ros::package::getPath( ROS_PACKAGE_NAME );
     std::string path = package_path + "/test/tmp/" + name;
     std::ofstream output( path, std::ios_base::out );
@@ -38,9 +40,9 @@ void writeReportToFile(const std::vector<Vector2<Scalar>> iteratedPositions,cons
     output<<"{\n \"limits\": [";
     output<<row_min<<", "<<row_max<<", "<<col_min<<", "<<col_max<<"],"<<std::endl;
     output<<"\"iterated positions\":";
-    output<<jsonVector(iteratedPositions);
+    output<<jsonVector(iteratedMap,offset);
     output<<"\"real positions\":";
-    output<<jsonVector(realPositions);
+    output<<jsonVector(realMap,offset);
     output<<"\"corners\": [";
     for(int i=0; i< polygon.cols();i++){
         output<<"["<< polygon(0,i)<< ", "<<polygon(1,i);
@@ -54,42 +56,6 @@ void writeReportToFile(const std::vector<Vector2<Scalar>> iteratedPositions,cons
     output.close();
     std::cout<<"Wrote file"<<path<<std::endl;
 }
-
-template<typename Scalar>
-bool verifyPositions(const std::vector<Vector2<Scalar>> &encounteredPositions, const std::vector<Vector2<Scalar>> &realPositions,std::string msg){
-    bool noErrorsFound = true;
-    int a = (int) encounteredPositions.size();
-    //ASSERT_EQ(encounteredPositions.size(),realPositions.size())<<"Number of encountered positions and real positions doesn't match";
-    for (auto encounteredPosition:encounteredPositions){
-        bool exist = false;
-        for(const auto& real_position:realPositions){
-            if (encounteredPosition == real_position) exist=true;
-        }
-        EXPECT_TRUE(exist)<<encounteredPosition[0]<<", "<<encounteredPosition[1]<<" not in real Positions in "<<msg;
-        if (!exist) noErrorsFound = false;
-    }
-    for(auto real_position:realPositions) {
-        bool exist = false;
-        for (const auto& encounteredPosition:encounteredPositions){
-            //if (pow(encounteredPosition[0]-real_position[0]+0.5,2),pow(encounteredPosition[1]-real_position[1]+0.5,2)<0.3) exist=true;
-            if (encounteredPosition == real_position) exist=true;
-        }
-        EXPECT_TRUE(exist)<<real_position[0]<<", "<<real_position[1]<<" not in encounterd Positions in "<<msg;
-        if (!exist) noErrorsFound = false;
-    }
-    // verify that every entry is only once in encountered positions
-    for(auto i = encounteredPositions.begin(); i != encounteredPositions.end(); ++i){
-        int count = 0;
-        bool not_twice = true;
-        for(auto j = i + 1; j != encounteredPositions.end(); ++j){
-            if(*i == *j) not_twice= false;
-        }
-        EXPECT_TRUE(not_twice)<<*i<<"exists twice in the list of encountered Positions while iterating through the polygon/circle in "<<msg;
-        if (!not_twice) noErrorsFound = false;
-    }
-    return noErrorsFound;
-}
-
 
 
 template<typename Scalar>
@@ -105,194 +71,257 @@ TYPED_TEST_CASE( IteratorTest, Implementations );
 TYPED_TEST( IteratorTest, circleTest ) {
     using Scalar = TypeParam;
     using Vector2 = Vector2<Scalar>;
-
-    std::vector<Vector2> position;
     //normal case in area x: -4 bis 4 and y: -4 bis 4, center (0,0) and radius 2,
-    iterateCircle<Scalar>(Vector2(Scalar(0.49),Scalar(0.49)),2,Eigen::Index(-4),Eigen::Index(4),Eigen::Index(-4),Eigen::Index(4) ,[ &position ]( Eigen::Index x, Eigen::Index y )
-    {
-        position.push_back(Vector2(x,y));
-    } );
-    std::vector<Vector2> realPositions{Vector2(0,-2),Vector2(-1,-1),Vector2(0,-1),Vector2(1,-1),
-                                         Vector2(-2,0),Vector2(-1,0),Vector2(0,0),Vector2(1,0),
-                                         Vector2(-1,1),Vector2(0,1),Vector2(1,1)};
-    verifyPositions<Scalar>(position,realPositions,"normal case, center at (0.49,0.49");
+    GridMap<Scalar> realMap(5, 5);
+    // @formatter:off
+    realMap << 0, 0, 1, 0, 0,
+            0, 1, 1, 1, 0,
+            1, 1, 1, 1, 0,
+            0, 1, 1, 1, 0,
+            0, 0, 0, 0, 0;
+    // @formatter:on
+    GridMap<Scalar> iteratedMap(5, 5); iteratedMap.setZero();
+    iterateCircle<Scalar>(Vector2(Scalar(0.49), Scalar(0.49)), 2, Eigen::Index(-4), Eigen::Index(4), Eigen::Index(-4),
+                          Eigen::Index(4), [&iteratedMap](Eigen::Index x, Eigen::Index y) {
+                iteratedMap(x + 2, y + 2) += 1;
+            });
+    EXPECT_TRUE(EIGEN_MATRIX_NEAR(realMap, iteratedMap, 1E-6));
+
     // case 2, equal to one but center at (0,0)
-    position.clear();
-    iterateCircle<Scalar>(Vector2(Scalar(0),Scalar(0)),2,Eigen::Index(-4),Eigen::Index(4),Eigen::Index(-4),Eigen::Index(4) ,[ &position ]( Eigen::Index x, Eigen::Index y )
+    // @formatter:off
+    realMap << 0, 1, 1, 0, 0,
+            1, 1, 1, 1, 0,
+            1, 1, 1, 1, 0,
+            0, 1, 1, 0, 0,
+            0, 0, 0, 0, 0;
+    // @formatter:on
+    iteratedMap.setZero();
+    iterateCircle<Scalar>(Vector2(Scalar(0),Scalar(0)),2,Eigen::Index(-4),Eigen::Index(4),Eigen::Index(-4),Eigen::Index(4) ,[ &iteratedMap ]( Eigen::Index x, Eigen::Index y )
     {
-        position.push_back(Vector2(x,y));
+        iteratedMap(x + 2, y + 2) += 1;
     } );
-    realPositions = {Vector2(-1,-2),Vector2(0,-2),
-                     Vector2(-2,-1),Vector2(-1,-1),Vector2(0,-1),Vector2(1,-1),
-                     Vector2(-2,0),Vector2(-1,0),Vector2(0,0),Vector2(1,0),
-                     Vector2(-1,1),Vector2(0,1)};
-    verifyPositions<Scalar>(position,realPositions,"normal case center at (0,0)");
+    EXPECT_TRUE(EIGEN_MATRIX_NEAR(realMap, iteratedMap, 1E-6));
+
     //case 3 restrict max_row to be 1
-    position.clear();
-    iterateCircle<Scalar>(Vector2(Scalar(0),Scalar(0)),2,Eigen::Index(-4),Eigen::Index(1),Eigen::Index(-4),Eigen::Index(4) ,[ &position ]( Eigen::Index x, Eigen::Index y )
+    realMap = GridMap<Scalar>(4, 5);
+    iteratedMap = GridMap<Scalar>(4, 5);iteratedMap.setZero();
+    // @formatter:off
+    realMap << 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 1.0, 0.0,
+            0.0, 1.0, 1.0, 1.0, 1.0,
+            0.0, 1.0, 1.0, 1.0, 1.0;
+    // @formatter:on
+    iterateCircle<Scalar>(Vector2(Scalar(0),Scalar(0)),2,Eigen::Index(-4),Eigen::Index(1),Eigen::Index(-4),Eigen::Index(4) ,[ &iteratedMap ]( Eigen::Index x, Eigen::Index y )
     {
-        position.push_back(Vector2(x,y));
+        iteratedMap(x + 3, y + 3) += 1;
     } );
-    realPositions = {Vector2(-1,-2),Vector2(0,-2),
-                     Vector2(-2,-1),Vector2(-1,-1),Vector2(0,-1),
-                     Vector2(-2,0),Vector2(-1,0),Vector2(0,0),
-                     Vector2(-1,1),Vector2(0,1)};
-    verifyPositions<Scalar>(position,realPositions," case with center at (0,0) and limited max_row");
+    EXPECT_TRUE(EIGEN_MATRIX_NEAR(realMap, iteratedMap, 1E-6));
 
     //case 4 restrict min_row to be 1
-    position.clear();
-    iterateCircle<Scalar>(Vector2(Scalar(0),Scalar(0)),2,Eigen::Index(1),Eigen::Index(4),Eigen::Index(-4),Eigen::Index(4) ,[ &position ]( Eigen::Index x, Eigen::Index y )
+    realMap = GridMap<Scalar>(3, 4);
+    iteratedMap = GridMap<Scalar>(3, 4);iteratedMap.setZero();
+    // @formatter:off
+    realMap << 0.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 0.0;
+    // @formatter:on
+    iterateCircle<Scalar>(Vector2(Scalar(0),Scalar(0)),2,Eigen::Index(1),Eigen::Index(4),Eigen::Index(-4),Eigen::Index(4) ,[ &iteratedMap ]( Eigen::Index x, Eigen::Index y )
     {
-        position.push_back(Vector2(x,y));
+        iteratedMap(x + 0, y + 2) += 1;
     } );
-    realPositions = {Vector2(1,0),Vector2(1,-1)};
-    verifyPositions<Scalar>(position,realPositions," case with center at (0,0) and limited min_row");
-
+    EXPECT_TRUE(EIGEN_MATRIX_NEAR(realMap, iteratedMap, 1E-6));
     //case 5 restrict min_column to be -1 and max_column to be 1
-    position.clear();
-    iterateCircle<Scalar>(Vector2(Scalar(0),Scalar(0)),2,Eigen::Index(-4),Eigen::Index(4),Eigen::Index(-1),Eigen::Index(1) ,[ &position ]( Eigen::Index x, Eigen::Index y )
+    realMap = GridMap<Scalar>(6, 4);
+    iteratedMap = GridMap<Scalar>(6, 4); iteratedMap.setZero();
+    // @formatter:off
+    realMap << 0.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 1.0, 0.0,
+            0.0, 1.0, 1.0, 0.0,
+            0.0, 1.0, 1.0, 0.0,
+            0.0, 1.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 0.0;
+    // @formatter:on
+    iterateCircle<Scalar>(Vector2(Scalar(0),Scalar(0)),2,Eigen::Index(-4),Eigen::Index(4),Eigen::Index(-1),Eigen::Index(1) ,[ &iteratedMap ]( Eigen::Index x, Eigen::Index y )
     {
-        position.push_back(Vector2(x,y));
+        iteratedMap(x  + 3, y + 2) += 1;
     } );
-    realPositions = {Vector2(-2,-1),Vector2(-1,-1),Vector2(0,-1),Vector2(1,-1),
-                     Vector2(-2,0),Vector2(-1,0),Vector2(0,0),Vector2(1,0)};
-    verifyPositions<Scalar>(position,realPositions," case with center at (0,0) and limited min/max_column");
+    EXPECT_TRUE(EIGEN_MATRIX_NEAR(realMap, iteratedMap, 1E-6));
 
     //case 6 no points due to colum/index restrictions
-    position.clear();
-    iterateCircle<Scalar>(Vector2(Scalar(0),Scalar(0)),2,Eigen::Index(4),Eigen::Index(8),Eigen::Index(-8),Eigen::Index(8) ,[ &position ]( Eigen::Index x, Eigen::Index y )
+    realMap = GridMap<Scalar>(6, 4);
+    iteratedMap = GridMap<Scalar>(6, 4);
+    iteratedMap.setZero(); realMap.setZero();
+    iterateCircle<Scalar>(Vector2(Scalar(0),Scalar(0)),2,Eigen::Index(4),Eigen::Index(8),Eigen::Index(-8),Eigen::Index(8) ,[ &iteratedMap ]( Eigen::Index x, Eigen::Index y )
     {
-        position.push_back(Vector2(x,y));
+        iteratedMap(x  + 3, y + 3) += 1;
     } );
-    iterateCircle<Scalar>(Vector2(Scalar(0),Scalar(0)),2,Eigen::Index(-8),Eigen::Index(8),Eigen::Index(4),Eigen::Index(8) ,[ &position ]( Eigen::Index x, Eigen::Index y )
+    iterateCircle<Scalar>(Vector2(Scalar(0),Scalar(0)),2,Eigen::Index(-8),Eigen::Index(8),Eigen::Index(4),Eigen::Index(8) ,[ &iteratedMap ]( Eigen::Index x, Eigen::Index y )
     {
-        position.push_back(Vector2(x,y));
+        iteratedMap(x  + 3, y + 3) += 1;
     } );
-    realPositions = {};
-    verifyPositions<Scalar>(position,realPositions," case with center at (0,0) and all points should be invalid due to column/row restrictions");
-
+    EXPECT_TRUE(EIGEN_MATRIX_NEAR(realMap, iteratedMap, 1E-6));
     // case 7, using different function overload
-    position.clear();
-    iterateCircle<Scalar>(Vector2(Scalar(0),Scalar(0)),2,Eigen::Index(4),Eigen::Index(4) ,[ &position ]( Eigen::Index x, Eigen::Index y )
+    realMap = GridMap<Scalar>(4, 4);
+    iteratedMap = GridMap<Scalar>(4, 4);iteratedMap.setZero();
+    // @formatter:off
+    realMap << 0.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0;
+    // @formatter:on
+    iterateCircle<Scalar>(Vector2(Scalar(0),Scalar(0)),2,Eigen::Index(4),Eigen::Index(4) ,[ &iteratedMap ]( Eigen::Index x, Eigen::Index y )
     {
-        position.push_back(Vector2(x,y));
+        iteratedMap(x  + 1, y + 1) += 1;
     } );
-    realPositions = {Vector2(0,0),Vector2(1,0),Vector2(0,1)};
-    verifyPositions<Scalar>(position,realPositions," case with center at (0,0) usage of function overload setting min_ro/column to zeros");
-
+    EXPECT_TRUE(EIGEN_MATRIX_NEAR(realMap, iteratedMap, 1E-6));
 }
 
 TYPED_TEST( IteratorTest, polygonTest ) {
     using Scalar = TypeParam;
     using Vector2 = Vector2<Scalar>;
     std::vector<Vector2> position;
+    int offset = 5;
     Polygon<Scalar> polygon = createPolygon<Scalar>(0);
     //normal case in area x: -4 bis 4 and y: -4 bis 4, center (0,0) and radius 2,
     Eigen::Index row_min = -6;
     Eigen::Index row_max = 6;
     Eigen::Index col_min = -6;
     Eigen::Index col_max = 6;
-    bool correctlyWorking = true;
-    iteratePolygon<Scalar>(polygon,row_min,row_max,col_min,col_max ,[ &position ]( Eigen::Index x, Eigen::Index y )
+    GridMap<Scalar> realMap(10, 10);
+    GridMap<Scalar> iteratedMap(10, 10);
+    iteratedMap.setZero();
+    // @formatter:off
+    realMap << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+    // @formatter:on
+    iteratePolygon<Scalar>(polygon,row_min,row_max,col_min,col_max ,[ &iteratedMap,offset ]( Eigen::Index x, Eigen::Index y )
     {
-        position.push_back(Vector2(x,y));
+        iteratedMap(x  + offset, y + offset) += 1;
     } );
-    std::vector<Vector2> realPositions{{0,4},{1,4},{2,4},{3,4},
-                                       {-3,3},{-1,3},{0,3},{1,3},{2,3},{3,3},
-                                       {-4,2},{-3,2},{-2,2},{-1,2},{0,2},{1,2},{2,2},{3,2},
-                                       {-4,1},{-3,1},{-2,1},{-1,1},
-                                       {-4,0},{-3,0},{-2,0},{-1,0},{0,0},{1,0},
-                                       {-4,-1},{-3,-1},{-2,-1},{-1,-1},
-                                       {-2,-2}};//,{-1,-2}};
-    correctlyWorking = verifyPositions<Scalar>(position,realPositions," case with 'random shape");
-    if (!correctlyWorking) writeReportToFile(position, realPositions, polygon,row_min,row_max,col_min,col_max,"TestCasePolygonRandom.txt");
+    EXPECT_TRUE(EIGEN_MATRIX_NEAR(realMap, iteratedMap, 1E-6));
+    writeReportToFile(iteratedMap, realMap,polygon,row_min,row_max,col_min,col_max,offset,"TestCasePolygonRandom.txt");
     // case Z
     polygon = createPolygon<Scalar>(1);
-    position.clear();
-    iteratePolygon<Scalar>(polygon,row_min,row_max,col_min,col_max,[ &position ]( Eigen::Index x, Eigen::Index y )
+    iteratedMap.setZero();
+    // @formatter:off
+    realMap << 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+            0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+            0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+            0.0, 1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0,
+            0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0,
+            0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+    // @formatter:on
+    iteratePolygon<Scalar>(polygon,row_min,row_max,col_min,col_max ,[ &iteratedMap,offset ]( Eigen::Index x, Eigen::Index y )
     {
-        position.push_back(Vector2(x,y));
+        iteratedMap(x  + offset, y + offset) += 1;
     } );
-    realPositions={{-5,3},{-4,3},{-3,3},{-2,3},{-1,3},{0,3},
-                  {0,2},
-                  {-1,1},
-                  {-2,0},
-                  {-2,-1},
-                  {-3,-2},{-2,-2},
-                   {-4,-3},
-                   {-5,-4},{-4,-4},{-3,-4},{-2,-4},{-1,-4},{0,-4}};
-    correctlyWorking = verifyPositions<Scalar>(position,realPositions," case with Z-shape");
-    if (!correctlyWorking) writeReportToFile(position, realPositions, polygon,row_min,row_max,col_min,col_max,"TestCasePolygonZShape.txt");
-
+    EXPECT_TRUE(EIGEN_MATRIX_NEAR(realMap, iteratedMap, 1E-6));
+    writeReportToFile(iteratedMap, realMap,polygon,row_min,row_max,col_min,col_max,offset,"TestCasePolygonZShape.txt");
     // circle approximation
     polygon = createPolygon<Scalar>(2);
-    position.clear();
-    iteratePolygon<Scalar>(polygon,row_min,row_max,col_min,col_max,[ &position ]( Eigen::Index x, Eigen::Index y )
+    iteratedMap.setZero();
+    // @formatter:off
+    realMap << 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0,
+            0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0,
+            0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0,
+            1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+            1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+            0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0,
+            0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0,
+            0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0;
+    // @formatter:on
+    iteratePolygon<Scalar>(polygon,row_min,row_max,col_min,col_max ,[ &iteratedMap,offset ]( Eigen::Index x, Eigen::Index y )
     {
-        position.push_back(Vector2(x,y));
+        iteratedMap(x  + offset, y + offset) += 1;
     } );
-    realPositions={{-1.0,-5.0},{0.0,-5.0},
-                   {-4.0,-4.0},{-3.0,-4.0},{-2.0,-4.0},{-1.0,-4.0},{0.0,-4.0},{1.0,-4.0},{2.0,-4.0},{3.0,-4.0},
-                   {-4.0,-3.0},{-3.0,-3.0},{-2.0,-3.0},{-1.0,-3.0},{0.0,-3.0},{1.0,-3.0},{2.0,-3.0},{3.0,-3.0},
-                   {-4.0,-2.0},{-3.0,-2.0},{-2.0,-2.0},{-1.0,-2.0},{0.0,-2.0},{1.0,-2.0},{2.0,-2.0},{3.0,-2.0},
-                   {-5.0,-1.0},{-4.0,-1.0},{-3.0,-1.0},{-2.0,-1.0},{-1.0,-1.0},{0.0,-1.0},{1.0,-1.0},{2.0,-1.0},{3.0,-1.0},{4.0,-1.0},
-                   {-5.0,0.0},{-4.0,0.0},{-3.0,0.0},{-2.0,0.0},{-1.0,0.0},{0.0,0.0},{1.0,0.0},{2.0,0.0},{3.0,0.0},{4.0,0.0},
-                   {-4.0,1.0},{-3.0,1.0},{-2.0,1.0},{-1.0,1.0},{0.0,1.0},{1.0,1.0},{2.0,1.0},{3.0,1.0},
-                   {-4.0,2.0},{-3.0,2.0},{-2.0,2.0},{-1.0,2.0},{0.0,2.0},{1.0,2.0},{2.0,2.0},{3.0,2.0},
-                   {-4.0,3.0},{-3.0,3.0},{-2.0,3.0},{-1.0,3.0},{0.0,3.0},{1.0,3.0},{2.0,3.0},{3.0,3.0},
-                   {-1.0,4.0},{0.0,4.0}};
-    correctlyWorking = verifyPositions<Scalar>(position,realPositions," case with circle shape");
-    if (!correctlyWorking) writeReportToFile(position, realPositions, polygon,row_min,row_max,col_min,col_max,"TestCaseCircleShape.txt");
+    EXPECT_TRUE(EIGEN_MATRIX_NEAR(realMap, iteratedMap, 1E-6));
+    writeReportToFile(iteratedMap, realMap,polygon,row_min,row_max,col_min,col_max,offset,"TestCaseCircleShape.txt");
+
     // u - shape
-    /*polygon = createPolygon<Scalar>(3);
-    position.clear();
-    std::cout<<"u1"<<std::endl;
-    iteratePolygon<Scalar>(polygon,row_min,row_max,col_min,col_max ,[ &position ]( Eigen::Index x, Eigen::Index y )
+    polygon = createPolygon<Scalar>(3);
+    iteratedMap.setZero();
+    // @formatter:off
+    realMap << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0;
+    // @formatter:on
+    iteratePolygon<Scalar>(polygon,row_min,row_max,col_min,col_max ,[ &iteratedMap,offset ]( Eigen::Index x, Eigen::Index y )
     {
-        position.push_back(Vector2(x,y));
+        std::cout<<"x "<<x<<" y "<<y<<std::endl;
+        iteratedMap(x  + offset, y + offset) += 1;
     } );
-    std::cout<<"u2"<<std::endl;
-    realPositions={{-3.0,-2.0},{-2.0,-2.0},{-1.0,-2.0},{0.0,-2.0},{1.0,-2.0},{4.0,-2.0},
-                   {-3.0,-1.0},{1.0,-1.0},{4.0,-1.0},
-                   {-3.0,0.0},{1.0,0.0},{4.0,0.0},
-                   {-3.0,1.0},{1.0,1.0},{3.0,1.0},{4.0,1.0},
-                   {-3.0,2.0},{1.0,2.0},{3.0,2.0},
-                   {-3.0,3.0},{1.0,3.0},{2.0,3.0},{3.0,3.0}};
-    correctlyWorking = verifyPositions<Scalar>(position,realPositions," case with u-shape");
-    if (!correctlyWorking) writeReportToFile(position, realPositions, polygon,row_min,row_max,col_min,col_max,"TestCaseUShape.txt");*/
+    EXPECT_TRUE(EIGEN_MATRIX_NEAR(realMap, iteratedMap, 1E-6));
+    writeReportToFile(iteratedMap, realMap,polygon,row_min,row_max,col_min,col_max,offset,"TestCaseUShape.txt");
 
     // circle approximation with limited indexes
-    polygon = createPolygon<Scalar>(2);
-    position.clear();
     row_min =-4;
     row_max = 2;
     col_min = -3;
     col_max = 1;
-    iteratePolygon<Scalar>(polygon,row_min,row_max,col_min,col_max ,[ &position ]( Eigen::Index x, Eigen::Index y )
+    polygon = createPolygon<Scalar>(2);
+    iteratedMap.setZero();
+    // @formatter:off
+    realMap << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+    // @formatter:on
+    iteratePolygon<Scalar>(polygon,row_min,row_max,col_min,col_max ,[ &iteratedMap,offset ]( Eigen::Index x, Eigen::Index y )
     {
-        position.push_back(Vector2(x,y));
+        iteratedMap(x  + offset, y + offset) += 1;
     } );
-    realPositions={{-4.0,-3.0},{-3.0,-3.0},{-2.0,-3.0},{-1.0,-3.0},{0.0,-3.0},{1.0,-3.0},
-                    {-4.0,-2.0},{-3.0,-2.0},{-2.0,-2.0},{-1.0,-2.0},{0.0,-2.0},{1.0,-2.0},
-                    {-4.0,-1.0},{-3.0,-1.0},{-2.0,-1.0},{-1.0,-1.0},{0.0,-1.0},{1.0,-1.0},
-                    {-4.0,0.0},{-3.0,0.0},{-2.0,0.0},{-1.0,0.0},{0.0,0.0},{1.0,0.0}};
+    EXPECT_TRUE(EIGEN_MATRIX_NEAR(realMap, iteratedMap, 1E-6));
+    writeReportToFile(iteratedMap, realMap,polygon,row_min,row_max,col_min,col_max,offset,"TestCaseCircleShapeLimitedIndexes.txt");
 
-    correctlyWorking = verifyPositions<Scalar>(position,realPositions," case with circle shape and limited indexes");
-    if (!correctlyWorking) writeReportToFile(position, realPositions, polygon,row_min,row_max,col_min,col_max,"TestCaseCircleShapeLimitedIndexes.txt");
     // u - shape limited index
     polygon = createPolygon<Scalar>(3);
-    position.clear();
-    iteratePolygon<Scalar>(polygon,row_min,row_max,col_min,col_max ,[ &position ]( Eigen::Index x, Eigen::Index y )
+    iteratedMap.setZero();
+    // @formatter:off
+    realMap << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+    // @formatter:on
+    iteratePolygon<Scalar>(polygon,row_min,row_max,col_min,col_max ,[ &iteratedMap,offset ]( Eigen::Index x, Eigen::Index y )
     {
-        position.push_back(Vector2(x,y));
+        iteratedMap(x  + offset, y + offset) += 1;
     } );
-    realPositions={{-3.0,-2.0},{-2.0,-2.0},{-1.0,-2.0},{0.0,-2.0},{1.0,-2.0},
-                   {-3.0,-1.0},{1.0,-1.0},
-                   {-3.0,0.0},{1.0,0.0}};
-    correctlyWorking = verifyPositions<Scalar>(position,realPositions," case with u-shape and limited indexes");
-    if (!correctlyWorking) writeReportToFile(position, realPositions, polygon,row_min,row_max,col_min,col_max,"TestCaseUShapeLimitedIndexes.txt");
+    EXPECT_TRUE(EIGEN_MATRIX_NEAR(realMap, iteratedMap, 1E-6));
+    writeReportToFile(iteratedMap, realMap,polygon,row_min,row_max,col_min,col_max,offset,"TestCaseUShapeLimitedIndexes.txt");
 
-    // TODO: first shape and Z-shape fails, in circle index limitations lowest row seems to be missing
 }
 
 int main( int argc, char **argv )
