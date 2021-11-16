@@ -1,6 +1,7 @@
 #ifndef HECTOR_MATH_ITERATOR_TEST_INPUT_H
 #define HECTOR_MATH_ITERATOR_TEST_INPUT_H
-using namespace hector_math;
+#include <hector_math/types.h>
+
 ///////////////// Polygon /////////////////////
 template<typename Scalar>
 hector_math::Polygon<Scalar> createPolygon(int which)
