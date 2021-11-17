@@ -1,13 +1,18 @@
 #ifndef HECTOR_MATH_ITERATOR_TEST_INPUT_H
 #define HECTOR_MATH_ITERATOR_TEST_INPUT_H
 #include <hector_math/types.h>
+#include <iostream>
 
+
+enum PolygonTyp{RandomStructure, Z_Shape, Circle, U_Shape };
 ///////////////// Polygon /////////////////////
 template<typename Scalar>
-hector_math::Polygon<Scalar> createPolygon(int which)
+hector_math::Polygon<Scalar> createPolygon(PolygonTyp polygonTyp)
 {
-    if (which == 0) {
-        hector_math::Polygon<Scalar> result(2, 15);
+  hector_math::Polygon<Scalar> result(2, 15);
+  switch (polygonTyp) {
+  case PolygonTyp::RandomStructure:
+        result = hector_math::Polygon<Scalar> (2, 15);
         result.col(0) << 0, 4.9;
         result.col(1) << 3.5, 4.9;
         result.col(2) << 4.3333, 3.3333;
@@ -24,9 +29,9 @@ hector_math::Polygon<Scalar> createPolygon(int which)
         result.col(13) << -2, 4;
         result.col(14) << -1.0, 2.5;
         return result;
-    }else if (which == 1){
+  case PolygonTyp::Z_Shape:
         // Z structure
-        hector_math::Polygon<Scalar> result(2, 8);
+        result = hector_math::Polygon<Scalar> (2, 8);
         result.col(0) << 1.66666, 4;
         result.col(1) << -5,4;
         result.col(2) << -5,3;
@@ -36,9 +41,9 @@ hector_math::Polygon<Scalar> createPolygon(int which)
         result.col(6) << 2,-3;
         result.col(7) << -3,-3;
         return result;
-    }else if (which == 2) {
+  case PolygonTyp::Circle:
         // circle structure
-        hector_math::Polygon<Scalar> result(2, 8);
+        result = hector_math::Polygon<Scalar> (2, 8);
         result.col(0) << 0, 5;
         result.col(1) << -3.6, 3.5;
         result.col(2) << -5, 0;
@@ -48,9 +53,9 @@ hector_math::Polygon<Scalar> createPolygon(int which)
         result.col(6) << 5, 0;
         result.col(7) << 3.6, 3.5;
         return result;
-    }else if (which == 3) {
+  case PolygonTyp::U_Shape:
         // u structure
-        hector_math::Polygon<Scalar> result(2, 11);
+        result = hector_math::Polygon<Scalar> (2, 11);
         result.col(0) << -3.5, 4.2;
         result.col(1) << -2, 4.2;
         result.col(2) << -2, -0.5;
@@ -63,15 +68,10 @@ hector_math::Polygon<Scalar> createPolygon(int which)
         result.col(9) << 2.4, -2;
         result.col(10) << -3.5, -2;
         return result;
+    default:
+      std::cout<<"Invalid polygon number"<<std::endl;
     }
     return hector_math::Polygon<Scalar>(2, 0);
 }
-///////////////// groundtruth /////////////////////
-//template<typename Scalar>
-//std::vector<Vector<Scalar>> getGroundtruth(int which){
-
-//}
-
-///////////////// Polygon /////////////////////
 
 #endif //HECTOR_MATH_ITERATOR_TEST_INPUT_H

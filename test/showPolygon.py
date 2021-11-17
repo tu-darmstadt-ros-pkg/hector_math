@@ -48,18 +48,15 @@ def read_from_file(path):
     return data["iterated positions"], data["real positions"], data["corners"], data["limits"]
 
 
-# iterates over all files in folder and visualizes the failure reports starting with the newest one
+# iterates over all files in folder and visualizes the failure reports
 def show_all_failure_cases():
     all_files = os.listdir("tmp")
-    files = ["tmp/" + file for file in all_files]
-    print(files)
-    while len(files) > 0:
-        file = max(files, key=os.path.getctime)
+    for file_name in all_files:
+        file = "tmp/" + file_name
         modification_time = time.strftime('%d/%m/%Y %H:%M', time.localtime(os.path.getmtime(file)))
         iterated_points, real_points, corners, limits = read_from_file(file)
         draw_nice_visualisation(corners, real_points, iterated_points, limits,
-                                file[4:] + " \n changed last at " + modification_time)
-        files.remove(file)
+                            file[4:] + " \n changed last at " + modification_time)
 
 
 if __name__ == "__main__":
