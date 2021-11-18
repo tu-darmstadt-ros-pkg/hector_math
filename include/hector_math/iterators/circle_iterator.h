@@ -23,14 +23,15 @@ namespace hector_math
  * @param functor The function that will be called for each index (x, y) inside the polygon.
  */
 template<typename Scalar, typename Functor>
-void iterateCircle( const Vector2<Scalar> &center, Scalar radius,
-                    Eigen::Index row_min, Eigen::Index row_max, Eigen::Index col_min, Eigen::Index col_max,
+void iterateCircle( const Vector2<Scalar> &center, Scalar radius, Eigen::Index row_min,
+                    Eigen::Index row_max, Eigen::Index col_min, Eigen::Index col_max,
                     Functor functor );
 
-//! Overload of iterateCircle where row_min and col_min are set to 0 to allow for bounded iteration of 2D matrices and arrays.
+//! Overload of iterateCircle where row_min and col_min are set to 0 to allow for bounded iteration
+//! of 2D matrices and arrays.
 template<typename Scalar, typename Functor>
-void iterateCircle( const Vector2<Scalar> &center, Scalar radius, Eigen::Index rows, Eigen::Index cols,
-                    Functor functor )
+void iterateCircle( const Vector2<Scalar> &center, Scalar radius, Eigen::Index rows,
+                    Eigen::Index cols, Functor functor )
 {
   iterateCircle( center, radius, 0, rows, 0, cols, functor );
 }
@@ -44,28 +45,22 @@ void iteratePolygon( const Vector2<Scalar> &center, Scalar radius, Functor funct
   iterateCircle( center, radius, min, max, min, max, functor );
 }
 
-
 template<typename Scalar, typename Functor>
-void iterateCircle( const Vector2<Scalar> &center, Scalar radius,
-                    Eigen::Index row_min, Eigen::Index row_max, Eigen::Index col_min, Eigen::Index col_max,
-                    Functor functor )
+void iterateCircle( const Vector2<Scalar> &center, Scalar radius, Eigen::Index row_min,
+                    Eigen::Index row_max, Eigen::Index col_min, Eigen::Index col_max, Functor functor )
 {
-  const Eigen::Index min_y = std::max<Eigen::Index>( col_min, std::round( center.y() - radius ));
-  const Eigen::Index max_y = std::min<Eigen::Index>( col_max, std::round( center.y() + radius ));
+  const Eigen::Index min_y = std::max<Eigen::Index>( col_min, std::round( center.y() - radius ) );
+  const Eigen::Index max_y = std::min<Eigen::Index>( col_max, std::round( center.y() + radius ) );
   const Scalar radius_squared = radius * radius;
-  for ( Eigen::Index y = min_y; y < max_y; ++y )
-  {
+  for ( Eigen::Index y = min_y; y < max_y; ++y ) {
     // Formula of a circle is: r^2 = x^2 + y^2 ==> x = +/- sqrt(r^2 - y^2) which we can use to get min x and max x
     const Scalar delta_y = y + 0.5 - center.y();
     const Scalar width = std::sqrt( radius_squared - delta_y * delta_y );
-    const Eigen::Index min_x = std::max<Eigen::Index>( row_min, std::round( center.x() - width ));
-    const Eigen::Index max_x = std::min<Eigen::Index>( row_max, std::round( center.x() + width ));
-    for ( Eigen::Index x = min_x; x < max_x; ++x )
-    {
-      functor( x, y );
-    }
+    const Eigen::Index min_x = std::max<Eigen::Index>( row_min, std::round( center.x() - width ) );
+    const Eigen::Index max_x = std::min<Eigen::Index>( row_max, std::round( center.x() + width ) );
+    for ( Eigen::Index x = min_x; x < max_x; ++x ) { functor( x, y ); }
   }
 }
-}
+} // namespace hector_math
 
-#endif //HECTOR_MATH_CIRCLE_ITERATOR_H
+#endif // HECTOR_MATH_CIRCLE_ITERATOR_H

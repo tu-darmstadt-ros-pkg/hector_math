@@ -2,13 +2,13 @@ cmake_minimum_required(VERSION 3.5.1)
 project(hector_math VERSION 1.0.0)
 set(CMAKE_CXX_STANDARD 11)
 
-find_package(catkin REQUIRED COMPONENTS urdf)
+find_package(catkin REQUIRED COMPONENTS roslib)
 find_package(Eigen3 REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES hector_math
-  CATKIN_DEPENDS urdf
+  CATKIN_DEPENDS roslib
   DEPENDS EIGEN3
 )
 
@@ -32,9 +32,6 @@ target_link_libraries(${PROJECT_NAME} INTERFACE ${EIGEN3_LIBRARIES})
 
 find_package(benchmark QUIET)
 if (${benchmark_FOUND})
-  add_executable(benchmark_robot_model benchmark/robot_model.cpp)
-  target_link_libraries(benchmark_robot_model ${PROJECT_NAME} ${catkin_LIBRARIES} benchmark pthread)
-
   # Iterator benchmark
   add_executable(benchmark_iterators benchmark/iterators.cpp)
   find_package(grid_map_core QUIET)
@@ -71,12 +68,7 @@ install(DIRECTORY include/${PROJECT_NAME}/
   PATTERN ".svn" EXCLUDE
 )
 
-## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
-#   # myfile1
-#   # myfile2
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
+
 
 
 #############

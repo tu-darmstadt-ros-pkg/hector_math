@@ -13,16 +13,15 @@
 namespace hector_math
 {
 
-
 template<typename Scalar>
 class RobotModel
 {
 public:
-  using Ptr = std::shared_ptr<RobotModel<Scalar> >;
-  using ConstPtr = std::shared_ptr<const RobotModel<Scalar> >;
+  using Ptr = std::shared_ptr<RobotModel<Scalar>>;
+  using ConstPtr = std::shared_ptr<const RobotModel<Scalar>>;
 
   RobotModel( std::vector<std::string> joint_names, std::vector<Scalar> joint_positions )
-    : joint_names_( std::move( joint_names )), joint_positions_( std::move( joint_positions ))
+      : joint_names_( std::move( joint_names ) ), joint_positions_( std::move( joint_positions ) )
   {
     // Ensure joint positions has the same length as joint names
     joint_positions.resize( joint_names_.size(), 0 );
@@ -30,22 +29,22 @@ public:
 
   explicit RobotModel( std::unordered_map<std::string, Scalar> joint_states )
   {
-    joint_names_.reserve( joint_states.size());
-    joint_positions_.reserve( joint_states.size());
-    for ( const auto &it: joint_states )
-    {
+    joint_names_.reserve( joint_states.size() );
+    joint_positions_.reserve( joint_states.size() );
+    for ( const auto &it : joint_states ) {
       joint_names_.push_back( it.first );
       joint_positions_.push_back( it.second );
     }
   }
 
-  //! Updates the joint positions of the robot model with the given values for the corresponding joint name.
+  //! Updates the joint positions of the robot model with the given values for the corresponding
+  //! joint name.
   virtual void updateJointPositions( const std::unordered_map<std::string, Scalar> &positions )
   {
-    for ( size_t i = 0; i < joint_names_.size(); ++i )
-    {
+    for ( size_t i = 0; i < joint_names_.size(); ++i ) {
       auto it = positions.find( joint_names_[i] );
-      if ( it == positions.end()) continue;
+      if ( it == positions.end() )
+        continue;
       joint_positions_[i] = it->second;
     }
     onJointStatesUpdated();
@@ -55,9 +54,10 @@ public:
   //! Indices have to correspond to names in jointNames().
   virtual void updateJointPositions( const std::vector<Scalar> &positions )
   {
-    auto end = positions.size() > joint_positions_.size() ? positions.begin() + joint_positions_.size()
-                                                          : positions.end();
-    std::copy( positions.begin(), end, joint_positions_.begin());
+    auto end = positions.size() > joint_positions_.size()
+                   ? positions.begin() + joint_positions_.size()
+                   : positions.end();
+    std::copy( positions.begin(), end, joint_positions_.begin() );
     onJointStatesUpdated();
   }
 
@@ -68,9 +68,9 @@ public:
 
   Scalar getJointPosition( const std::string &name ) const
   {
-    for ( size_t i = 0; i < joint_names_.size(); ++i )
-    {
-      if ( joint_names_[i] != name ) continue;
+    for ( size_t i = 0; i < joint_names_.size(); ++i ) {
+      if ( joint_names_[i] != name )
+        continue;
       return joint_positions_[i];
     }
     return std::numeric_limits<Scalar>::quiet_NaN();
@@ -79,7 +79,8 @@ public:
   //! The position of the center of mass in the robot coordinate frame.
   Vector3<Scalar> centerOfMass() const
   {
-    if ( center_of_mass_valid_ ) return center_of_mass_;
+    if ( center_of_mass_valid_ )
+      return center_of_mass_;
     center_of_mass_ = computeCenterOfMass();
     center_of_mass_valid_ = true;
     return center_of_mass_;
@@ -87,7 +88,8 @@ public:
 
   Eigen::AlignedBox<Scalar, 3> axisAlignedBoundingBox() const
   {
-    if ( axis_aligned_bounding_box_valid_ ) return axis_aligned_bounding_box_;
+    if ( axis_aligned_bounding_box_valid_ )
+      return axis_aligned_bounding_box_;
     axis_aligned_bounding_box_ = computeAxisAlignedBoundingBox();
     axis_aligned_bounding_box_valid_ = true;
     return axis_aligned_bounding_box_;
@@ -96,7 +98,8 @@ public:
   //! The footprint is an approximated polygon of the robots hull projected to the ground.
   Polygon<Scalar> footprint() const
   {
-    if ( footprint_valid_ ) return footprint_;
+    if ( footprint_valid_ )
+      return footprint_;
     footprint_ = computeFootprint();
     footprint_valid_ = true;
     return footprint_;
@@ -127,6 +130,6 @@ protected:
   mutable bool axis_aligned_bounding_box_valid_ = false;
   mutable bool center_of_mass_valid_ = false;
 };
-}
+} // namespace hector_math
 
-#endif //HECTOR_MATH_ROBOT_MODEL_H
+#endif // HECTOR_MATH_ROBOT_MODEL_H

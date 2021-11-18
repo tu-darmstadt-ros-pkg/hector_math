@@ -21,12 +21,13 @@ namespace hector_math
 template<typename Scalar>
 Scalar findMinimum( const Eigen::Ref<const GridMap<Scalar>> &map, const Polygon<Scalar> &polygon )
 {
-  Scalar minimum = std::numeric_limits<Scalar>::has_quiet_NaN ? std::numeric_limits<Scalar>::quiet_NaN()
-                                                              : std::numeric_limits<Scalar>::max();
-  iteratePolygon( polygon, map.rows(), map.cols(), [ & ]( Eigen::Index x, Eigen::Index y )
-  {
+  Scalar minimum = std::numeric_limits<Scalar>::has_quiet_NaN
+                       ? std::numeric_limits<Scalar>::quiet_NaN()
+                       : std::numeric_limits<Scalar>::max();
+  iteratePolygon( polygon, map.rows(), map.cols(), [&]( Eigen::Index x, Eigen::Index y ) {
     const Scalar &val = map( x, y );
-    if ( val >= minimum ) return; // Will be false for NaN
+    if ( val >= minimum )
+      return; // Will be false for NaN
     minimum = val;
   } );
   return minimum;
@@ -42,16 +43,17 @@ Scalar findMinimum( const Eigen::Ref<const GridMap<Scalar>> &map, const Polygon<
 template<typename Scalar>
 Scalar findMaximum( const Eigen::Ref<const GridMap<Scalar>> &map, const Polygon<Scalar> &polygon )
 {
-  Scalar maximum = std::numeric_limits<Scalar>::has_quiet_NaN ? std::numeric_limits<Scalar>::quiet_NaN()
-                                                              : std::numeric_limits<Scalar>::min();
-  iteratePolygon( polygon, map.rows(), map.cols(), [ & ]( Eigen::Index x, Eigen::Index y )
-  {
+  Scalar maximum = std::numeric_limits<Scalar>::has_quiet_NaN
+                       ? std::numeric_limits<Scalar>::quiet_NaN()
+                       : std::numeric_limits<Scalar>::min();
+  iteratePolygon( polygon, map.rows(), map.cols(), [&]( Eigen::Index x, Eigen::Index y ) {
     const Scalar &val = map( x, y );
-    if ( val <= maximum ) return; // Will be false for NaN
+    if ( val <= maximum )
+      return; // Will be false for NaN
     maximum = val;
   } );
   return maximum;
 }
-}
+} // namespace hector_math
 
-#endif //HECTOR_MATH_FIND_MINMAX_H
+#endif // HECTOR_MATH_FIND_MINMAX_H
