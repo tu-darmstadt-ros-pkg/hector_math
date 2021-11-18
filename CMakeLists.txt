@@ -8,7 +8,7 @@ find_package(Eigen3 REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES hector_math
-  CATKIN_DEPENDS urdf
+  CATKIN_DEPENDS
   DEPENDS EIGEN3
 )
 
