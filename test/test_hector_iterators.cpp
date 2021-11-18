@@ -11,8 +11,8 @@
 
 using namespace hector_math;
 
-template<typename Scalar>
-std::string jsonVector( const GridMap<Scalar> &map, int offset )
+
+std::string jsonVector( const GridMap<Eigen::Index> &map, int offset )
 {
   std::string s = "[";
   for ( int i = 0; i < map.rows(); i++ ) {
@@ -28,7 +28,7 @@ std::string jsonVector( const GridMap<Scalar> &map, int offset )
 // writes JSON File for polygon Test cases, can be visualized with showPolygon.py
 // visualizes the polygon, the groundtruth and the points found using the polygon iterator
 template<typename Scalar>
-void writeReportToFile( const GridMap<Scalar> &iteratedMap, const GridMap<Scalar> &realMap,
+void writeReportToFile( const GridMap<Eigen::Index> &iteratedMap, const GridMap<Eigen::Index> &realMap,
                         hector_math::Polygon<Scalar> &polygon, Eigen::Index row_min,
                         Eigen::Index row_max, Eigen::Index col_min, Eigen::Index col_max,
                         int offset, const std::string &name )
@@ -74,7 +74,7 @@ TYPED_TEST( IteratorTest, circleTest )
   using Scalar = TypeParam;
   using Vector2 = Vector2<Scalar>;
   // normal case in area x: -4 bis 4 and y: -4 bis 4, center (0,0) and radius 2,
-  GridMap<Scalar> realMap( 5, 5 );
+  GridMap<Eigen::Index> realMap( 5, 5 );
   // @formatter:off
   // clang-format off
   realMap << 0, 0, 1, 0, 0,
@@ -84,12 +84,12 @@ TYPED_TEST( IteratorTest, circleTest )
             0, 0, 0, 0, 0;
   // @formatter:on
   // clang-format on
-  GridMap<Scalar> iteratedMap( 5, 5 );
+  GridMap<Eigen::Index> iteratedMap( 5, 5 );
   iteratedMap.setZero();
   iterateCircle<Scalar>(
       Vector2( 0.49, 0.49 ), 2, -4, 4, -4, 4,
       [&iteratedMap]( Eigen::Index x, Eigen::Index y ) { iteratedMap( x + 2, y + 2 ) += 1; } );
-  EXPECT_TRUE( EIGEN_MATRIX_NEAR( realMap, iteratedMap, 1E-6 ) );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( realMap, iteratedMap ) );
 
   // case 2, equal to one but center at (0,0)
   // @formatter:off
@@ -105,11 +105,11 @@ TYPED_TEST( IteratorTest, circleTest )
   iterateCircle<Scalar>(
       Vector2( 0, 0 ), 2, -4, 4, -4, 4,
       [&iteratedMap]( Eigen::Index x, Eigen::Index y ) { iteratedMap( x + 2, y + 2 ) += 1; } );
-  EXPECT_TRUE( EIGEN_MATRIX_NEAR( realMap, iteratedMap, 1E-6 ) );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( realMap, iteratedMap ) );
 
   // case 3 restrict max_row to be 1
-  realMap = GridMap<Scalar>( 4, 5 );
-  iteratedMap = GridMap<Scalar>( 4, 5 );
+  realMap = GridMap<Eigen::Index>( 4, 5 );
+  iteratedMap = GridMap<Eigen::Index>( 4, 5 );
   iteratedMap.setZero();
   // @formatter:off
   // clang-format off
@@ -122,11 +122,11 @@ TYPED_TEST( IteratorTest, circleTest )
   iterateCircle<Scalar>(
       Vector2( 0, 0 ), 2, -4, 1, -4, 4,
       [&iteratedMap]( Eigen::Index x, Eigen::Index y ) { iteratedMap( x + 3, y + 3 ) += 1; } );
-  EXPECT_TRUE( EIGEN_MATRIX_NEAR( realMap, iteratedMap, 1E-6 ) );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( realMap, iteratedMap ) );
 
   // case 4 restrict min_row to be 1
-  realMap = GridMap<Scalar>( 3, 4 );
-  iteratedMap = GridMap<Scalar>( 3, 4 );
+  realMap = GridMap<Eigen::Index>( 3, 4 );
+  iteratedMap = GridMap<Eigen::Index>( 3, 4 );
   iteratedMap.setZero();
   // @formatter:off
   // clang-format off
@@ -138,10 +138,10 @@ TYPED_TEST( IteratorTest, circleTest )
   iterateCircle<Scalar>(
       Vector2( 0, 0 ), 2, 1, 4, -4, 4,
       [&iteratedMap]( Eigen::Index x, Eigen::Index y ) { iteratedMap( x + 0, y + 2 ) += 1; } );
-  EXPECT_TRUE( EIGEN_MATRIX_NEAR( realMap, iteratedMap, 1E-6 ) );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( realMap, iteratedMap ) );
   // case 5 restrict min_column to be -1 and max_column to be 1
-  realMap = GridMap<Scalar>( 6, 4 );
-  iteratedMap = GridMap<Scalar>( 6, 4 );
+  realMap = GridMap<Eigen::Index>( 6, 4 );
+  iteratedMap = GridMap<Eigen::Index>( 6, 4 );
   iteratedMap.setZero();
   // @formatter:off
   // clang-format off
@@ -156,11 +156,11 @@ TYPED_TEST( IteratorTest, circleTest )
   iterateCircle<Scalar>(
       Vector2( 0, 0 ), 2, -4, 4, -1, 1,
       [&iteratedMap]( Eigen::Index x, Eigen::Index y ) { iteratedMap( x + 3, y + 2 ) += 1; } );
-  EXPECT_TRUE( EIGEN_MATRIX_NEAR( realMap, iteratedMap, 1E-6 ) );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( realMap, iteratedMap ) );
 
-  // case 6 no points due to colum/index restrictions
-  realMap = GridMap<Scalar>( 6, 4 );
-  iteratedMap = GridMap<Scalar>( 6, 4 );
+  // case 6 no points due to column/index restrictions
+  realMap = GridMap<Eigen::Index>( 6, 4 );
+  iteratedMap = GridMap<Eigen::Index>( 6, 4 );
   iteratedMap.setZero();
   realMap.setZero();
   iterateCircle<Scalar>(
@@ -169,10 +169,10 @@ TYPED_TEST( IteratorTest, circleTest )
   iterateCircle<Scalar>(
       Vector2( 0, 0 ), 2, -8, 8, 4, 8,
       [&iteratedMap]( Eigen::Index x, Eigen::Index y ) { iteratedMap( x + 3, y + 3 ) += 1; } );
-  EXPECT_TRUE( EIGEN_MATRIX_NEAR( realMap, iteratedMap, 1E-6 ) );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( realMap, iteratedMap ) );
   // case 7, using different function overload
-  realMap = GridMap<Scalar>( 4, 4 );
-  iteratedMap = GridMap<Scalar>( 4, 4 );
+  realMap = GridMap<Eigen::Index>( 4, 4 );
+  iteratedMap = GridMap<Eigen::Index>( 4, 4 );
   iteratedMap.setZero();
   // @formatter:off
   // clang-format off
@@ -185,7 +185,7 @@ TYPED_TEST( IteratorTest, circleTest )
   iterateCircle<Scalar>( Vector2( 0, 0 ), 2, 4, 4, [&iteratedMap]( Eigen::Index x, Eigen::Index y ) {
     iteratedMap( x + 1, y + 1 ) += 1;
   } );
-  EXPECT_TRUE( EIGEN_MATRIX_NEAR( realMap, iteratedMap, 1E-6 ) );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( realMap, iteratedMap ) );
 }
 
 TYPED_TEST( IteratorTest, polygonTest )
@@ -200,8 +200,8 @@ TYPED_TEST( IteratorTest, polygonTest )
   Eigen::Index row_max = 6;
   Eigen::Index col_min = -6;
   Eigen::Index col_max = 6;
-  GridMap<Scalar> realMap( 10, 10 );
-  GridMap<Scalar> iteratedMap( 10, 10 );
+  GridMap<Eigen::Index> realMap( 10, 10 );
+  GridMap<Eigen::Index> iteratedMap( 10, 10 );
   iteratedMap.setZero();
   // @formatter:off
   // clang-format off
@@ -221,7 +221,7 @@ TYPED_TEST( IteratorTest, polygonTest )
                           [&iteratedMap, offset]( Eigen::Index x, Eigen::Index y ) {
                             iteratedMap( x + offset, y + offset ) += 1;
                           } );
-  EXPECT_TRUE( EIGEN_MATRIX_NEAR( realMap, iteratedMap, 1E-6 ) );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( realMap, iteratedMap ) );
   writeReportToFile( iteratedMap, realMap, polygon, row_min, row_max, col_min, col_max, offset,
                      "TestCasePolygonRandom.txt" );
   // case Z
@@ -245,7 +245,7 @@ TYPED_TEST( IteratorTest, polygonTest )
                           [&iteratedMap, offset]( Eigen::Index x, Eigen::Index y ) {
                             iteratedMap( x + offset, y + offset ) += 1;
                           } );
-  EXPECT_TRUE( EIGEN_MATRIX_NEAR( realMap, iteratedMap, 1E-6 ) );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( realMap, iteratedMap ) );
   writeReportToFile( iteratedMap, realMap, polygon, row_min, row_max, col_min, col_max, offset,
                      "TestCasePolygonZShape.txt" );
   // circle approximation
@@ -269,7 +269,7 @@ TYPED_TEST( IteratorTest, polygonTest )
                           [&iteratedMap, offset]( Eigen::Index x, Eigen::Index y ) {
                             iteratedMap( x + offset, y + offset ) += 1;
                           } );
-  EXPECT_TRUE( EIGEN_MATRIX_NEAR( realMap, iteratedMap, 1E-6 ) );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( realMap, iteratedMap ) );
   writeReportToFile( iteratedMap, realMap, polygon, row_min, row_max, col_min, col_max, offset,
                      "TestCaseCircleShape.txt" );
   /*
@@ -295,7 +295,7 @@ TYPED_TEST( IteratorTest, polygonTest )
                               std::cout << "x " << x << " y " << y << std::endl;
                               iteratedMap( x + offset, y + offset ) += 1;
                             } );
-    EXPECT_TRUE( EIGEN_MATRIX_NEAR( realMap, iteratedMap, 1E-6 ) );
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( realMap, iteratedMap ) );
     writeReportToFile( iteratedMap, realMap, polygon, row_min, row_max, col_min, col_max, offset,
                        "TestCaseUShape.txt" );
   */
@@ -324,7 +324,7 @@ TYPED_TEST( IteratorTest, polygonTest )
                           [&iteratedMap, offset]( Eigen::Index x, Eigen::Index y ) {
                             iteratedMap( x + offset, y + offset ) += 1;
                           } );
-  EXPECT_TRUE( EIGEN_MATRIX_NEAR( realMap, iteratedMap, 1E-6 ) );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( realMap, iteratedMap ) );
   writeReportToFile( iteratedMap, realMap, polygon, row_min, row_max, col_min, col_max, offset,
                      "TestCaseCircleShapeLimitedIndexes.txt" );
 
@@ -349,7 +349,7 @@ TYPED_TEST( IteratorTest, polygonTest )
                           [&iteratedMap, offset]( Eigen::Index x, Eigen::Index y ) {
                             iteratedMap( x + offset, y + offset ) += 1;
                           } );
-  EXPECT_TRUE( EIGEN_MATRIX_NEAR( realMap, iteratedMap, 1E-6 ) );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( realMap, iteratedMap ) );
   writeReportToFile( iteratedMap, realMap, polygon, row_min, row_max, col_min, col_max, offset,
                      "TestCaseUShapeLimitedIndexes.txt" );
 }
