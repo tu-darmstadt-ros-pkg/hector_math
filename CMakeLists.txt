@@ -2,13 +2,13 @@ cmake_minimum_required(VERSION 3.5.1)
 project(hector_math VERSION 1.0.0)
 set(CMAKE_CXX_STANDARD 11)
 
-find_package(catkin REQUIRED COMPONENTS roslib)
+find_package(catkin REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES hector_math
-  CATKIN_DEPENDS roslib
+  CATKIN_DEPENDS
   DEPENDS EIGEN3
 )
 
@@ -84,9 +84,10 @@ if (CATKIN_ENABLE_TESTING)
           ${catkin_INCLUDE_DIRS}
           ${EIGEN3_INCLUDE_DIRS}
           ${roscpp_INCLUDE_DIRS}
+          ${roslib_INCLUDE_DIRS}
           ${rostest_INCLUDE_DIRS}
   )
   ## Add gtest based cpp test target and link libraries
   add_rostest_gtest(test_hector_iterators test/test_hector_iterators.test test/test_hector_iterators.cpp)
-  target_link_libraries(test_hector_iterators ${PROJECT_NAME} ${catkin_LIBRARIES} ${roscpp_LIBRARIES})
+  target_link_libraries(test_hector_iterators ${PROJECT_NAME} ${catkin_LIBRARIES} ${roscpp_LIBRARIES} ${roslib_LIBRARIES})
 endif ()
