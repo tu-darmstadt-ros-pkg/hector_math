@@ -60,9 +60,12 @@ void iteratePolygon( const Polygon<Scalar> &polygon, Eigen::Index row_min, Eigen
 {
   if ( polygon.cols() < 3 )
     return;
-  if ( polygon.cols() <= 30 ) {
-    detail::iteratePolygon<Scalar, Functor, 30>( polygon, row_min, row_max, col_min, col_max,
-                                                 functor );
+  if ( polygon.cols() <= 16 ) {
+    detail::iteratePolygon<Scalar, Functor, 16>( polygon, row_min, row_max, col_min, col_max,
+                                                functor );
+  } else if ( polygon.cols() <= 64 ) {
+    detail::iteratePolygon<Scalar, Functor, 64>( polygon, row_min, row_max, col_min, col_max,
+                                                functor );
   } else {
     detail::iteratePolygon<Scalar, Functor>( polygon, row_min, row_max, col_min, col_max, functor );
   }
@@ -81,8 +84,8 @@ void iteratePolygon( const Polygon<Scalar> &polygon, Eigen::Index row_min, Eigen
 
     Line( const Point<Scalar> &a, const Point<Scalar> &b )
     {
-      start = a;
-      end = b;
+      Point<Scalar> start = a;
+      Point<Scalar> end = b;
       if ( a.y() > b.y() )
         std::swap( start, end );
       Scalar diff_y = b.y() - a.y();
@@ -91,17 +94,19 @@ void iteratePolygon( const Polygon<Scalar> &polygon, Eigen::Index row_min, Eigen
       else
         x_increment = ( b.x() - a.x() ) / ( b.y() - a.y() );
 
+      // Compute x value at center of y-column
       x = start.x() + ( 0.5 - ( start.y() - std::floor( start.y() ) ) ) * x_increment;
+      start_y = start.y();
+      end_y = end.y();
     }
 
-    Point<Scalar> start, end;
+    Scalar start_y;
+    Scalar end_y;
     Scalar x;
     Scalar x_increment;
   };
   using LineContainer =
       typename std::conditional<LIMIT == 0, std::vector<Line>, BoundedVector<Line, LIMIT + 1>>::type;
-  using LinePointerContainer =
-      typename std::conditional<LIMIT == 0, std::vector<Line *>, BoundedVector<Line *, LIMIT>>::type;
   using RegionContainer =
       typename std::conditional<LIMIT == 0, std::vector<Scalar>, BoundedVector<Scalar, LIMIT>>::type;
 
@@ -111,7 +116,7 @@ void iteratePolygon( const Polygon<Scalar> &polygon, Eigen::Index row_min, Eigen
   // Build lines from points and obtain max y for the stopping criterion during the iteration loop
   for ( Eigen::Index i = 0; i < polygon.cols() - 1; ++i ) {
     lines.emplace_back( polygon.col( i ), polygon.col( i + 1 ) );
-    Eigen::Index y_end = std::round( lines[i].end.y() );
+    Eigen::Index y_end = std::round( lines[i].end_y );
     if ( y_end > max_y )
       max_y = y_end;
   }
@@ -120,46 +125,39 @@ void iteratePolygon( const Polygon<Scalar> &polygon, Eigen::Index row_min, Eigen
 
   // Sort lines by their y start, to quickly find new active lines as we iterate over y
   std::sort( lines.begin(), lines.end(),
-             []( const Line &a, const Line &b ) { return a.start.y() < b.start.y(); } );
+             []( const Line &a, const Line &b ) { return a.start_y < b.start_y; } );
   size_t active_line_index = 0;
-  LinePointerContainer active_lines;
+  LineContainer active_lines;
   RegionContainer x_region_segments;
 
   Eigen::Index y =
-      std::max<Eigen::Index>( col_min, std::round( lines[active_line_index].start.y() ) );
+      std::max<Eigen::Index>( col_min, std::round( lines[active_line_index].start_y ) );
   for ( ; y < max_y; ++y ) {
     // Determine lines that ended
     for ( int i = active_lines.size() - 1; i >= 0; --i ) {
-      active_lines[i]->x += active_lines[i]->x_increment;
-      if ( active_lines[i]->end.y() >= y + 0.5 )
+      active_lines[i].x += active_lines[i].x_increment;
+      if ( active_lines[i].end_y >= y + 0.5 )
         continue;
       active_lines.erase( active_lines.begin() + i );
     }
     // Determine new lines that started
-    for ( size_t i = active_line_index; i < lines.size(); ++i ) {
-      if ( lines[i].start.y() >= y + 0.5 )
+    for ( ; active_line_index < lines.size(); ++active_line_index ) {
+      if ( lines[active_line_index].start_y >= y + 0.5 )
         break;
-      if ( lines[i].start.y() < y )
-        lines[i].x += lines[i].x_increment;
-      active_lines.push_back( &lines[i] );
-      ++active_line_index;
+      if (lines[active_line_index].end_y < y + 0.5) continue; // Ignore lines that start and end before current column
+      if ( lines[active_line_index].start_y < y )
+        lines[active_line_index].x += lines[active_line_index].x_increment;
+      active_lines.push_back( lines[active_line_index] );
     }
 
     // We obtain from each line the x for the current y and use that information to iterate between
     // each pair of x(k) -> x(k+1) where k = 2 * i and i is a natural integer
     x_region_segments.clear();
     for ( size_t i = 0; i < active_lines.size(); ++i ) {
-      Eigen::Index x = std::round( active_lines[i]->x );
+      Eigen::Index x = std::round( active_lines[i].x );
       x_region_segments.push_back( x );
     }
     std::sort( x_region_segments.begin(), x_region_segments.end() );
-    if ( x_region_segments.size() > 2 ) {
-      for ( size_t i = x_region_segments.size() - 2; i > 1; --i ) {
-        if ( x_region_segments[i - 1] != x_region_segments[i] )
-          continue;
-        x_region_segments.erase( x_region_segments.begin() + i, x_region_segments.begin() + i + 2 );
-      }
-    }
 
     for ( size_t i = 0; i < x_region_segments.size() - 1; i += 2 ) {
       Eigen::Index x_start = std::max<Eigen::Index>( row_min, std::round( x_region_segments[i] ) );

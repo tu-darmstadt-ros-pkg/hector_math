@@ -58,7 +58,7 @@ public:
     assert( last - begin() <= (long)( size_ ) );
     iterator start = begin() + ( first - begin() );
     for ( auto it = start; it != last; ++it ) it->~T();
-    for ( auto it = last + 1; it != end(); ++it, ++start ) *start = std::move( *it );
+    for ( auto it = last; it != end(); ++it, ++start ) *start = std::move( *it );
     --size_;
   }
 
