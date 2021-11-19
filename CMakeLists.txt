@@ -68,17 +68,26 @@ install(DIRECTORY include/${PROJECT_NAME}/
   PATTERN ".svn" EXCLUDE
 )
 
+
+
+
 #############
 ## Testing ##
 #############
-
 if (CATKIN_ENABLE_TESTING)
   find_package(roscpp REQUIRED)
   find_package(rostest REQUIRED)
+  find_package(roslib REQUIRED) # Provides ros::package
 
-  include_directories(include ${catkin_INCLUDE_DIRS} ${roscpp_INCLUDE_DIRS} ${rostest_INCLUDE_DIRS})
+  include_directories(
+          ${eigen_checks_INCLUDE_DIRS}
+          ${catkin_INCLUDE_DIRS}
+          ${EIGEN3_INCLUDE_DIRS}
+          ${roscpp_INCLUDE_DIRS}
+          ${roslib_INCLUDE_DIRS}
+          ${rostest_INCLUDE_DIRS}
+  )
   ## Add gtest based cpp test target and link libraries
-  catkin_add_gtest(${PROJECT_NAME}-test test/test_hector_math.cpp)
- target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME} ${catkin_LIBRARIES})
-
-endif()
+  add_rostest_gtest(test_hector_iterators test/test_hector_iterators.test test/test_hector_iterators.cpp)
+  target_link_libraries(test_hector_iterators ${PROJECT_NAME} ${catkin_LIBRARIES} ${roscpp_LIBRARIES} ${roslib_LIBRARIES})
+endif ()
