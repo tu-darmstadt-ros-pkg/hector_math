@@ -10,6 +10,7 @@ also the limits are visualized. The function will iterate over all Testcase repo
 
 
 def draw_nice_visualisation(corners, real_points, iterated_points, limits, name="Visualization"):
+    plt.figure()
     x, y = np.zeros(len(corners) + 1), np.zeros(len(corners) + 1)
     for i in range(len(corners)):
         x[i] = corners[i][0]
@@ -30,16 +31,18 @@ def draw_nice_visualisation(corners, real_points, iterated_points, limits, name=
     plt.scatter([x[0] + 0.5 for x in iterated_points], [x[1] + 0.5 for x in iterated_points], s=100,
                 facecolors='none', edgecolors='red', linewidths=2, label="iterated Positions")
     # draw 'groundtruth' data
-    plt.scatter([x[0] + 0.5 for x in real_points], [x[1] + 0.5 for x in real_points], c="green", label="groundtruth")
+    plt.scatter([x[0] + 0.5 for x in real_points], [x[1] + 0.5 for x in real_points], s=120,
+                marker='x', c="green", linewidths=2, label="groundtruth")
     # draw limits
     plt.plot([limits[0], limits[0], limits[1] - 0.25, limits[1] - 0.25, limits[0]],
              [limits[2], limits[3] - 0.25, limits[3] - 0.25, limits[2], limits[2]],
              linestyle='dashed', label="limits")
     plt.legend()  # bbox_to_anchor=(0.75, 1.15), ncol=2)
     plt.xlim((minx, maxx))
+    plt.xlabel("Row Index")
     plt.ylim((miny, maxy))
+    plt.ylabel("Col Index")
     plt.title(name)
-    plt.show()
 
 
 def read_from_file(path):
@@ -52,11 +55,14 @@ def read_from_file(path):
 def show_all_failure_cases():
     all_files = os.listdir("tmp")
     for file_name in all_files:
+        if not file_name.endswith('.txt'):
+            continue
         file = "tmp/" + file_name
         modification_time = time.strftime('%d/%m/%Y %H:%M', time.localtime(os.path.getmtime(file)))
         iterated_points, real_points, corners, limits = read_from_file(file)
         draw_nice_visualisation(corners, real_points, iterated_points, limits,
-                            file[4:] + " \n changed last at " + modification_time)
+                              file[4:] + " \n changed last at " + modification_time)
+    plt.show()
 
 
 if __name__ == "__main__":
