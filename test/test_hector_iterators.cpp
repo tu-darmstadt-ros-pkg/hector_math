@@ -90,9 +90,9 @@ TYPED_TEST( IteratorTest, circleTest )
       Vector2( 0.49, 0.49 ), 2, -4, 4, -4, 4,
       [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x + 2, y + 2 ) += 1; } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
-      << "Circle with radius 2 at (0.49, 0.49).";
+      << "Circle with radius 2 at (0.49, 0.49) with negative x- and y- indices.";
 
-  // case 2, equal to one but center at (0,0)
+  // case 2, equal to one but center at (2,2)
   // @formatter:off
   // clang-format off
   expected_map << 0, 1, 1, 0, 0,
@@ -104,64 +104,68 @@ TYPED_TEST( IteratorTest, circleTest )
   // clang-format on
   actual_map.setZero();
   iterateCircle<Scalar>(
-      Vector2( 0, 0 ), 2, -4, 4, -4, 4,
-      [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x + 2, y + 2 ) += 1; } );
+      Vector2( 2, 2 ), 2, 0, 6, 0, 6, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+        EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
+        actual_map( x, y ) += 1;
+      } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
-      << "Circle with radius 2 at (0, 0).";
+      << "Circle with radius 2 at (2, 2).";
 
   // case 3 restrict max_row to be 1
-  expected_map = GridMap<Eigen::Index>( 4, 5 );
-  actual_map = GridMap<Eigen::Index>( 4, 5 );
+  actual_map.setZero();
+  // @formatter:off
+  // clang-format off
+  expected_map << 0, 1, 1, 0, 0,
+                  1, 1, 1, 1, 0,
+                  1, 1, 1, 1, 0,
+                  0, 0, 0, 0, 0,
+                  0, 0, 0, 0, 0;
+  // @formatter:on
+  // clang-format on
+  iterateCircle<Scalar>(
+      Vector2( 2, 2 ), 2, 0, 3, 0, 6, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+        EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
+        actual_map( x, y ) += 1;
+      } );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+      << "Circle with radius 2 at (2, 2) with limited row max.";
+
+  // case 4 restrict min_row to be 1
   actual_map.setZero();
   // @formatter:off
   // clang-format off
   expected_map << 0, 0, 0, 0, 0,
-                  0, 0, 1, 1, 0,
-                  0, 1, 1, 1, 1,
-                  0, 1, 1, 1, 1;
+                1, 1, 1, 1, 0,
+                1, 1, 1, 1, 0,
+                0, 1, 1, 0, 0,
+                0, 0, 0, 0, 0;
   // @formatter:on
   // clang-format on
   iterateCircle<Scalar>(
-      Vector2( 0, 0 ), 2, -4, 1, -4, 4,
-      [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x + 3, y + 3 ) += 1; } );
+      Vector2( 2, 2 ), 2, 1, 6, 0, 6, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+        EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
+        actual_map( x, y ) += 1;
+      } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
-      << "Circle with radius 2 at (0, 0) with limited row max.";
-
-  // case 4 restrict min_row to be 1
-  expected_map = GridMap<Eigen::Index>( 3, 4 );
-  actual_map = GridMap<Eigen::Index>( 3, 4 );
+      << "Circle with radius 2 at (2, 2) with limited row min.";
+  // case 5 restrict min_column to be 1 and max_column to be 3
   actual_map.setZero();
   // @formatter:off
   // clang-format off
-  expected_map << 0, 0, 0, 0,
-                  0, 1, 1, 0,
-                  0, 0, 0, 0;
+  expected_map << 0, 1, 1, 0, 0,
+                0, 1, 1, 0, 0,
+                0, 1, 1, 0, 0,
+                0, 1, 1, 0, 0,
+                0, 0, 0, 0, 0;
   // @formatter:on
   // clang-format on
   iterateCircle<Scalar>(
-      Vector2( 0, 0 ), 2, 1, 4, -4, 4,
-      [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x + 0, y + 2 ) += 1; } );
+      Vector2( 2, 2 ), 2, 0, 6, 1, 3, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+        EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
+        actual_map( x, y ) += 1;
+      } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
-      << "Circle with radius 2 at (0, ) with limited row min.";
-  // case 5 restrict min_column to be -1 and max_column to be 1
-  expected_map = GridMap<Eigen::Index>( 6, 4 );
-  actual_map = GridMap<Eigen::Index>( 6, 4 );
-  actual_map.setZero();
-  // @formatter:off
-  // clang-format off
-  expected_map << 0, 0, 0, 0,
-                  0, 1, 1, 0,
-                  0, 1, 1, 0,
-                  0, 1, 1, 0,
-                  0, 1, 1, 0,
-                  0, 0, 0, 0;
-  // @formatter:on
-  // clang-format on
-  iterateCircle<Scalar>(
-      Vector2( 0, 0 ), 2, -4, 4, -1, 1,
-      [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x + 3, y + 2 ) += 1; } );
-  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
-      << "Circle with radius 2 at (0, ) with limited col min and max.";
+      << "Circle with radius 2 at (2, 2) with limited col min and max.";
 
   // case 6 no points due to column/index restrictions
   expected_map = GridMap<Eigen::Index>( 6, 4 );
@@ -169,13 +173,17 @@ TYPED_TEST( IteratorTest, circleTest )
   actual_map.setZero();
   expected_map.setZero();
   iterateCircle<Scalar>(
-      Vector2( 0, 0 ), 2, 4, 8, -8, 8,
-      [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x + 3, y + 3 ) += 1; } );
+      Vector2( 2, 2 ), 2, 5, 8, -8, 8, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+        EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
+        actual_map( x + 3, y + 3 ) += 1;
+      } );
   iterateCircle<Scalar>(
-      Vector2( 0, 0 ), 2, -8, 8, 4, 8,
-      [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x + 3, y + 3 ) += 1; } );
+      Vector2( 2, 2 ), 2, -8, 8, 5, 8, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+        EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
+        actual_map( x + 3, y + 3 ) += 1;
+      } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
-      << "Circle with radius 2 at (0, 0) entirely outside of iterated area.";
+      << "Circle with radius 2 at (2, 2) entirely outside of iterated area.";
   // case 7, using different function overload
   expected_map = GridMap<Eigen::Index>( 4, 4 );
   actual_map = GridMap<Eigen::Index>( 4, 4 );
@@ -189,6 +197,7 @@ TYPED_TEST( IteratorTest, circleTest )
   // @formatter:on
   // clang-format on
   iterateCircle<Scalar>( Vector2( 0, 0 ), 2, 4, 4, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+    EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
     actual_map( x, y ) += 1;
   } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) );
@@ -198,9 +207,9 @@ TYPED_TEST( IteratorTest, polygonTest )
 {
   using Scalar = TypeParam;
   constexpr bool FORCE_TEST_OUTPUT = true;
-  constexpr int offset = 5;
-  Polygon<Scalar> polygon = createPolygon<Scalar>( PolygonTyp::RandomStructure );
-  // normal case in area x: -4 bis 4 and y: -4 bis 4, center (0,0) and radius 2,
+  int offset = 5;
+  Polygon<Scalar> polygon = createPolygon<Scalar>( PolygonTyp::RandomStructureNegativeIndices );
+  // RandomStructure case in area x: -6 bis 6 and y: -6 bis 6,
   Eigen::Index row_min = -6;
   Eigen::Index row_max = 6;
   Eigen::Index col_min = -6;
@@ -224,12 +233,48 @@ TYPED_TEST( IteratorTest, polygonTest )
   // clang-format on
   iteratePolygon<Scalar>( polygon, row_min, row_max, col_min, col_max,
                           [&actual_map, offset]( Eigen::Index x, Eigen::Index y ) {
+                            EXPECT_TRUE( x + offset >= 0 and x + offset < actual_map.rows() and
+                                         y + offset >= 0 and y + offset < actual_map.cols() );
                             actual_map( x + offset, y + offset ) += 1;
                           } );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+      << "Random Structure Polygon with corner with negative indices";
+  if ( FORCE_TEST_OUTPUT || !EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+    writeReportToFile( actual_map, expected_map, polygon, row_min, row_max, col_min, col_max,
+                       offset, "TestCasePolygonRandom_NegativeIndices.txt" );
+
+  // RandomStructure case in area x: 0 bis 10 and y: 0 bis 10,
+  polygon = createPolygon<Scalar>( PolygonTyp::RandomStructure );
+  row_min = 0;
+  row_max = 10;
+  col_min = 0;
+  col_max = 10;
+  offset = 0;
+  actual_map.setZero();
+  // @formatter:off
+  // clang-format off
+  expected_map << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                  0, 0, 0, 0, 1, 1, 1, 1, 0, 0,
+                  0, 0, 0, 0, 1, 1, 1, 1, 1, 0,
+                  0, 0, 0, 1, 1, 1, 1, 1, 0, 0,
+                  0, 0, 0, 1, 1, 1, 1, 1, 1, 0,
+                  0, 0, 0, 0, 0, 1, 0, 1, 1, 1,
+                  0, 0, 0, 0, 0, 1, 0, 1, 1, 1,
+                  0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
+                  0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
+                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
+  // @formatter:on
+  // clang-format on
+  iteratePolygon<Scalar>(
+      polygon, row_min, row_max, col_min, col_max, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+        EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
+        actual_map( x, y ) += 1;
+      } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) ) << "Random Structure Polygon";
   if ( FORCE_TEST_OUTPUT || !EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
     writeReportToFile( actual_map, expected_map, polygon, row_min, row_max, col_min, col_max,
                        offset, "TestCasePolygonRandom.txt" );
+
   // case Z
   polygon = createPolygon<Scalar>( PolygonTyp::Z_Shape );
   actual_map.setZero();
@@ -247,10 +292,11 @@ TYPED_TEST( IteratorTest, polygonTest )
                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
   // @formatter:on
   // clang-format on
-  iteratePolygon<Scalar>( polygon, row_min, row_max, col_min, col_max,
-                          [&actual_map, offset]( Eigen::Index x, Eigen::Index y ) {
-                            actual_map( x + offset, y + offset ) += 1;
-                          } );
+  iteratePolygon<Scalar>(
+      polygon, row_min, row_max, col_min, col_max, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+        EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
+        actual_map( x, y ) += 1;
+      } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) ) << "Z-Shape.";
   if ( FORCE_TEST_OUTPUT || !EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
     writeReportToFile( actual_map, expected_map, polygon, row_min, row_max, col_min, col_max,
@@ -272,10 +318,11 @@ TYPED_TEST( IteratorTest, polygonTest )
                   0, 0, 0, 0, 1, 1, 0, 0, 0, 0;
   // @formatter:on
   // clang-format on
-  iteratePolygon<Scalar>( polygon, row_min, row_max, col_min, col_max,
-                          [&actual_map, offset]( Eigen::Index x, Eigen::Index y ) {
-                            actual_map( x + offset, y + offset ) += 1;
-                          } );
+  iteratePolygon<Scalar>(
+      polygon, row_min, row_max, col_min, col_max, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+        EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
+        actual_map( x, y ) += 1;
+      } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) ) << "Circle Polygon Approx.";
   if ( FORCE_TEST_OUTPUT || !EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
     writeReportToFile( actual_map, expected_map, polygon, row_min, row_max, col_min, col_max,
@@ -300,6 +347,8 @@ TYPED_TEST( IteratorTest, polygonTest )
   // clang-format on
   iteratePolygon<Scalar>( polygon, row_min, row_max, col_min, col_max,
                           [&actual_map, offset]( Eigen::Index x, Eigen::Index y ) {
+                            EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and
+                                         y < actual_map.cols() );
                             actual_map( x + offset, y + offset ) += 1;
                           } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) );
@@ -308,10 +357,10 @@ TYPED_TEST( IteratorTest, polygonTest )
                        offset, "TestCaseUShape.txt" );
 
   // circle approximation with limited indexes
-  row_min = -4;
-  row_max = 2;
-  col_min = -3;
-  col_max = 1;
+  row_min = 1;
+  row_max = 7;
+  col_min = 2;
+  col_max = 6;
   polygon = createPolygon<Scalar>( PolygonTyp::Circle );
   actual_map.setZero();
   // @formatter:off
@@ -328,10 +377,11 @@ TYPED_TEST( IteratorTest, polygonTest )
                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
   // @formatter:on
   // clang-format on
-  iteratePolygon<Scalar>( polygon, row_min, row_max, col_min, col_max,
-                          [&actual_map, offset]( Eigen::Index x, Eigen::Index y ) {
-                            actual_map( x + offset, y + offset ) += 1;
-                          } );
+  iteratePolygon<Scalar>(
+      polygon, row_min, row_max, col_min, col_max, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+        EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
+        actual_map( x, y ) += 1;
+      } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Circle Approx with limited indexes";
   if ( FORCE_TEST_OUTPUT || !EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
@@ -355,10 +405,11 @@ TYPED_TEST( IteratorTest, polygonTest )
                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
   // @formatter:on
   // clang-format on
-  iteratePolygon<Scalar>( polygon, row_min, row_max, col_min, col_max,
-                          [&actual_map, offset]( Eigen::Index x, Eigen::Index y ) {
-                            actual_map( x + offset, y + offset ) += 1;
-                          } );
+  iteratePolygon<Scalar>(
+      polygon, row_min, row_max, col_min, col_max, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+        EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
+        actual_map( x, y ) += 1;
+      } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) ) << "U Shape with limited indexes";
   if ( FORCE_TEST_OUTPUT || !EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
     writeReportToFile( actual_map, expected_map, polygon, row_min, row_max, col_min, col_max,
