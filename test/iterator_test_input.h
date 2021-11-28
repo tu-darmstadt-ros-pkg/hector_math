@@ -3,7 +3,7 @@
 #include <hector_math/types.h>
 #include <iostream>
 
-enum PolygonTyp { RandomStructureNegativeIndices, RandomStructure, Z_Shape, Circle, U_Shape };
+enum PolygonTyp { RandomStructureNegativeIndices, RandomStructure, Z_Shape, Circle, U_Shape, Line };
 ///////////////// Polygon /////////////////////
 template<typename Scalar>
 hector_math::Polygon<Scalar> createPolygon( PolygonTyp polygonTyp )
@@ -49,14 +49,14 @@ hector_math::Polygon<Scalar> createPolygon( PolygonTyp polygonTyp )
   case PolygonTyp::Z_Shape:
     // Z structure
     result = hector_math::Polygon<Scalar>( 2, 8 );
-    result.col( 0 ) << 6.66666, 9;
-    result.col( 1 ) << 0, 9;
-    result.col( 2 ) << 0, 8;
-    result.col( 3 ) << 5, 8;
-    result.col( 4 ) << 0.333, 1;
-    result.col( 5 ) << 7, 1;
-    result.col( 6 ) << 7, 2;
-    result.col( 7 ) << 2, 2;
+    result.col( 0 ) << 2, 2;
+    result.col( 1 ) << 6.66666, 9;
+    result.col( 2 ) << 0, 9;
+    result.col( 3 ) << 0, 8;
+    result.col( 4 ) << 5, 8;
+    result.col( 5 ) << 0.333, 1;
+    result.col( 6 ) << 7, 1;
+    result.col( 7 ) << 7, 2;
     return result;
   case PolygonTyp::Circle:
     // circle structure
@@ -84,6 +84,11 @@ hector_math::Polygon<Scalar> createPolygon( PolygonTyp polygonTyp )
     result.col( 8 ) << 7.4, 8.5;
     result.col( 9 ) << 7.4, 3;
     result.col( 10 ) << 1.3, 3;
+    return result;
+  case PolygonTyp::Line:
+    result = hector_math::Polygon<Scalar>( 2, 2 );
+    result.col( 0 ) << 1, 5;
+    result.col( 1 ) << 3, 5;
     return result;
   default:
     std::cout << "Invalid polygonTyp" << std::endl;

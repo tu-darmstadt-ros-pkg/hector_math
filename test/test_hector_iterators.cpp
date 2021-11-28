@@ -356,6 +356,20 @@ TYPED_TEST( IteratorTest, polygonTest )
     writeReportToFile( actual_map, expected_map, polygon, row_min, row_max, col_min, col_max,
                        offset, "TestCaseUShape.txt" );
 
+  // Line test, can not iterate over Line because it is not a polygon
+  polygon = createPolygon<Scalar>( PolygonTyp::Line );
+  actual_map.setZero();
+  expected_map.setZero();
+  iteratePolygon<Scalar>( polygon, row_min, row_max, col_min, col_max,
+                          [&actual_map, offset]( Eigen::Index x, Eigen::Index y ) {
+                            EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and
+                                         y < actual_map.cols() );
+                            actual_map( x + offset, y + offset ) += 1;
+                          } );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) );
+  if ( FORCE_TEST_OUTPUT || !EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+    writeReportToFile( actual_map, expected_map, polygon, row_min, row_max, col_min, col_max,
+                       offset, "TestCaseLine.txt" );
   // circle approximation with limited indexes
   row_min = 1;
   row_max = 7;
@@ -415,6 +429,8 @@ TYPED_TEST( IteratorTest, polygonTest )
     writeReportToFile( actual_map, expected_map, polygon, row_min, row_max, col_min, col_max,
                        offset, "TestCaseUShapeLimitedIndexes.txt" );
 }
+
+
 
 int main( int argc, char **argv )
 {
