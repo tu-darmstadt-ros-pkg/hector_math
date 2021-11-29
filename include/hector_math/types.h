@@ -41,7 +41,7 @@ using Vector4 = Eigen::Matrix<Scalar, 4, 1>;
 using Vector4f = Vector4<float>;
 using Vector4d = Vector4<double>;
 template<typename Scalar>
-using Vector4List = std::vector<Vector4<Scalar>>;
+using Vector4List = std::vector<Vector4<Scalar>, Eigen::aligned_allocator<Vector4<Scalar>>>;
 using Vector4fList = Vector4List<float>;
 using Vector4dList = Vector4List<double>;
 
@@ -66,6 +66,8 @@ using Isometry2d = Isometry2<double>;
 
 template<typename Scalar>
 using Point = Eigen::Array<Scalar, 2, 1>;
+template<typename Scalar>
+using PointList = std::vector<Point<Scalar>, Eigen::aligned_allocator<Point<Scalar>>>;
 
 template<typename Scalar>
 using Polygon = Eigen::Array<Scalar, 2, Eigen::Dynamic>;
