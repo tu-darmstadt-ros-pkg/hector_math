@@ -103,6 +103,7 @@ public:
   void reserve( size_t size )
   {
     assert( size <= MaxSize && "Bounded vector can not reserve more than max size!" );
+    (void)size;
   }
 
 private:
