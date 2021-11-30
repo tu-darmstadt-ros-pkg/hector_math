@@ -1,0 +1,4 @@
+<launch>
+  <include file="$(find hector_math)/test/test_hector_iterators.test"/>
+  <include file="$(find hector_math)/test/test_pose.test"/>
+</launch>
