@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>hector_math_ros</name>
+  <version>0.0.0</version>
+  <description>The hector_math_ros package</description>
+
+  <maintainer email="fabian@sim.tu-darmstadt.de">Stefan Fabian</maintainer>
+
+  <license>MIT</license>
+
+  <author email="fabian@sim.tu-darmstadt.de">Stefan Fabian</author>
+
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>hector_math</build_depend>
+  <build_depend>urdf</build_depend>
+  <build_export_depend>hector_math</build_export_depend>
+  <build_export_depend>urdf</build_export_depend>
+</package>
