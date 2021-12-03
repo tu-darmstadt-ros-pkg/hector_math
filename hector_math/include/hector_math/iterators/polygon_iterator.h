@@ -60,11 +60,11 @@ void iteratePolygon( const Polygon<Scalar> &polygon, Eigen::Index row_min, Eigen
 {
   if ( polygon.cols() < 3 )
     return;
-  if ( polygon.cols() <= 16 ) {
-    detail::iteratePolygon<Scalar, Functor, 16>( polygon, row_min, row_max, col_min, col_max,
+  if ( polygon.cols() <= 15 ) {
+    detail::iteratePolygon<Scalar, Functor, 15>( polygon, row_min, row_max, col_min, col_max,
                                                 functor );
-  } else if ( polygon.cols() <= 64 ) {
-    detail::iteratePolygon<Scalar, Functor, 64>( polygon, row_min, row_max, col_min, col_max,
+  } else if ( polygon.cols() <= 63 ) {
+    detail::iteratePolygon<Scalar, Functor, 63>( polygon, row_min, row_max, col_min, col_max,
                                                 functor );
   } else {
     detail::iteratePolygon<Scalar, Functor>( polygon, row_min, row_max, col_min, col_max, functor );
