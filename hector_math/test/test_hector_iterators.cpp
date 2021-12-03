@@ -206,8 +206,8 @@ TYPED_TEST( IteratorTest, circleTest )
 TYPED_TEST( IteratorTest, polygonTest )
 {
   using Scalar = TypeParam;
-  constexpr bool FORCE_TEST_OUTPUT = true;
-  int offset = 5;
+  const bool FORCE_TEST_OUTPUT = false;
+  const int offset = 5;
   Polygon<Scalar> polygon = createPolygon<Scalar>( PolygonTyp::RandomStructureNegativeIndices );
   // RandomStructure case in area x: -6 bis 6 and y: -6 bis 6,
   Eigen::Index row_min = -6;
