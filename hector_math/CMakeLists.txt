@@ -42,6 +42,9 @@ if (${benchmark_FOUND})
   endif()
   target_link_libraries(benchmark_iterators ${PROJECT_NAME} ${catkin_LIBRARIES} benchmark pthread)
 
+  add_executable(benchmark_caches benchmark/caches.cpp)
+  target_link_libraries(benchmark_caches ${PROJECT_NAME} ${catkin_LIBRARIES} benchmark pthread)
+
   add_executable(show_iterators benchmark/show_iterators.cpp)
   target_link_libraries(show_iterators ${PROJECT_NAME} ${catkin_LIBRARIES})
 endif()
