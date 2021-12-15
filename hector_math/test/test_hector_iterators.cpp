@@ -7,7 +7,6 @@
 #include <fstream>
 #include <gtest/gtest.h>
 #include <ros/package.h>
-#include <ros/ros.h>
 
 using namespace hector_math;
 
@@ -434,7 +433,6 @@ TYPED_TEST( IteratorTest, polygonTest )
 
 int main( int argc, char **argv )
 {
-  ros::init( argc, argv, "test_hector_iterators" );
   testing::InitGoogleTest( &argc, argv );
   return RUN_ALL_TESTS();
 }

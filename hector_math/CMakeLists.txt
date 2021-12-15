@@ -97,10 +97,10 @@ if (CATKIN_ENABLE_TESTING)
           ${rostest_INCLUDE_DIRS}
   )
   ## Add gtest based cpp test target and link libraries
-  add_rostest_gtest(test_hector_iterators test/test_hector_iterators.test test/test_hector_iterators.cpp)
+  catkin_add_gtest(test_hector_iterators test/test_hector_iterators.cpp)
   target_link_libraries(test_hector_iterators ${PROJECT_NAME} ${catkin_LIBRARIES} ${roscpp_LIBRARIES} ${roslib_LIBRARIES})
 
-  add_rostest_gtest(test_pose test/test_pose.test test/test_pose.cpp)
+  catkin_add_gtest(test_pose test/test_pose.cpp)
   target_link_libraries(test_pose ${PROJECT_NAME})
 endif ()
 
