@@ -78,6 +78,17 @@ TYPED_TEST( IteratorTest, find_minmax )
   // clang-format on
   EXPECT_NEAR( findMinimum<Scalar>( map, polygon ), 4.1, 0.001 );
   EXPECT_NEAR( findMaximum<Scalar>( map, polygon ), 4.5, 0.001 );
+  map = GridMap<Scalar>( 3, 3 );
+  polygon = createPolygon<Scalar>( PolygonTyp::All2x2 );
+  // @formatter:off
+  // clang-format off
+  map << 0,std::numeric_limits<Scalar>::min(), std::numeric_limits<Scalar>::infinity(),
+        -3,2,0,
+      -1, -std::numeric_limits<Scalar>::infinity(), std::numeric_limits<Scalar>::max();
+  // @formatter:on
+  // clang-format on
+  EXPECT_EQ(findMinimum<Scalar>( map, polygon ), -std::numeric_limits<Scalar>::infinity());
+  EXPECT_EQ(findMaximum<Scalar>( map, polygon ), std::numeric_limits<Scalar>::infinity());
 }
 
 int main( int argc, char **argv )

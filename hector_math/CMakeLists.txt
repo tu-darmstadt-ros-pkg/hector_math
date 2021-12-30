@@ -97,6 +97,9 @@ if (CATKIN_ENABLE_TESTING)
   add_rostest_gtest(test_hector_map_operations test/test_hector_map_operations.test test/test_hector_map_operations.cpp)
   target_link_libraries(test_hector_map_operations ${PROJECT_NAME} ${catkin_LIBRARIES} ${roscpp_LIBRARIES} ${roslib_LIBRARIES})
 
+  add_rostest_gtest(test_bounding_box test/test_bounding_box.test test/test_bounding_box.cpp)
+  target_link_libraries(test_bounding_box ${PROJECT_NAME} ${catkin_LIBRARIES} ${roscpp_LIBRARIES} ${roslib_LIBRARIES})
+
   add_rostest_gtest(test_pose test/test_pose.test test/test_pose.cpp)
   target_link_libraries(test_pose ${PROJECT_NAME})
 endif ()

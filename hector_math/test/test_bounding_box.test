@@ -1,0 +1,3 @@
+<launch>
+    <test test-name="test_bounding_box" pkg="hector_math" type="test_bounding_box" />
+</launch>
