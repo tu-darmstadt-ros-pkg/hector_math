@@ -9,15 +9,15 @@
 
 using namespace hector_math;
 template<typename Scalar>
-class IteratorTest : public testing::Test
+class BoundingBoxTest : public testing::Test
 {
 };
 
 typedef testing::Types<float, double> Implementations;
 
-TYPED_TEST_CASE( IteratorTest, Implementations );
+TYPED_TEST_CASE( BoundingBoxTest, Implementations );
 
-TYPED_TEST( IteratorTest, sphere )
+TYPED_TEST( BoundingBoxTest, sphere )
 {
   using Scalar = TypeParam;
 
@@ -48,7 +48,7 @@ TYPED_TEST( IteratorTest, sphere )
   EXPECT_TRUE(EIGEN_ARRAY_EQUAL(box.max(),maximum));
 }
 
-TYPED_TEST( IteratorTest, box ) {
+TYPED_TEST( BoundingBoxTest, box ) {
   using Scalar = TypeParam;
 
   // Test Case 1: box placed at origin
@@ -107,7 +107,7 @@ TYPED_TEST( IteratorTest, box ) {
 
 }
 
-TYPED_TEST( IteratorTest, cylinder )
+TYPED_TEST( BoundingBoxTest, cylinder )
 {
   using Scalar = TypeParam;
 

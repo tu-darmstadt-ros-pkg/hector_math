@@ -20,7 +20,6 @@ TYPED_TEST( BoundedVectorTest, tests )
   using Scalar = TypeParam;
   const size_t maxSize = 25;
   BoundedVector<Scalar, maxSize> vector;
-  // std::vector<Scalar> vector;
   EXPECT_TRUE( vector.size() == 0 );
   // add items 0,1,...,maxSize-1
   for ( size_t i = 0; i < maxSize; i++ ) {
