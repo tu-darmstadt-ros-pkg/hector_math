@@ -1,8 +1,10 @@
 
-#include <hector_math/helpers/bounded_vector.h>
 
 #include <gtest/gtest.h>
 #include <ros/ros.h>
+
+#undef NDEBUG
+#include <hector_math/helpers/bounded_vector.h>
 
 using namespace hector_math;
 
@@ -48,8 +50,9 @@ TYPED_TEST( BoundedVectorTest, tests )
   EXPECT_THROW( vector.emplace_back( 0 ), std::length_error );
   EXPECT_TRUE( vector.front() == 0 );
   EXPECT_TRUE( vector.back() == maxSize - 1 );
-  EXPECT_NO_THROW( vector.reserve( maxSize - 1 ) );
-  EXPECT_NO_THROW( vector.reserve( maxSize ) );
+  // Should not die as long as we stay within maxSize.
+  vector.reserve( maxSize - 1 );
+  vector.reserve( maxSize );
   EXPECT_DEATH( vector.reserve( maxSize + 1 ),
                 "Bounded vector can not reserve more than max size!" );
 }
