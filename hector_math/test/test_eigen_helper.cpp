@@ -90,29 +90,29 @@ TYPED_TEST( EigenHelperTest, shift )
   // @formatter:off
   // clang-format off
   start_map << 1, 2, 3,
-      4, 5,6,
-      7, 8, 9;
-  expected_map << 6,4,5,
-      9,7,8,
-      3,1,2;
+               4, 5, 6,
+               7, 8, 9;
+  expected_map << 8, 9, 7,
+                  2, 3, 1,
+                  5, 6, 4;
   // @formatter:on
   // clang-format on
   actual_map = eigen::shift<Eigen::Array<Scalar, Eigen::Dynamic, Eigen::Dynamic>>(start_map,2,1);
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) ) << "Shift Test Case 0, see example in helpers/eigen.h";
   // @formatter:off
   // clang-format off
-  start_map << 0, 1, 2,
-      3, 4, 5,
-      NaN, MAX, -1;
+  start_map << 0,     1,  2,
+               3,     4,  5,
+               NaN, MAX, -1;
   // @formatter:on
   // clang-format on
 
   //TestCase 1 No shift
   // @formatter:off
   // clang-format off
-  expected_map << 0, 1, 2,
-      3, 4, 5,
-      NaN, MAX, -1;
+  expected_map <<   0,   1,  2,
+                    3,   4,  5,
+                  NaN, MAX, -1;
   // @formatter:on
   // clang-format on
   actual_map = eigen::shift<Eigen::Array<Scalar, Eigen::Dynamic, Eigen::Dynamic>>(start_map,0,0);
