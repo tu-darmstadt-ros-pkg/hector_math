@@ -1,3 +1,0 @@
-<launch>
-    <test test-name="test_bounded_vector" pkg="hector_math" type="test_bounded_vector" />
-</launch>

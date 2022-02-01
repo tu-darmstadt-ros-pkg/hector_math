@@ -1,3 +1,0 @@
-<launch>
-    <test test-name="test_hector_map_operations" pkg="hector_math" type="test_hector_map_operations" />
-</launch>

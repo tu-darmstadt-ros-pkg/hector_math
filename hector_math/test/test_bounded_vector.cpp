@@ -59,7 +59,6 @@ TYPED_TEST( BoundedVectorTest, tests )
 
 int main( int argc, char **argv )
 {
-  ros::init( argc, argv, "test_bounded_vector" );
   testing::InitGoogleTest( &argc, argv );
   return RUN_ALL_TESTS();
 }

@@ -93,7 +93,6 @@ TYPED_TEST( IteratorTest, find_minmax )
 
 int main( int argc, char **argv )
 {
-  ros::init( argc, argv, "test_hector_iterators" );
   testing::InitGoogleTest( &argc, argv );
   return RUN_ALL_TESTS();
 }

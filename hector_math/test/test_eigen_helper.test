@@ -1,3 +1,0 @@
-<launch>
-    <test test-name="test_eigen_helper" pkg="hector_math" type="test_eigen_helper" />
-</launch>
