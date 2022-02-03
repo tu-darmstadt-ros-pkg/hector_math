@@ -22,6 +22,15 @@ template<typename Scalar>
 inline Eigen::AlignedBox<Scalar, 3>
 computeBoundingBoxForCylinder( Scalar radius, Scalar length, const Isometry3<Scalar> &transform );
 
+/*!
+ * Transforms the given bounding box with the given transform (rotation + translation) and returns
+ *  the minimal axis aligned bounding box that contains the transformed input box.
+ * The resulting bounding box may have a larger volume than the input box.
+ *
+ * @param box The box that is transformed.
+ * @param transform The transform that is applied to the box.
+ * @return The minimal axis aligned bounding box that contains the transformed input box.
+ */
 template<typename Scalar>
 inline Eigen::AlignedBox<Scalar, 3> transformBoundingBox( const Eigen::AlignedBox<Scalar, 3> &box,
                                                           const Isometry3<Scalar> &transform );
@@ -73,18 +82,19 @@ template<typename Scalar>
 inline Eigen::AlignedBox<Scalar, 3> transformBoundingBox( const Eigen::AlignedBox<Scalar, 3> &box,
                                                           const Isometry3<Scalar> &transform )
 {
-  Vector3<Scalar> dim_2 = box.sizes() / 2;
+  const Vector3<Scalar> &min = box.min();
+  const Vector3<Scalar> &max = box.max();
   Eigen::Matrix<Scalar, 3, 8> corners;
   // clang-format off
-  corners << dim_2.x(), -dim_2.x(), -dim_2.x(), -dim_2.x(), -dim_2.x(),  dim_2.x(),  dim_2.x(),  dim_2.x(),
-             dim_2.y(),  dim_2.y(), -dim_2.y(), -dim_2.y(),  dim_2.y(),  dim_2.y(), -dim_2.y(), -dim_2.y(),
-             dim_2.z(),  dim_2.z(),  dim_2.z(), -dim_2.z(), -dim_2.z(), -dim_2.z(), -dim_2.z(),  dim_2.z();
+  corners << max.x(), min.x(), min.x(), min.x(), min.x(), max.x(), max.x(), max.x(),
+             max.y(), max.y(), min.y(), min.y(), max.y(), max.y(), min.y(), min.y(),
+             max.z(), max.z(), max.z(), min.z(), min.z(), min.z(), min.z(), max.z();
   // clang-format on
   const Eigen::Matrix<Scalar, 3, 8> &transformed_corners = transform * corners;
   const auto &row_wise = transformed_corners.rowwise();
-  const Vector3<Scalar> &min = row_wise.minCoeff();
-  const Vector3<Scalar> &max = row_wise.maxCoeff();
-  return { min, max };
+  const Vector3<Scalar> &transformed_min = row_wise.minCoeff();
+  const Vector3<Scalar> &transformed_max = row_wise.maxCoeff();
+  return { transformed_min, transformed_max };
 }
 } // namespace hector_math
 

@@ -87,14 +87,14 @@ UrdfRobotModel<Scalar>::computeAxisAlignedBoundingBox( const LinkTree &root,
   for ( const LinkGeometry &shape : root.geometries ) {
     switch ( shape.type ) {
     case urdf::Geometry::BOX:
-      result.extend( computeBoundingBoxForBox<Scalar>( shape.dims, transform ) );
+      result.extend( computeBoundingBoxForBox<Scalar>( shape.dims, transform * shape.origin ) );
       break;
     case urdf::Geometry::CYLINDER:
       result.extend(
-          computeBoundingBoxForCylinder<Scalar>( shape.dims.x(), shape.dims.z(), transform ) );
+          computeBoundingBoxForCylinder<Scalar>( shape.dims.x(), shape.dims.z(), transform * shape.origin ) );
       break;
     case urdf::Geometry::SPHERE:
-      result.extend( computeBoundingBoxForSphere<Scalar>( shape.dims.x(), transform ) );
+      result.extend( computeBoundingBoxForSphere<Scalar>( shape.dims.x(), transform * shape.origin ) );
       break;
     case urdf::Geometry::MESH:
       // TODO Adding support for meshes would be cool I guess
