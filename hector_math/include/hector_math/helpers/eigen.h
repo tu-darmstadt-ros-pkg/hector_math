@@ -5,6 +5,8 @@
 #ifndef HECTOR_MATH_EIGEN_H
 #define HECTOR_MATH_EIGEN_H
 
+#include <Eigen/Core>
+
 namespace hector_math
 {
 namespace eigen
@@ -56,6 +58,7 @@ class shift_functor;
 
 /*!
  * Shifts the given Eigen Array by the given row and column values.
+ * I.e. the access to arr(x, y) is mapped to arr(x+row_shift, y+column_shift).
  * E.g. the array:
  * @verbatim
  *   1 2 3
@@ -64,11 +67,15 @@ class shift_functor;
  * @endverbatim
  * shifted by row_shift=2 and column_shift=1 would result in
  * @verbatim
- *   6 4 5
- *   9 7 8
- *   3 1 2
+ *   8 9 7
+ *   2 3 1
+ *   5 6 4
  * @endverbatim
  *
+ * @param row_shift The number of rows that are added to the accessed location.
+ *   In essence, this shifts the rows upwards by the given value.
+ * @param column_shift The number of columns that are added to the accessed location.
+ *   In essence, this shifts the rows to the left by the given value.
  * @return The shifted array.
  */
 template<typename ArgType>
