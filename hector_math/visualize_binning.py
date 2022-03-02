@@ -4,11 +4,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 AXIS_BINS = 32
-SAMPLED_ANGLE_RESOLUTION = 1  # In degrees
+SAMPLED_ANGLE_RESOLUTION = 0.5  # In degrees
 SHOW_INPUT = False
 
 AXIS_BINS_2 = AXIS_BINS / 2
 DIM_BITS = int(np.log2(AXIS_BINS)) + 1
+
+LARGEST_DIM = 0
+SPHERICAL = 1
+# Set the binning mode here:
+MODE = LARGEST_DIM
 
 
 def compute_bin(x, y, z):
@@ -59,13 +64,33 @@ def inverse_bin(val):
     return x, y, z
 
 
+def compute_bin_spherical(x, y, z):
+    norm = np.sqrt(x ** 2 + y ** 2 + z ** 2)
+    x /= norm
+    y /= norm
+    z /= norm
+    theta = np.arccos(z)
+    result = int(theta * AXIS_BINS / np.pi + 0.5)
+    phi = np.arctan2(y, x)
+    result |= int(phi * AXIS_BINS / np.pi + 0.5) << DIM_BITS
+    return result
+
+
+def inverse_bin_spherical(val):
+    theta = (val & (2**DIM_BITS - 1)) * np.pi / AXIS_BINS
+    phi = (val >> DIM_BITS) * np.pi / AXIS_BINS
+    return np.cos(phi) * np.sin(theta), np.sin(phi) * np.sin(theta), np.cos(theta)
+
+
 if __name__ == '__main__':
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     input_vectors = np.array([(np.cos(phi) * np.sin(theta), np.sin(phi) * np.sin(theta), np.cos(theta))
                               for theta in np.arange(0, np.pi, SAMPLED_ANGLE_RESOLUTION * np.pi / 180)
                               for phi in np.arange(0, 2 * np.pi, SAMPLED_ANGLE_RESOLUTION * np.pi / 180)])
-    bins = set([compute_bin(x, y, z) for x, y, z in input_vectors])
-    vectors = np.array([inverse_bin(x) for x in bins]) if not SHOW_INPUT else input_vectors
+    bin_fn = compute_bin if MODE == LARGEST_DIM else compute_bin_spherical
+    inv_bin_fn = inverse_bin if MODE == LARGEST_DIM else inverse_bin_spherical
+    bins = set([bin_fn(x, y, z) for x, y, z in input_vectors])
+    vectors = np.array([inv_bin_fn(x) for x in bins]) if not SHOW_INPUT else input_vectors
     ax.scatter(vectors[:, 0], vectors[:, 1], vectors[:, 2])
     plt.show()
