@@ -7,7 +7,6 @@
 #include <fstream>
 #include <gtest/gtest.h>
 #include <ros/package.h>
-#include <ros/ros.h>
 
 using namespace hector_math;
 
