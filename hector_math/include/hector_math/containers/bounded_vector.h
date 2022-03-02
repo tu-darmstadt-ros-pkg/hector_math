@@ -56,10 +56,11 @@ public:
   {
     assert( first >= begin() );
     assert( last - begin() <= (long)( size_ ) );
+    if (first >= last) return;
     iterator start = begin() + ( first - begin() );
     for ( auto it = start; it != last; ++it ) it->~T();
     for ( auto it = last; it != end(); ++it, ++start ) *start = std::move( *it );
-    if (first < last) size_ -= (last - first);
+    size_ -= (last - first);
   }
 
   void clear()
