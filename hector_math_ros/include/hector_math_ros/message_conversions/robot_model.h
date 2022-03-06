@@ -23,8 +23,8 @@ robotModelToRobotState( const RobotModel<Scalar> &model, const urdf::ModelShared
 {
   moveit::core::RobotModelPtr robot_model = std::make_shared<moveit::core::RobotModel>( urdf, srdf );
   moveit::core::RobotState state( robot_model );
-  const auto &names = model.getJointNames();
-  const auto &positions = model.getJointPositions();
+  const auto &names = model.jointNames();
+  const auto &positions = model.jointPositions();
   const auto &variable_names = state.getVariableNames();
   for ( int i = 0; i < names.size(); ++i )
   {

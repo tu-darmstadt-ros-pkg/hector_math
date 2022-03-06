@@ -4,6 +4,7 @@
 #include "hector_math/containers/quaternion_cache.h"
 
 #include <benchmark/benchmark.h>
+#include <random>
 #include <ros/package.h>
 
 using namespace hector_math;
@@ -37,9 +38,9 @@ static void quaternionCacheFind( benchmark::State &state )
       throw std::runtime_error("Unexpected");
   }
 }
-BENCHMARK_TEMPLATE( quaternionCacheInsert, float )->Unit( benchmark::kNanosecond );
-BENCHMARK_TEMPLATE( quaternionCacheInsert, double )->Unit( benchmark::kNanosecond );
-BENCHMARK_TEMPLATE( quaternionCacheFind, float )->Unit( benchmark::kNanosecond );
-BENCHMARK_TEMPLATE( quaternionCacheFind, double )->Unit( benchmark::kNanosecond );
+BENCHMARK_TEMPLATE( quaternionCacheInsert, float )->Unit( benchmark::kNanosecond )->Iterations( 2000000 );
+BENCHMARK_TEMPLATE( quaternionCacheInsert, double )->Unit( benchmark::kNanosecond )->Iterations( 2000000 );
+BENCHMARK_TEMPLATE( quaternionCacheFind, float )->Unit( benchmark::kNanosecond )->Iterations( 2000000 );
+BENCHMARK_TEMPLATE( quaternionCacheFind, double )->Unit( benchmark::kNanosecond )->Iterations( 2000000 );
 
 BENCHMARK_MAIN();
