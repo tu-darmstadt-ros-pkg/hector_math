@@ -5,7 +5,7 @@
 #ifndef HECTOR_MATH_RECTANGLE_ITERATOR_H
 #define HECTOR_MATH_RECTANGLE_ITERATOR_H
 
-#include "hector_math/helpers/bounded_vector.h"
+#include "hector_math/containers/bounded_vector.h"
 #include "hector_math/types.h"
 #include <vector>
 
