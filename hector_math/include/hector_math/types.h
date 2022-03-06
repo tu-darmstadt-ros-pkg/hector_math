@@ -526,7 +526,7 @@ public:
   template<typename RotationType>
   Pose &rotate( const RotationType &rotation )
   {
-    orientation_ *= rotation;
+    orientation_ = orientation_ * rotation;
     return *this;
   }
 
