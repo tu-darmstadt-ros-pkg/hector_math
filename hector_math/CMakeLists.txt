@@ -32,6 +32,7 @@ target_link_libraries(${PROJECT_NAME} INTERFACE ${EIGEN3_LIBRARIES})
 
 find_package(benchmark QUIET)
 if (${benchmark_FOUND})
+  message(STATUS "benchmark found. Building benchmarks.")
   # Iterator benchmark
   add_executable(benchmark_iterators benchmark/iterators.cpp)
   find_package(grid_map_core QUIET)
@@ -42,11 +43,16 @@ if (${benchmark_FOUND})
   endif()
   target_link_libraries(benchmark_iterators ${PROJECT_NAME} ${catkin_LIBRARIES} benchmark pthread)
 
+  add_executable(benchmark_approximations benchmark/approximations.cpp)
+  target_link_libraries(benchmark_approximations ${PROJECT_NAME} ${catkin_LIBRARIES} benchmark pthread)
+
   add_executable(benchmark_caches benchmark/caches.cpp)
   target_link_libraries(benchmark_caches ${PROJECT_NAME} ${catkin_LIBRARIES} benchmark pthread)
 
   add_executable(show_iterators benchmark/show_iterators.cpp)
   target_link_libraries(show_iterators ${PROJECT_NAME} ${catkin_LIBRARIES})
+else()
+  message(WARN benchmark library not found. Not building benchmarks.)
 endif()
 
 #############
