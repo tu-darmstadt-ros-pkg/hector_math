@@ -54,10 +54,12 @@ public:
   //! Indices have to correspond to names in jointNames().
   virtual void updateJointPositions( const std::vector<Scalar> &positions )
   {
-    auto end = positions.size() > joint_positions_.size()
-                   ? positions.begin() + joint_positions_.size()
-                   : positions.end();
-    std::copy( positions.begin(), end, joint_positions_.begin() );
+    if ( positions.size() != joint_positions_.size() )
+    {
+      throw std::invalid_argument( "RobotModel::updateJointPositions(): Expected array of size " + std::to_string(joint_positions_.size()) +
+      " but received size " + std::to_string(positions.size()) );
+    }
+    std::copy( positions.begin(), positions.end(), joint_positions_.begin() );
     onJointStatesUpdated();
   }
 
