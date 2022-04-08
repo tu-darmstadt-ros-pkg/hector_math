@@ -70,6 +70,16 @@ template<typename Scalar>
 using PointList = std::vector<Point<Scalar>, Eigen::aligned_allocator<Point<Scalar>>>;
 
 template<typename Scalar>
+class Pose2D;
+template<typename Scalar>
+using Pose2DList = std::vector<Pose2D<Scalar>, Eigen::aligned_allocator<Pose2D<Scalar>>>;
+
+template<typename Scalar>
+class Pose;
+template<typename Scalar>
+using PoseList = std::vector<Pose<Scalar>, Eigen::aligned_allocator<Pose<Scalar>>>;
+
+template<typename Scalar>
 using Polygon = Eigen::Array<Scalar, 2, Eigen::Dynamic>;
 
 template<typename Scalar>
