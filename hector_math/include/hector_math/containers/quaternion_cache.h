@@ -5,7 +5,6 @@
 #ifndef HECTOR_MATH_QUATERNION_CACHE_H
 #define HECTOR_MATH_QUATERNION_CACHE_H
 
-#include "hector_math/approximations/trigonometry.h"
 #include "hector_math/math/quaternion_binning.h"
 #include <unordered_map>
 
