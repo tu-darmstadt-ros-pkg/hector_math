@@ -38,7 +38,7 @@ void iterateCircle( const Vector2<Scalar> &center, Scalar radius, Eigen::Index r
 
 //! Overload of iterateCircle where the indexes are not bounded.
 template<typename Scalar, typename Functor>
-void iteratePolygon( const Vector2<Scalar> &center, Scalar radius, Functor functor )
+void iterateCircle( const Vector2<Scalar> &center, Scalar radius, Functor functor )
 {
   constexpr Eigen::Index min = std::numeric_limits<Eigen::Index>::min();
   constexpr Eigen::Index max = std::numeric_limits<Eigen::Index>::max();

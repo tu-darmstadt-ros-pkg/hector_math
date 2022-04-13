@@ -46,7 +46,7 @@ if (${benchmark_FOUND})
   add_executable(benchmark_caches benchmark/caches.cpp)
   target_link_libraries(benchmark_caches ${PROJECT_NAME} ${catkin_LIBRARIES} benchmark pthread)
 
-  add_executable(show_iterators benchmark/show_iterators.cpp)
+  add_executable(show_iterators scripts/show_iterators.cpp)
   target_link_libraries(show_iterators ${PROJECT_NAME} ${catkin_LIBRARIES})
 else()
   message(WARN benchmark library not found. Not building benchmarks.)
@@ -111,6 +111,9 @@ if (CATKIN_ENABLE_TESTING)
 
   catkin_add_gtest(test_pose test/test_pose.cpp)
   target_link_libraries(test_pose ${PROJECT_NAME})
+
+  catkin_add_gtest(test_quaternion_binning test/test_quaternion_binning.cpp)
+  target_link_libraries(test_quaternion_binning ${PROJECT_NAME})
 endif ()
 
 # to run: catkin build --this --no-deps -DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug -v --catkin-make-args hector_math_coverage

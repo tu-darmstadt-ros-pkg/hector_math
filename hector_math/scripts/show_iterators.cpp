@@ -3,7 +3,7 @@
 //
 
 #include "hector_math/iterators/polygon_iterator.h"
-#include "iterators_input.h"
+#include "../benchmark/iterators_input.h"
 #include <fstream>
 #include <iostream>
 

@@ -17,9 +17,7 @@ template<typename Scalar, typename T, int AXIS_BINS = 128, int ANGLE_COUNT = 512
 class QuaternionCache
 {
   static_assert( AXIS_BINS % 2 == 0, "AXIS_BINS should be an even number!" );
-  static constexpr int _required_bits = 2 * std::log2( AXIS_BINS ) + 1 + std::log2( ANGLE_COUNT ) + 2;
-  using BinType = typename std::conditional<_required_bits >= 8 * sizeof( int ), long, int>::type;
-  static constexpr int dim_bits = std::log( AXIS_BINS ) + 1;
+  using BinType = typename detail::QuaternionBinType<AXIS_BINS, ANGLE_COUNT>::BinType;
 
 public:
   using iterator = typename std::unordered_map<BinType, T>::iterator;
