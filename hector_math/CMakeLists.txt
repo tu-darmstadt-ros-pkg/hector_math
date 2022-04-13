@@ -41,10 +41,10 @@ if (${benchmark_FOUND})
     include_directories(${grid_map_core_INCLUDE_DIRS})
     target_link_libraries(benchmark_iterators ${grid_map_core_LIBRARIES})
   endif()
-  target_link_libraries(benchmark_iterators ${PROJECT_NAME} ${catkin_LIBRARIES} benchmark pthread)
+  target_link_libraries(benchmark_iterators ${PROJECT_NAME} ${catkin_LIBRARIES} benchmark benchmark_main pthread)
 
   add_executable(benchmark_caches benchmark/caches.cpp)
-  target_link_libraries(benchmark_caches ${PROJECT_NAME} ${catkin_LIBRARIES} benchmark pthread)
+  target_link_libraries(benchmark_caches ${PROJECT_NAME} ${catkin_LIBRARIES} benchmark benchmark_main pthread)
 
   add_executable(show_iterators scripts/show_iterators.cpp)
   target_link_libraries(show_iterators ${PROJECT_NAME} ${catkin_LIBRARIES})

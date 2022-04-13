@@ -26,7 +26,7 @@ target_link_libraries(${PROJECT_NAME} INTERFACE ${EIGEN3_LIBRARIES})
 find_package(benchmark QUIET)
 if (${benchmark_FOUND})
   add_executable(benchmark_robot_model benchmark/robot_model.cpp)
-  target_link_libraries(benchmark_robot_model ${PROJECT_NAME} ${catkin_LIBRARIES} benchmark pthread)
+  target_link_libraries(benchmark_robot_model ${PROJECT_NAME} ${catkin_LIBRARIES} benchmark benchmark_main pthread)
 endif()
 
 #############
