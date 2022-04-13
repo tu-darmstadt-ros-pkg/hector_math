@@ -5,7 +5,6 @@
 #ifndef HECTOR_MATH_QUATERNION_BINNING_H
 #define HECTOR_MATH_QUATERNION_BINNING_H
 
-#include "hector_math/approximations/trigonometry.h"
 #include <Eigen/Geometry>
 
 namespace hector_math
@@ -104,19 +103,19 @@ ReturnType computeBin( const Eigen::Quaternion<Scalar> &q )
       bin |= (ReturnType( q.x() * MULTIPLIER / norm + OFFSET ) & DIM_MASK) << ( 3 + dim_bits );
     }
     // Angle is 2 * acos(qw) which we move from [0, 2 * pi] to [0, ANGLE_BINS)
-    const Scalar angle = acosApproximate( q.w() );
+    const Scalar angle = std::acos( q.w() );
     bin |= (ReturnType( angle * ( ANGLE_BINS / M_PI ) ) & ANGLE_MASK) << ( 2 * dim_bits + 3 );
     return bin;
 
   } else { // SPHERICAL
 
     const Scalar norm = q.vec().norm();
-    Scalar theta = acosApproximate( q.z() / norm );
+    Scalar theta = std::acos( q.z() / norm );
     ReturnType bin = ReturnType( theta * AXIS_BINS / M_PI ) & DIM_MASK;
-    Scalar phi = atan2Approximate( q.y(), q.x() ) + M_PI; // Move from [-pi, pi] to [0, 2 * pi]
+    Scalar phi = std::atan2( q.y(), q.x() ) + M_PI; // Move from [-pi, pi] to [0, 2 * pi]
     bin |= (ReturnType( phi * AXIS_BINS / ( 2 * M_PI ) ) & DIM_MASK) << dim_bits;
 
-    const Scalar angle = acosApproximate( q.w() );
+    const Scalar angle = std::acos( q.w() );
     bin |= (ReturnType( angle * ( ANGLE_BINS / M_PI ) ) & ANGLE_MASK) << ( 2 * dim_bits );
     return bin;
   }
