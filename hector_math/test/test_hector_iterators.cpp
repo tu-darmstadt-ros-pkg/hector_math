@@ -90,6 +90,7 @@ TYPED_TEST( IteratorTest, rectangleTest )
       [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Rectangle with a (0, 1), b (4, 1) and c (0, 3).";
+
   // @formatter:off
   // clang-format off
   expected_map << 1, 0, 0, 0, 0,
@@ -102,6 +103,54 @@ TYPED_TEST( IteratorTest, rectangleTest )
   actual_map.setZero();
   iterateRectangle<Scalar>(
       Vector2( 0.4, 0.4 ), Vector2( 3.4, 1.6 ), Vector2( 1.6, 3.4 ),
+      [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+      << "Rectangle with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4).";
+  // swapped corners b and c -> should result in same expected map
+  actual_map.setZero();
+  iterateRectangle<Scalar>(
+      Vector2( 0.4, 0.4 ), Vector2( 1.6, 3.4 ), Vector2( 3.4, 1.6 ),
+      [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+      << "Rectangle with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4).";
+  // no points in rectangle
+  expected_map.setZero();
+  actual_map.setZero();
+  iterateRectangle<Scalar>(
+      Vector2( 1.6, 0 ), Vector2( 2.4, 0 ), Vector2( 1.6, 4.4 ),
+      [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+      << "Rectangle with a (1.6, 0), b (2.4, 0) and c (1.6, 4.4).";
+  // test max rows and max cols argument
+  // @formatter:off
+  // clang-format off
+  expected_map << 1, 0, 0, 0, 0,
+                  0, 1, 1, 0, 0,
+                  0, 1, 1, 1, 0,
+                  0, 0, 0, 0, 0,
+                  0, 0, 0, 0, 0;
+  // @formatter:on
+  // clang-format on
+  actual_map.setZero();
+  iterateRectangle<Scalar>(
+      Vector2( 0.4, 0.4 ), Vector2( 3.4, 1.6 ), Vector2( 1.6, 3.4 ),3,4,
+      [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+      << "Rectangle with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4).";
+
+  // test min/max rows and min/max cols argument
+  // @formatter:off
+  // clang-format off
+  expected_map << 0, 0, 0, 0, 0,
+                  0, 0, 1, 0, 0,
+                  0, 0, 1, 1, 0,
+                  0, 0, 0, 0, 0,
+                  0, 0, 0, 0, 0;
+  // @formatter:on
+  // clang-format on
+  actual_map.setZero();
+  iterateRectangle<Scalar>(
+      Vector2( 0.4, 0.4 ), Vector2( 3.4, 1.6 ), Vector2( 1.6, 3.4 ),1,3,2,4,
       [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Rectangle with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4).";
@@ -137,6 +186,8 @@ TYPED_TEST( IteratorTest, rectangleTest )
       [&actual_map]( Eigen::Index x, Eigen::Index y ) { ++actual_map( x, y ); } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Rectangle with a (1, 2), b (0, 5) and c (9, 4).";
+
+
 }
 
 TYPED_TEST( IteratorTest, circleTest )
@@ -499,6 +550,8 @@ TYPED_TEST( IteratorTest, polygonTest )
     writeReportToFile( actual_map, expected_map, polygon, row_min, row_max, col_min, col_max,
                        offset, "TestCaseUShapeLimitedIndexes.txt" );
 }
+
+
 
 int main( int argc, char **argv )
 {
