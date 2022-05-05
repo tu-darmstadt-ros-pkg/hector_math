@@ -54,17 +54,19 @@ public:
   //! Indices have to correspond to names in jointNames().
   virtual void updateJointPositions( const std::vector<Scalar> &positions )
   {
-    auto end = positions.size() > joint_positions_.size()
-                   ? positions.begin() + joint_positions_.size()
-                   : positions.end();
-    std::copy( positions.begin(), end, joint_positions_.begin() );
+    if ( positions.size() != joint_positions_.size() ) {
+      throw std::invalid_argument( "RobotModel::updateJointPositions(): Expected array of size " +
+                                   std::to_string( joint_positions_.size() ) +
+                                   " but received size " + std::to_string( positions.size() ) );
+    }
+    std::copy( positions.begin(), positions.end(), joint_positions_.begin() );
     onJointStatesUpdated();
   }
 
   //! The names of the joints represented in this robot model.
-  std::vector<std::string> jointNames() const { return joint_names_; }
+  const std::vector<std::string> &jointNames() const { return joint_names_; }
 
-  std::vector<Scalar> jointPositions() const { return joint_positions_; }
+  const std::vector<Scalar> &jointPositions() const { return joint_positions_; }
 
   Scalar getJointPosition( const std::string &name ) const
   {
@@ -77,7 +79,7 @@ public:
   }
 
   //! The position of the center of mass in the robot coordinate frame.
-  Vector3<Scalar> centerOfMass() const
+  const Vector3<Scalar> &centerOfMass() const
   {
     if ( center_of_mass_valid_ )
       return center_of_mass_;
@@ -86,7 +88,7 @@ public:
     return center_of_mass_;
   }
 
-  Eigen::AlignedBox<Scalar, 3> axisAlignedBoundingBox() const
+  const Eigen::AlignedBox<Scalar, 3> &axisAlignedBoundingBox() const
   {
     if ( axis_aligned_bounding_box_valid_ )
       return axis_aligned_bounding_box_;
@@ -96,7 +98,7 @@ public:
   }
 
   //! The footprint is an approximated polygon of the robots hull projected to the ground.
-  Polygon<Scalar> footprint() const
+  const Polygon<Scalar> &footprint() const
   {
     if ( footprint_valid_ )
       return footprint_;

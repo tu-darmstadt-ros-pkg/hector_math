@@ -4,7 +4,7 @@
 #include <ros/ros.h>
 
 #undef NDEBUG
-#include <hector_math/helpers/bounded_vector.h>
+#include <hector_math/containers/bounded_vector.h>
 
 using namespace hector_math;
 

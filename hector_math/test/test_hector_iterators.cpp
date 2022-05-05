@@ -2,6 +2,7 @@
 #include "iterator_test_input.h"
 #include <hector_math/iterators/circle_iterator.h>
 #include <hector_math/iterators/polygon_iterator.h>
+#include <hector_math/iterators/rectangle_iterator.h>
 
 #include "eigen_tests.h"
 #include <fstream>
@@ -67,6 +68,76 @@ class IteratorTest : public testing::Test
 typedef testing::Types<float, double> Implementations;
 
 TYPED_TEST_CASE( IteratorTest, Implementations );
+
+TYPED_TEST( IteratorTest, rectangleTest )
+{
+  using Scalar = TypeParam;
+  using Vector2 = Vector2<Scalar>;
+  GridMap<Eigen::Index> expected_map( 5, 5 );
+  // @formatter:off
+  // clang-format off
+  expected_map << 0, 0, 0, 0, 0,
+                  1, 1, 1, 1, 0,
+                  1, 1, 1, 1, 0,
+                  1, 1, 1, 1, 0,
+                  0, 0, 0, 0, 0;
+  // @formatter:on
+  // clang-format on
+  GridMap<Eigen::Index> actual_map( 5, 5 );
+  actual_map.setZero();
+  iterateRectangle<Scalar>(
+      Vector2( 1, 0 ), Vector2( 1, 4 ), Vector2( 4, 0 ),
+      [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+      << "Rectangle with a (0, 1), b (4, 1) and c (0, 3).";
+  // @formatter:off
+  // clang-format off
+  expected_map << 1, 0, 0, 0, 0,
+                  0, 1, 1, 0, 0,
+                  0, 1, 1, 1, 0,
+                  0, 0, 1, 1, 0,
+                  0, 0, 0, 0, 1;
+  // @formatter:on
+  // clang-format on
+  actual_map.setZero();
+  iterateRectangle<Scalar>(
+      Vector2( 0.4, 0.4 ), Vector2( 3.4, 1.6 ), Vector2( 1.6, 3.4 ),
+      [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+      << "Rectangle with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4).";
+
+  expected_map = GridMap<Eigen::Index>( 20, 20 );
+  // @formatter:off
+  // clang-format off
+  expected_map << 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                  0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+                  0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+                  0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+                  0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+                  0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+                  0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+                  0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+                  0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
+                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
+                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
+                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
+                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
+                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
+                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
+                  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
+                  0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,
+                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0;
+  // @formatter:on
+  // clang-format on
+  actual_map = GridMap<Eigen::Index>::Zero( 20, 20 );
+  iterateRectangle<Scalar>(
+      Vector2( 0, 1 ), Vector2( 1, 19 ), Vector2( 18, 0 ),
+      [&actual_map]( Eigen::Index x, Eigen::Index y ) { ++actual_map( x, y ); } );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+      << "Rectangle with a (1, 2), b (0, 5) and c (9, 4).";
+}
 
 TYPED_TEST( IteratorTest, circleTest )
 {
@@ -428,8 +499,6 @@ TYPED_TEST( IteratorTest, polygonTest )
     writeReportToFile( actual_map, expected_map, polygon, row_min, row_max, col_min, col_max,
                        offset, "TestCaseUShapeLimitedIndexes.txt" );
 }
-
-
 
 int main( int argc, char **argv )
 {

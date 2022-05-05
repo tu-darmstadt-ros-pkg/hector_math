@@ -32,6 +32,7 @@ target_link_libraries(${PROJECT_NAME} INTERFACE ${EIGEN3_LIBRARIES})
 
 find_package(benchmark QUIET)
 if (${benchmark_FOUND})
+  message(STATUS "benchmark found. Building benchmarks.")
   # Iterator benchmark
   add_executable(benchmark_iterators benchmark/iterators.cpp)
   find_package(grid_map_core QUIET)
@@ -40,10 +41,15 @@ if (${benchmark_FOUND})
     include_directories(${grid_map_core_INCLUDE_DIRS})
     target_link_libraries(benchmark_iterators ${grid_map_core_LIBRARIES})
   endif()
-  target_link_libraries(benchmark_iterators ${PROJECT_NAME} ${catkin_LIBRARIES} benchmark pthread)
+  target_link_libraries(benchmark_iterators ${PROJECT_NAME} ${catkin_LIBRARIES} benchmark benchmark_main pthread)
 
-  add_executable(show_iterators benchmark/show_iterators.cpp)
+  add_executable(benchmark_caches benchmark/caches.cpp)
+  target_link_libraries(benchmark_caches ${PROJECT_NAME} ${catkin_LIBRARIES} benchmark benchmark_main pthread)
+
+  add_executable(show_iterators scripts/show_iterators.cpp)
   target_link_libraries(show_iterators ${PROJECT_NAME} ${catkin_LIBRARIES})
+else()
+  message(WARN benchmark library not found. Not building benchmarks.)
 endif()
 
 #############
@@ -105,6 +111,9 @@ if (CATKIN_ENABLE_TESTING)
 
   catkin_add_gtest(test_pose test/test_pose.cpp)
   target_link_libraries(test_pose ${PROJECT_NAME})
+
+  catkin_add_gtest(test_quaternion_binning test/test_quaternion_binning.cpp)
+  target_link_libraries(test_quaternion_binning ${PROJECT_NAME})
 endif ()
 
 # to run: catkin build --this --no-deps -DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug -v --catkin-make-args hector_math_coverage
