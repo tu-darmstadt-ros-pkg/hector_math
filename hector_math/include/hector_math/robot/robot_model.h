@@ -63,6 +63,16 @@ public:
     onJointStatesUpdated();
   }
 
+  //! Updates the joint position of a single joint of the robot model with the given value.
+  //! The index corresponds to the names in jointNames().
+  virtual void updateJointPosition( size_t index, Scalar position )
+  {
+    assert( index >= 0 && index < joint_positions_.size() &&
+            "RobotModel::updateJointPosition(): The joint index is out of bounds" );
+    joint_positions_[index] = position;
+    onJointStatesUpdated();
+  }
+
   //! The names of the joints represented in this robot model.
   const std::vector<std::string> &jointNames() const { return joint_names_; }
 
