@@ -15,8 +15,8 @@ namespace eigen
 template<class ArgType>
 struct array_passthrough_helper {
   using ArrayType =
-      Eigen::Array<typename ArgType::Scalar, ArgType::SizeAtCompileTime, ArgType::SizeAtCompileTime,
-                   Eigen::ColMajor, ArgType::MaxSizeAtCompileTime, ArgType::MaxSizeAtCompileTime>;
+      Eigen::Array<typename ArgType::Scalar, ArgType::RowsAtCompileTime, ArgType::ColsAtCompileTime,
+                   Eigen::ColMajor, ArgType::MaxRowsAtCompileTime, ArgType::MaxColsAtCompileTime>;
 };
 
 namespace flip_ops
