@@ -84,6 +84,8 @@ shift( const Eigen::ArrayBase<ArgType> &mat, Eigen::Index row_shift, Eigen::Inde
 
 template<typename ArgType, FlipOp FLIP_OP>
 class flip_functor;
+template<typename ArgType>
+class runtime_flip_functor;
 
 /*!
  * Flips the given Eigen Array in the specified axis (default: Both).
@@ -93,25 +95,37 @@ class flip_functor;
  *   4 5 6
  *   7 8 9
  * @endverbatim
- * flipped with flip_op = flip_ops::Rows results in
+ * flipped with FLIP_OP = flip_ops::Rows results in
  * @verbatim
  *   7 8 9
  *   4 5 6
  *   1 2 3
  * @endverbatim
- * flipped with flip_op = flip_ops::Both instead would result in
+ * flipped with FLIP_OP = flip_ops::Both instead would result in
  * @verbatim
  *   9 8 7
  *   6 5 4
  *   3 2 1
  * @endverbatim
  *
+ * @tparam FLIP_OP The flip operation that is performed.
+ * @return The flipped array.
+ */
+template<typename ArgType, FlipOp FLIP_OP = flip_ops::Both>
+Eigen::CwiseNullaryOp<flip_functor<ArgType, FLIP_OP>, typename array_passthrough_helper<ArgType>::ArrayType>
+flip( const Eigen::ArrayBase<ArgType> &mat );
+
+/*!
+ * @see flip(const Eigen::ArrayBase<ArgType>&)
+ *
+ * Also flips the given Eigen::Array but can be used with flip ops determined at runtime.
+ *
+ * @param flip_op The flip operation that is performed.
  * @return The flipped array.
  */
 template<typename ArgType>
-Eigen::CwiseNullaryOp<flip_functor<ArgType, flip_ops::Both>,
-                      typename array_passthrough_helper<ArgType>::ArrayType>
-flip( const Eigen::ArrayBase<ArgType> &mat );
+Eigen::CwiseNullaryOp<runtime_flip_functor<ArgType>, typename array_passthrough_helper<ArgType>::ArrayType>
+flip( const Eigen::ArrayBase<ArgType> &mat, FlipOp flip_op );
 
 // ==============================================
 //                 IMPLEMENTATION
@@ -232,13 +246,43 @@ private:
 };
 
 template<typename ArgType>
-Eigen::CwiseNullaryOp<flip_functor<ArgType, flip_ops::Both>,
-                      typename array_passthrough_helper<ArgType>::ArrayType>
+class runtime_flip_functor
+{
+public:
+  explicit runtime_flip_functor( const ArgType &mat, FlipOp flip_op )
+      : m_mat( mat ), row_max_( mat.rows() - 1 ), col_max_( mat.cols() - 1 ), flip_op_( flip_op )
+  {
+  }
+
+  typename ArgType::Scalar operator()( Eigen::Index row, Eigen::Index col ) const
+  {
+    return m_mat( ( flip_op_ & flip_ops::Rows ) == flip_ops::Rows ? row_max_ - row : row,
+                  ( flip_op_ & flip_ops::Columns ) == flip_ops::Columns ? col_max_ - col : col );
+  }
+
+private:
+  const typename ArgType::Nested m_mat;
+  const Eigen::Index row_max_;
+  const Eigen::Index col_max_;
+  const FlipOp flip_op_;
+};
+
+template<typename ArgType, FlipOp FLIP_OP>
+Eigen::CwiseNullaryOp<flip_functor<ArgType, FLIP_OP>, typename array_passthrough_helper<ArgType>::ArrayType>
 flip( const Eigen::ArrayBase<ArgType> &mat )
 {
   typedef typename array_passthrough_helper<ArgType>::ArrayType ArrayType;
   return ArrayType::NullaryExpr( mat.rows(), mat.cols(),
-                                 flip_functor<ArgType, flip_ops::Both>( mat.derived() ) );
+                                 flip_functor<ArgType, FLIP_OP>( mat.derived() ) );
+}
+
+template<typename ArgType>
+Eigen::CwiseNullaryOp<runtime_flip_functor<ArgType>, typename array_passthrough_helper<ArgType>::ArrayType>
+flip( const Eigen::ArrayBase<ArgType> &mat, FlipOp flip_op )
+{
+  typedef typename array_passthrough_helper<ArgType>::ArrayType ArrayType;
+  return ArrayType::NullaryExpr( mat.rows(), mat.cols(),
+                                 runtime_flip_functor<ArgType>( mat.derived(), flip_op ) );
 }
 } // namespace eigen
 } // namespace hector_math
