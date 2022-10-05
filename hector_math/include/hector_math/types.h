@@ -373,8 +373,6 @@ public:
   Pose( const Eigen::Translation<Scalar, 3> &translation,
         const Eigen::Quaternion<Scalar> &orientation )
   {
-    assert( std::abs( orientation.squaredNorm() - 1 ) < 1E-2 &&
-            "Quaternion passed to pose should be normalized!" );
     orientation_ = orientation;
     translation_ = translation.vector();
   }
@@ -397,8 +395,6 @@ public:
   Pose( const Vector3<Scalar> &translation,
         const Eigen::Quaternion<Scalar> &orientation = Eigen::Quaternion<Scalar>::Identity() )
   {
-    assert( std::abs( orientation.squaredNorm() - 1 ) < 1E-2 &&
-            "Quaternion passed to pose should be normalized!" );
     orientation_ = orientation;
     translation_ = translation;
   }
