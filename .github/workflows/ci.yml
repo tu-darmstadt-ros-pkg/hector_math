@@ -1,0 +1,50 @@
+name: CI
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  linting:
+    runs-on: ubuntu-20.04
+    container:
+      image: rostooling/setup-ros-docker:ubuntu-focal-ros-noetic-ros-base-latest
+    #      options: -u root  # setup-node requires root access
+    strategy:
+      matrix:
+        linter:
+          - name: lint_cmake
+          - name: clang-format
+            args: --config .clang-format
+          - name: cppcheck
+            args: --language c++
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ros-tooling/action-ros-lint@v0.1
+        with:
+          linter: ${{ matrix.linter.name }}
+          arguments: ${{ matrix.linter.args }}
+          package-name: hector_math
+  testing-and-coverage:
+    needs: linting
+    runs-on: ${{ matrix.setup.os }}
+    strategy:
+      matrix:
+        setup:
+          - os: ubuntu-20.04
+            ros_distribution: noetic
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ros-tooling/setup-ros@v0.3
+        with:
+          required-ros-distributions: ${{ matrix.setup.ros_distribution }}
+      - name: build and test
+        uses: ros-tooling/action-ros-ci@v0.2
+        with:
+          package-name: hector_math
+          target-ros1-distro: ${{ matrix.setup.ros_distribution }}
+      - uses: ros-tooling/action-ros-lint@v0.1
+        with:
+          linter: clang-tidy
+          package-name: hector_math
