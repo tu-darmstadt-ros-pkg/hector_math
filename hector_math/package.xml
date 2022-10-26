@@ -11,6 +11,7 @@
 
 
   <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>eigen</build_depend>
   <depend> roslib</depend>
   <test_depend>rostest</test_depend>
 </package>
