@@ -1,4 +1,4 @@
-name: CI
+name: Build & Test
 on:
   push:
     branches: [ master ]
@@ -6,46 +6,30 @@ on:
     branches: [ master ]
 
 jobs:
-  linting:
-    runs-on: ubuntu-20.04
+  build-and-test:
+    runs-on: [ubuntu-20.04]
     container:
       image: rostooling/setup-ros-docker:ubuntu-focal-ros-noetic-ros-base-latest
-    #      options: -u root  # setup-node requires root access
-    strategy:
-      matrix:
-        linter:
-          - name: lint_cmake
-          - name: clang-format
-            args: --config .clang-format
-          - name: cppcheck
-            args: --language c++
     steps:
-      - uses: actions/checkout@v3
-      - uses: ros-tooling/action-ros-lint@v0.1
+      - name: install catkin
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-catkin-tools python3-empy
+      - uses: actions/checkout@v2.5.0
         with:
-          linter: ${{ matrix.linter.name }}
-          arguments: ${{ matrix.linter.args }}
-          package-name: hector_math
-  testing-and-coverage:
-    needs: linting
-    runs-on: ${{ matrix.setup.os }}
-    strategy:
-      matrix:
-        setup:
-          - os: ubuntu-20.04
-            ros_distribution: noetic
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ros-tooling/setup-ros@v0.3
-        with:
-          required-ros-distributions: ${{ matrix.setup.ros_distribution }}
-      - name: build and test
-        uses: ros-tooling/action-ros-ci@v0.2
-        with:
-          # import-token: ${{ secrets.GITHUB_TOKEN }}
-          package-name: hector_math
-          target-ros1-distro: ${{ matrix.setup.ros_distribution }}
-      - uses: ros-tooling/action-ros-lint@v0.1
-        with:
-          linter: clang-tidy
-          package-name: hector_math
+          path: hector/src
+      - name: rosdep
+        run: |
+          cd $GITHUB_WORKSPACE/hector/src
+          rosdep update
+          rosdep install -y --from-paths . --ignore-src --rosdistro noetic
+      - name: build
+        run: |
+          cd $GITHUB_WORKSPACE/hector
+          catkin config --extend /opt/ros/noetic --cmake-args -DCMAKE_BUILD_TYPE=Release
+          cd $GITHUB_WORKSPACE/hector/src
+          catkin build
+      - name: build_and_test
+        run: |
+          cd $GITHUB_WORKSPACE/hector/src
+          catkin test hector_math
