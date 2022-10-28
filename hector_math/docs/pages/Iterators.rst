@@ -12,9 +12,9 @@ Examples
 
 Examples, can be seen in the figures:
 
-.. figure:: img/iterator_example1.svg
+.. figure:: img/iterator_polygon_example.svg
    :width: 75%
-   :alt: Sorry, the image seems to be missing.
+   :alt: The image displays a polygon on a grid and marks all cells lying in the polygon.
    :align: center
 
    The figure shows a blue polygon which can be passed to the function iteratePolygon().
@@ -23,9 +23,9 @@ Examples, can be seen in the figures:
    groundtruth markers shows that all selected points are correct, because they
    belong to cells whose center lies in the polygon.
 
-.. figure:: img/iterator_example2.svg
+.. figure:: img/iterator_polygon_example_with_limits.svg
    :width: 75%
-   :alt: Sorry, the image seems to be missing.
+   :alt: The image displays a different polygon on a grid. In comparison to before, limits additionally constraint the marked cells.
    :align: center
 
    In addition to the polygon, the function iteratePolygon can be provided minimum and
