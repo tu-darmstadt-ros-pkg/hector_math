@@ -109,10 +109,10 @@ cat > index.html <<EOF
 <html>
    <head>
       <title>hector_math Docs</title>
-      <meta http-equiv = "refresh" content="0; url='/${REPO_NAME}/en/master/'" />
+      <meta http-equiv = "refresh" content="0; url='/${REPO_NAME}/en/documentation/'" />  # TODO: switch to master
    </head>
    <body>
-      <p>Please wait while you're redirected to our <a href="/${REPO_NAME}/en/master/">documentation</a>.</p>
+      <p>Please wait while you're redirected to our <a href="/${REPO_NAME}/en/documentation/">documentation</a>.</p> # TODO: switch to master
    </body>
 </html>
 EOF

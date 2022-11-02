@@ -23,6 +23,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-       cd hector_math
-       docs/build_docs.sh
+        # TODO: remove branch change
+        git checkout documentation 
+        cd hector_math
+        docs/build_docs.sh
       shell: bash
