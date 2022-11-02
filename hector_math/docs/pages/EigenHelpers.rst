@@ -22,6 +22,7 @@ Wrap With Constant
 Shift
 *****
 .. doxygenfunction:: hector_math::eigen::shift
+
 Flip
 ****
 .. doxygenenum:: hector_math::eigen::flip_ops::FlipOp

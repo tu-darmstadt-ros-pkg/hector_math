@@ -1,4 +1,3 @@
-_build/
-html/
-latex/
-xml/
+*.swp
+/_build
+/doctrees
