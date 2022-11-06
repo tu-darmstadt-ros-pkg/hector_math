@@ -29,6 +29,18 @@ struct QuaternionBinType {
       2 * computeRequiredBits( AXIS_BINS - 1 ) + computeRequiredBits( ANGLE_BINS ) + 3;
   using BinType = typename std::conditional<_required_bits >= 8 * sizeof( int ), unsigned long, unsigned int>::type;
 };
+
+const float PHI = (std::sqrt(5)+1.0)/2.0; // TODO: variable type Scalar ?
+
+template<typename Scalar>
+Scalar madfrac(Scalar a, Scalar b){
+  return a*b - std::floor(a*b);
+}
+
+template <typename T>
+T clip(const T& n, const T& lower, const T& upper) {
+  return std::max(lower, std::min(n, upper));
+}
 } // namespace detail
 
 namespace quaternion_binning_modes
@@ -37,7 +49,7 @@ namespace quaternion_binning_modes
 //! LargestDim is somewhat faster and doesn't have a reduced resolution at the poles due to the
 //! equidistant angles used in spherical but at the cost of overlapping regions with increased
 //! bin resolution
-enum QuaternionBinningMode { LargestDim, Spherical };
+enum QuaternionBinningMode { LargestDim, Spherical, SphericalFibonacci };
 } // namespace quaternion_binning_modes
 using QuaternionBinningMode = quaternion_binning_modes::QuaternionBinningMode;
 
@@ -85,27 +97,67 @@ ReturnType computeBin( const Eigen::Quaternion<Scalar> &q )
         bin |= 0b100;
       const Scalar norm = std::sqrt( x2 + y2 + z2 );
       // Since x is largest, y and z are absolute smaller than sqrt(2)/2
-      bin |= (ReturnType( q.y() * MULTIPLIER / norm + OFFSET ) & DIM_MASK) << 3;
-      bin |= (ReturnType( q.z() * MULTIPLIER / norm + OFFSET ) & DIM_MASK) << ( 3 + dim_bits );
+      bin |= ( ReturnType( q.y() * MULTIPLIER / norm + OFFSET ) & DIM_MASK ) << 3;
+      bin |= ( ReturnType( q.z() * MULTIPLIER / norm + OFFSET ) & DIM_MASK ) << ( 3 + dim_bits );
     } else if ( y2 > z2 ) {
       bin = 0b10;
       if ( q.y() < 0 )
         bin |= 0b100;
       const Scalar norm = std::sqrt( x2 + y2 + z2 );
-      bin |= (ReturnType( q.x() * MULTIPLIER / norm + OFFSET ) & DIM_MASK) << 3;
-      bin |= (ReturnType( q.z() * MULTIPLIER / norm + OFFSET ) & DIM_MASK) << ( 3 + dim_bits );
+      bin |= ( ReturnType( q.x() * MULTIPLIER / norm + OFFSET ) & DIM_MASK ) << 3;
+      bin |= ( ReturnType( q.z() * MULTIPLIER / norm + OFFSET ) & DIM_MASK ) << ( 3 + dim_bits );
     } else {
       bin = 0b11;
       if ( q.z() < 0 )
         bin |= 0b100;
       const Scalar norm = std::sqrt( x2 + y2 + z2 );
-      bin |= (ReturnType( q.y() * MULTIPLIER / norm + OFFSET ) & DIM_MASK) << 3;
-      bin |= (ReturnType( q.x() * MULTIPLIER / norm + OFFSET ) & DIM_MASK) << ( 3 + dim_bits );
+      bin |= ( ReturnType( q.y() * MULTIPLIER / norm + OFFSET ) & DIM_MASK ) << 3;
+      bin |= ( ReturnType( q.x() * MULTIPLIER / norm + OFFSET ) & DIM_MASK ) << ( 3 + dim_bits );
     }
     // Angle is 2 * acos(qw) which we move from [0, 2 * pi] to [0, ANGLE_BINS)
     const Scalar angle = std::acos( q.w() );
-    bin |= (ReturnType( angle * ( ANGLE_BINS / M_PI ) ) & ANGLE_MASK) << ( 2 * dim_bits + 3 );
+    bin |= ( ReturnType( angle * ( ANGLE_BINS / M_PI ) ) & ANGLE_MASK ) << ( 2 * dim_bits + 3 );
     return bin;
+
+  }else if( mode == quaternion_binning_modes::SphericalFibonacci ){
+    int fibonacci_n = ANGLE_BINS * ANGLE_BINS;;//TODO: Fibonacci_n input param
+    const Scalar norm = sqrt(pow(q.x(),2)+pow(q.y(),2)+pow(q.z(),2));
+    Scalar x = q.x()/norm;
+    Scalar y = q.y()/norm;
+    Scalar z = q.z()/norm;
+    Scalar phi = std::min<Scalar>(std::atan2<Scalar>(y,x),M_PI);
+    Scalar sin_theta, cos_theta = z;
+    Scalar k = std::max(2.0, std::floor(std::log(fibonacci_n * M_PI * sqrt(5) *(1.0-pow(cos_theta,2)))/std::log(detail::PHI+1.0)));
+    Scalar fk = pow(detail::PHI,k)/std::sqrt(5);
+    Scalar f0 = std::round(fk);
+    Scalar f1 = std::round(fk * detail::PHI);
+    Eigen::Matrix<Scalar,2,2> b;
+    b <<
+    2.0 * M_PI * detail::madfrac(f0+1.0, detail::PHI-1.0)-2*M_PI*(detail::PHI-1.0),
+    2.0 * M_PI * detail::madfrac(f1+1.0, detail::PHI-1.0)-2*M_PI*(detail::PHI-1.0),
+    -2.0*f0/fibonacci_n,
+    -2.0*f1/fibonacci_n;
+    Eigen::Matrix<Scalar,2,1> c = (b.inverse()*Eigen::Matrix<Scalar,2,1>{phi,cos_theta-(1.0-1.0/fibonacci_n)});
+    c = c.unaryExpr([](Scalar x){return std::floor(x);});
+    Scalar d = std::numeric_limits<Scalar>::max();
+    ReturnType j = 0;
+    for(int s=0;s<4;s++){
+      cos_theta = b.row(1).dot(Eigen::Matrix<Scalar,2,1> {s%2,s/2}+c)  + (1.0 - 1.0 / fibonacci_n);
+      cos_theta = detail::clip(cos_theta,Scalar(-1.0),Scalar(1.0)) * 2.0 - cos_theta;
+
+      ReturnType i = std::floor(fibonacci_n*0.5*(1.0-cos_theta));
+      phi = 2.0*M_PI* detail::madfrac((Scalar)i,Scalar(detail::PHI-1.0));
+      cos_theta = 1.0 - (2.0 * i + 1.0) / fibonacci_n;
+      sin_theta = std::sqrt(1 - std::min(pow(cos_theta,2), 1.0));
+
+      Eigen::Matrix<Scalar,3,1> p {cos(phi)*sin_theta, sin(phi)*sin_theta,cos_theta};
+      Scalar squared_distance = pow(x-p[0],2)+pow(y-p[1],2)+pow(z-p[2],2);
+      if (squared_distance < d ){
+        d = squared_distance;
+        j = i;
+      }
+    }
+    return j;
 
   } else { // SPHERICAL
 
@@ -118,6 +170,19 @@ ReturnType computeBin( const Eigen::Quaternion<Scalar> &q )
     const Scalar angle = std::acos( q.w() );
     bin |= (ReturnType( angle * ( ANGLE_BINS / M_PI ) ) & ANGLE_MASK) << ( 2 * dim_bits );
     return bin;
+  }
+}
+template<typename Scalar, int AXIS_BINS, int ANGLE_BINS, QuaternionBinningMode mode,
+         typename ReturnType = typename detail::QuaternionBinType<AXIS_BINS, ANGLE_BINS>::BinType>
+Eigen::Matrix<Scalar,3,1> computeDirectionFromBin( const ReturnType &i ){
+  if( mode == quaternion_binning_modes::SphericalFibonacci ) {
+    int fibonacci_n = ANGLE_BINS * ANGLE_BINS;
+    Scalar phi = 2 * M_PI * ( i / detail::PHI - std::floor( i / detail::PHI ) );
+    Scalar cos_theta = 1.0 - ( 1.0 + 2.0 * i ) / fibonacci_n;
+    Scalar sin_theta = std::sqrt( std::max( 0.0, 1.0 - pow( cos_theta, 2 ) ) );
+    return { std::cos( phi ) * sin_theta, std::sin( phi ) * sin_theta, cos_theta };
+  }else{
+    std::cout<<"Not implemented"<<std::endl;
   }
 }
 } // namespace hector_math
