@@ -258,7 +258,7 @@ html_context['downloads'].append( ('epub', '/' +REPO_NAME+ '/' +current_language
 ##########################
  
 html_context['display_github'] = True
-html_context['github_user'] = 'Joschi3'
+html_context['github_user'] = 'tu-darmstadt-ros-pkg'
 html_context['github_repo'] = 'hector_math'
 html_context['github_version'] = 'master/docs/'
  
