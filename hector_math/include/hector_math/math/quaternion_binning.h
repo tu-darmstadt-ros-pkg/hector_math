@@ -182,7 +182,7 @@ Eigen::Matrix<Scalar,3,1> computeDirectionFromBin( const ReturnType &i ){
     Scalar sin_theta = std::sqrt( std::max( 0.0, 1.0 - pow( cos_theta, 2 ) ) );
     return { std::cos( phi ) * sin_theta, std::sin( phi ) * sin_theta, cos_theta };
   }else{
-    std::cout<<"Not implemented"<<std::endl;
+    return {-1.0,-1.0,-1.0};
   }
 }
 } // namespace hector_math
