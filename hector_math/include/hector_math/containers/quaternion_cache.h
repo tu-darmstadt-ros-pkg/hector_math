@@ -11,8 +11,8 @@
 namespace hector_math
 {
 
-template<typename Scalar, typename T, int AXIS_BINS = 128, int ANGLE_COUNT = 512,
-         QuaternionBinningMode MODE = quaternion_binning_modes::LargestDim>
+template<typename Scalar, typename T, QuaternionBinningMode MODE = quaternion_binning_modes::LargestDim,
+         int AXIS_BINS = 128, int ANGLE_COUNT = 512>
 class QuaternionCache
 {
   static_assert( AXIS_BINS % 2 == 0, "AXIS_BINS should be an even number!" );

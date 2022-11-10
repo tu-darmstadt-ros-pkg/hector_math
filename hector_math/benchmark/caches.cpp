@@ -40,13 +40,17 @@ static void quaternionCacheFind( benchmark::State &state )
   }
 }
 BENCHMARK_TEMPLATE( quaternionCacheInsert, float, QuaternionBinningMode::LargestDim)->Unit( benchmark::kNanosecond )->Iterations( 2000000 );
-BENCHMARK_TEMPLATE( quaternionCacheInsert, double, QuaternionBinningMode::LargestDim )->Unit( benchmark::kNanosecond )->Iterations( 2000000 );
-BENCHMARK_TEMPLATE( quaternionCacheFind, float, QuaternionBinningMode::LargestDim )->Unit( benchmark::kNanosecond )->Iterations( 2000000 );
-BENCHMARK_TEMPLATE( quaternionCacheFind, double, QuaternionBinningMode::LargestDim )->Unit( benchmark::kNanosecond )->Iterations( 2000000 );
-
+BENCHMARK_TEMPLATE( quaternionCacheInsert, float, QuaternionBinningMode::Spherical)->Unit( benchmark::kNanosecond )->Iterations( 2000000 );
 BENCHMARK_TEMPLATE( quaternionCacheInsert, float, QuaternionBinningMode::SphericalFibonacci)->Unit( benchmark::kNanosecond )->Iterations( 2000000 );
-BENCHMARK_TEMPLATE( quaternionCacheInsert, double, QuaternionBinningMode::SphericalFibonacci )->Unit( benchmark::kNanosecond )->Iterations( 2000000 );
+BENCHMARK_TEMPLATE( quaternionCacheFind, float, QuaternionBinningMode::LargestDim )->Unit( benchmark::kNanosecond )->Iterations( 2000000 );
+BENCHMARK_TEMPLATE( quaternionCacheFind, float, QuaternionBinningMode::Spherical )->Unit( benchmark::kNanosecond )->Iterations( 2000000 );
 BENCHMARK_TEMPLATE( quaternionCacheFind, float, QuaternionBinningMode::SphericalFibonacci )->Unit( benchmark::kNanosecond )->Iterations( 2000000 );
+
+BENCHMARK_TEMPLATE( quaternionCacheInsert, double, QuaternionBinningMode::LargestDim )->Unit( benchmark::kNanosecond )->Iterations( 2000000 );
+BENCHMARK_TEMPLATE( quaternionCacheInsert, double, QuaternionBinningMode::Spherical )->Unit( benchmark::kNanosecond )->Iterations( 2000000 );
+BENCHMARK_TEMPLATE( quaternionCacheInsert, double, QuaternionBinningMode::SphericalFibonacci )->Unit( benchmark::kNanosecond )->Iterations( 2000000 );
+BENCHMARK_TEMPLATE( quaternionCacheFind, double, QuaternionBinningMode::LargestDim )->Unit( benchmark::kNanosecond )->Iterations( 2000000 );
+BENCHMARK_TEMPLATE( quaternionCacheFind, double, QuaternionBinningMode::Spherical )->Unit( benchmark::kNanosecond )->Iterations( 2000000 );
 BENCHMARK_TEMPLATE( quaternionCacheFind, double, QuaternionBinningMode::SphericalFibonacci )->Unit( benchmark::kNanosecond )->Iterations( 2000000 );
 
 BENCHMARK_MAIN();
