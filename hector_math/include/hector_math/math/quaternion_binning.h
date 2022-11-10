@@ -31,14 +31,13 @@ struct QuaternionBinType {
 };
 
 const float PHI = (std::sqrt(5)+1.0)/2.0; // TODO: variable type Scalar ?
-
 template<typename Scalar>
 Scalar madfrac(Scalar a, Scalar b){
   return a*b - std::floor(a*b);
 }
 
 template <typename T>
-T clip(const T& n, const T& lower, const T& upper) {
+inline T clip(const T& n, const T& lower, const T& upper) {
   return std::max(lower, std::min(n, upper));
 }
 } // namespace detail
@@ -120,7 +119,7 @@ ReturnType computeBin( const Eigen::Quaternion<Scalar> &q )
     return bin;
 
   }else if( mode == quaternion_binning_modes::SphericalFibonacci ){
-    int fibonacci_n = ANGLE_BINS * ANGLE_BINS;;//TODO: Fibonacci_n input param
+    constexpr int fibonacci_n = ANGLE_BINS * ANGLE_BINS;;//TODO: Fibonacci_n input param
     const Scalar norm = sqrt(pow(q.x(),2)+pow(q.y(),2)+pow(q.z(),2));
     Scalar x = q.x()/norm;
     Scalar y = q.y()/norm;
@@ -133,8 +132,8 @@ ReturnType computeBin( const Eigen::Quaternion<Scalar> &q )
     Scalar f1 = std::round(fk * detail::PHI);
     Eigen::Matrix<Scalar,2,2> b;
     b <<
-    2.0 * M_PI * detail::madfrac(f0+1.0, detail::PHI-1.0)-2*M_PI*(detail::PHI-1.0),
-    2.0 * M_PI * detail::madfrac(f1+1.0, detail::PHI-1.0)-2*M_PI*(detail::PHI-1.0),
+    2.0 * M_PI * (detail::madfrac(f0+1.0, detail::PHI-1.0)-(detail::PHI-1.0)),
+    2.0 * M_PI * (detail::madfrac(f1+1.0, detail::PHI-1.0)-(detail::PHI-1.0)),
     -2.0*f0/fibonacci_n,
     -2.0*f1/fibonacci_n;
     Eigen::Matrix<Scalar,2,1> c = (b.inverse()*Eigen::Matrix<Scalar,2,1>{phi,cos_theta-(1.0-1.0/fibonacci_n)});
@@ -150,8 +149,9 @@ ReturnType computeBin( const Eigen::Quaternion<Scalar> &q )
       cos_theta = 1.0 - (2.0 * i + 1.0) / fibonacci_n;
       sin_theta = std::sqrt(1 - std::min(pow(cos_theta,2), 1.0));
 
-      Eigen::Matrix<Scalar,3,1> p {cos(phi)*sin_theta, sin(phi)*sin_theta,cos_theta};
-      Scalar squared_distance = pow(x-p[0],2)+pow(y-p[1],2)+pow(z-p[2],2);
+      Scalar squared_distance = pow(x-cos(phi)*sin_theta,2)+
+                                pow(y-sin(phi)*sin_theta,2)+
+                                pow(z-cos_theta,2);
       if (squared_distance < d ){
         d = squared_distance;
         j = i;
