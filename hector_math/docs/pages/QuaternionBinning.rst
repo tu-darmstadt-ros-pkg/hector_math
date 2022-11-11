@@ -4,7 +4,7 @@ Quaternion Binning
 
 Quaternion Binning can be used to discretize directions. This can be interpreted as discretizing the surface of a sphere.
 In general, it is impossible to discretize the sphere with `n` points such that all points are evenly
-spaced for an arbitrary 'n'. There must be a mapping between directions
+spaced for an arbitrary `n`. There must be a mapping between directions
 and unique indices to store and retrieve direction-dependent data.
 
 Hector_math implements three modes: `Spherical`, `Largest dim` and `Spherical Fibonacci`.
