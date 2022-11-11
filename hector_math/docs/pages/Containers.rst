@@ -4,33 +4,41 @@ Containers
 
 Bounded Vector
 --------------
-The bounded vector is an array like container as it has a maximum size.
-It does, however, use the same syntax as std::vector.
-As a result, if the maximum size is known, it can be used as a drop-in replacement for std::vectors.
+The bounded vector is a container structure that tries to combine the advantages of arrays and vectors.
+It can be used if the maximum size is known at compile time. It combines the efficiency of arrays with the syntax of vectors.
 
 Quaternion Cache
 ----------------
-The Quaternion Cache allows to store direction-dependent data. Therefore, the continuous space of
-possible directions is discretized.
-There are 2 different modes for discretizing the sphere surface (all possible directions lie
-on the unit sphere).
-In general, it is impossible to discretize the sphere with n points such that all points are evenly
-spaced. To store and retrieve direction-dependent data, there must be a mapping between directions
-and unique indices.
-The Quaternion cache can be used in two modes: `Spherical` and `Largest dim`.
-The Spherical mode uses polar coordinates to compute :math:`\theta` and :math:`\phi`.
+This container can be used to store direction-dependent data. To store the data efficiently, the directions are discretized.
+Hector_math implements three modes: `Spherical`, `Largest dim` and `Spherical Fibonacci`.
+The level of discretization, how many bins there, are can selected as well as the discretization mode.
+The modes have different advantages and disadvantages:
 
-.. math::
+.. list-table:: Discretization Mode Comparison
+   :widths: 15 15 15
+   :header-rows: 1
+   :align: center
 
-   x& = \cos(\phi) \sin(\theta)\\
-   y& = \sin(\phi) \sin(\theta)\\
-   z& = \cos(\theta)
+   * - Mode
+     - Speed
+     - Evenly Discretization
+   * - Spherical
+     - 🟡
+     - ❌
+   * - Largest Dimension
+     - ✅
+     - 🟡
+   * - Spherical Fibonacci
+     - ❌
+     - ✅
 
-Both angles are evenly discretized.
+It is impossible to achieve perfect evenly discretization for arbitrary many bins.
+The spherical fibonacci mode achieves the best discretization. The spherical mode
+is differently distributed near the poles and the equator while the largest dim
+mode doesn't have a reduced resolution at the poles but at the cost of overlapping
+regions with increased bin resolution.
 
-The Largest Dim Mode starts by evaluating which of the :math:`x`-, :math:`y`- or :math:`z`-component of the quaternion
-is the largest. Then it stores discretized representations of the two remaining components. Lastly,
-it discretices the :math:`w` component of the quaternion.
+For more details, see :doc:`QuaternionBinning`.
 
 API
 ---

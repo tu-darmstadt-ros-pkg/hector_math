@@ -327,7 +327,7 @@ TYPED_TEST( IteratorTest, circleTest )
 TYPED_TEST( IteratorTest, polygonTest )
 {
   using Scalar = TypeParam;
-  const bool FORCE_TEST_OUTPUT = false;
+  const bool FORCE_TEST_OUTPUT = true;
   int offset = 5;
   Polygon<Scalar> polygon = createPolygon<Scalar>( PolygonTyp::RandomStructureNegativeIndices );
   // RandomStructure case in area x: -6 bis 6 and y: -6 bis 6,
@@ -500,7 +500,8 @@ TYPED_TEST( IteratorTest, polygonTest )
   actual_map.setZero();
   // @formatter:off
   // clang-format off
-  expected_map << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  row_min = -1;
+  expected_map << 0, 0, 0, 0, 1, 1, 0, 0, 0, 0,
                   0, 0, 1, 1, 1, 1, 0, 0, 0, 0,
                   0, 0, 1, 1, 1, 1, 0, 0, 0, 0,
                   0, 0, 1, 1, 1, 1, 0, 0, 0, 0,
@@ -528,6 +529,7 @@ TYPED_TEST( IteratorTest, polygonTest )
   actual_map.setZero();
   // @formatter:off
   // clang-format off
+  row_min = 1;
   expected_map << 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                   0, 0, 0, 1, 1, 1, 0, 0, 0, 0,
                   0, 0, 0, 1, 1, 1, 0, 0, 0, 0,

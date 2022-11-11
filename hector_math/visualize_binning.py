@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 AXIS_BINS = 32
-SAMPLED_ANGLE_RESOLUTION = 0.5  # In degrees
+SAMPLED_ANGLE_RESOLUTION = 10  # In degrees
 SHOW_INPUT = False
 
 AXIS_BINS_2 = AXIS_BINS / 2
@@ -18,7 +18,7 @@ fibonacci_n = 2 ** 12
 PHI = (np.sqrt(5) + 1) / 2
 # Set the binning mode here:
 MODE = SPHERICAL_FIBONACCI
-
+names = ["Largest dimension", "Spherical", "Spherical Fibonacci"]
 
 def compute_bin(x, y, z):
     norm = np.sqrt(x ** 2 + y ** 2 + z ** 2)
@@ -132,7 +132,7 @@ def forward_sf(i):
 
 
 if __name__ == '__main__':
-    fig = plt.figure()
+    fig = plt.figure(figsize=(8, 8))  # quadratic figure
     ax = fig.add_subplot(111, projection='3d')
     input_vectors = np.array([(np.cos(phi) * np.sin(theta), np.sin(phi) * np.sin(theta), np.cos(theta))
                               for theta in np.arange(0, np.pi, SAMPLED_ANGLE_RESOLUTION * np.pi / 180)
@@ -142,4 +142,11 @@ if __name__ == '__main__':
     bins = set([bin_fn(x, y, z) for x, y, z in input_vectors])
     vectors = np.array([inv_bin_fn(x) for x in bins]) if not SHOW_INPUT else input_vectors
     ax.scatter(vectors[:, 0], vectors[:, 1], vectors[:, 2])
-    plt.show()
+
+    ax.axes.set_xlim3d(left=-1, right=1)
+    ax.axes.set_ylim3d(bottom=-1, top=1)
+    ax.axes.set_zlim3d(bottom=-1, top=1)
+    ax.view_init(elev=20, azim=270)
+    plt.title(names[MODE])
+    plt.tight_layout()
+plt.show()
