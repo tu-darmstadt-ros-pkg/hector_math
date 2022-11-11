@@ -5,7 +5,8 @@ Containers
 Bounded Vector
 --------------
 The bounded vector is a container structure that tries to combine the advantages of arrays and vectors.
-It can be used if the maximum size is known at compile time. It combines the efficiency of arrays with the syntax of vectors.
+It can be used if the maximum size is known at compile time.
+It combines the efficiency of arrays (e.g. locality) with the syntax of vectors (e.g. push_back).
 
 Quaternion Cache
 ----------------

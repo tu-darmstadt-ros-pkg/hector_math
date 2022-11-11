@@ -7,7 +7,7 @@ In general, it is impossible to discretize the sphere with `n` points such that 
 spaced for an arbitrary 'n'. There must be a mapping between directions
 and unique indices to store and retrieve direction-dependent data.
 
-Hector_math implements three modes: `Spherical`, `Largest dim` and .`Spherical Fibonacci`.
+Hector_math implements three modes: `Spherical`, `Largest dim` and `Spherical Fibonacci`.
 They differ in how evenly they discretize the sphere surface and how fast they compute the mapping from a direction to its index.
 
 .. list-table:: Discretization Mode Comparison
@@ -91,6 +91,12 @@ to compute the spherical fibonacci mapping see `Spherical Fibonacci Mapping <1_>
 
    A visualization of the spherical fibonacci mapping,
    also showing the generative spiral.
+
+API
+***
+.. doxygenenum:: hector_math::quaternion_binning_modes::QuaternionBinningMode
+
+.. doxygenfunction:: hector_math::computeBin
 
 
 

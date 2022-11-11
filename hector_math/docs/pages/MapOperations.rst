@@ -2,12 +2,27 @@
 Map Operations
 ==============
 
-Extreme values on a GridMap in a polygon can be found using these functions.
-The maximum or minimum value is returned after comparing the values of every cell in a polygon.
+These functions can be used to find extreme values which lie in a polygon on a GridMap .
+After comparing the values of each cell in a polygon, the maximum or minimum value is returned.
+Furthermore, one can look for extreme values and their indices.
+There are three different implementations available
 
-API
----
+Find Minimum
+************
 
 .. doxygenfunction:: hector_math::findMinimum
 
+Find Maximum
+************
+
 .. doxygenfunction:: hector_math::findMaximum
+
+Find Minimum and Index
+**********************
+
+.. doxygenfunction:: hector_math::findMinimumAndIndex
+
+Find Maximum and Index
+**********************
+
+.. doxygenfunction:: hector_math::findMaximumAndIndex

@@ -7,13 +7,22 @@ Shapes include spheres, cylinders, and cuboids.
 Furthermore, they can have any orientation.
 The functions find the smallest box in which the specified shape fits completely.
 
-API
----
+Sphere
+------
 
-.. doxygenfunction:: hector_math::computeBoundingBoxForSphere
+.. doxygenfunction:: hector_math::computeBoundingBoxForSphere( Scalar radius, const Isometry3<Scalar> &transform )
+
+Box
+---
 
 .. doxygenfunction:: hector_math::computeBoundingBoxForBox
 
+Cylinder
+--------
+
 .. doxygenfunction:: hector_math::computeBoundingBoxForCylinder
+
+Transform
+---------
 
 .. doxygenfunction:: hector_math::transformBoundingBox
