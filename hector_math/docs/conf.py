@@ -45,6 +45,7 @@ extensions = [
     #'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
+    'sphinxcontrib.video',
 ]
 todo_include_todos = True
 

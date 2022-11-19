@@ -41,10 +41,11 @@ The Spherical mode uses polar coordinates to compute :math:`\theta` and :math:`\
 Both angles are evenly discretized.
 The discretization can be computed medium fast however it is not evenly. There are more bins at the poles and less at the equator.
 
-.. figure:: img/spherical.svg
-   :width: 75%
-   :alt: Spherical Discretization.
-   :align: center
+
+.. video:: ../_static/animation_Spherical.mp4
+   :width: 100%
+   :autoplay:
+
 
 Largest Dim
 ***********
@@ -53,10 +54,11 @@ The Largest Dim Mode starts by evaluating which of the :math:`x`-, :math:`y`- or
 is the largest. Then it stores discretized representations of the two remaining components. Lastly,
 it discretices the :math:`w` component of the quaternion.
 
-.. figure:: img/largest_dim.svg
-   :width: 75%
-   :alt: Largest dimension Discretization.
-   :align: center
+
+.. video:: ../_static/animation_Largest_dimension.mp4
+   :width: 100%
+   :autoplay:
+
 
 
 The largest dimension mode is somewhat faster and doesn't have a reduced resolution at the poles
@@ -67,10 +69,10 @@ sphere surface than in others.
 Spherical Fibonacci
 *******************
 
-.. figure:: img/spherical_fibonacci.svg
-   :width: 75%
-   :alt: Spherical Fibonacci dimension Discretization.
-   :align: center
+.. video:: ../_static/animation_Spherical_Fibonacci.mp4
+   :width: 100%
+   :autoplay:
+
 
 Spherical Fibonacci point sets yield nearly uniform point distributions on the unit sphere.
 The forward generation of these point sets has been widely researched and is easy to implement,
