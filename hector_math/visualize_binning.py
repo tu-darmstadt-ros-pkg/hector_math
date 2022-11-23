@@ -20,6 +20,7 @@ PHI = (np.sqrt(5) + 1) / 2
 MODE = SPHERICAL_FIBONACCI
 names = ["Largest dimension", "Spherical", "Spherical Fibonacci"]
 
+
 def compute_bin(x, y, z):
     norm = np.sqrt(x ** 2 + y ** 2 + z ** 2)
     x /= norm

@@ -61,7 +61,7 @@ def show_all_failure_cases():
         modification_time = time.strftime('%d/%m/%Y %H:%M', time.localtime(os.path.getmtime(file)))
         iterated_points, real_points, corners, limits = read_from_file(file)
         draw_nice_visualisation(corners, real_points, iterated_points, limits,
-                              file[4:] + " \n changed last at " + modification_time)
+                                file[4:] + " \n changed last at " + modification_time)
     plt.show()
 
 

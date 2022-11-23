@@ -27,7 +27,8 @@ template<int AXIS_BINS, int ANGLE_BINS>
 struct QuaternionBinType {
   static constexpr int _required_bits =
       2 * computeRequiredBits( AXIS_BINS - 1 ) + computeRequiredBits( ANGLE_BINS ) + 3;
-  using BinType = typename std::conditional<_required_bits >= 8 * sizeof( int ), unsigned long, unsigned int>::type;
+  using BinType =
+      typename std::conditional<_required_bits >= 8 * sizeof( int ), unsigned long, unsigned int>::type;
 };
 } // namespace detail
 
@@ -85,26 +86,26 @@ ReturnType computeBin( const Eigen::Quaternion<Scalar> &q )
         bin |= 0b100;
       const Scalar norm = std::sqrt( x2 + y2 + z2 );
       // Since x is largest, y and z are absolute smaller than sqrt(2)/2
-      bin |= (ReturnType( q.y() * MULTIPLIER / norm + OFFSET ) & DIM_MASK) << 3;
-      bin |= (ReturnType( q.z() * MULTIPLIER / norm + OFFSET ) & DIM_MASK) << ( 3 + dim_bits );
+      bin |= ( ReturnType( q.y() * MULTIPLIER / norm + OFFSET ) & DIM_MASK ) << 3;
+      bin |= ( ReturnType( q.z() * MULTIPLIER / norm + OFFSET ) & DIM_MASK ) << ( 3 + dim_bits );
     } else if ( y2 > z2 ) {
       bin = 0b10;
       if ( q.y() < 0 )
         bin |= 0b100;
       const Scalar norm = std::sqrt( x2 + y2 + z2 );
-      bin |= (ReturnType( q.x() * MULTIPLIER / norm + OFFSET ) & DIM_MASK) << 3;
-      bin |= (ReturnType( q.z() * MULTIPLIER / norm + OFFSET ) & DIM_MASK) << ( 3 + dim_bits );
+      bin |= ( ReturnType( q.x() * MULTIPLIER / norm + OFFSET ) & DIM_MASK ) << 3;
+      bin |= ( ReturnType( q.z() * MULTIPLIER / norm + OFFSET ) & DIM_MASK ) << ( 3 + dim_bits );
     } else {
       bin = 0b11;
       if ( q.z() < 0 )
         bin |= 0b100;
       const Scalar norm = std::sqrt( x2 + y2 + z2 );
-      bin |= (ReturnType( q.y() * MULTIPLIER / norm + OFFSET ) & DIM_MASK) << 3;
-      bin |= (ReturnType( q.x() * MULTIPLIER / norm + OFFSET ) & DIM_MASK) << ( 3 + dim_bits );
+      bin |= ( ReturnType( q.y() * MULTIPLIER / norm + OFFSET ) & DIM_MASK ) << 3;
+      bin |= ( ReturnType( q.x() * MULTIPLIER / norm + OFFSET ) & DIM_MASK ) << ( 3 + dim_bits );
     }
     // Angle is 2 * acos(qw) which we move from [0, 2 * pi] to [0, ANGLE_BINS)
     const Scalar angle = std::acos( q.w() );
-    bin |= (ReturnType( angle * ( ANGLE_BINS / M_PI ) ) & ANGLE_MASK) << ( 2 * dim_bits + 3 );
+    bin |= ( ReturnType( angle * ( ANGLE_BINS / M_PI ) ) & ANGLE_MASK ) << ( 2 * dim_bits + 3 );
     return bin;
 
   } else { // SPHERICAL
@@ -113,10 +114,10 @@ ReturnType computeBin( const Eigen::Quaternion<Scalar> &q )
     Scalar theta = std::acos( q.z() / norm );
     ReturnType bin = ReturnType( theta * AXIS_BINS / M_PI ) & DIM_MASK;
     Scalar phi = std::atan2( q.y(), q.x() ) + M_PI; // Move from [-pi, pi] to [0, 2 * pi]
-    bin |= (ReturnType( phi * AXIS_BINS / ( 2 * M_PI ) ) & DIM_MASK) << dim_bits;
+    bin |= ( ReturnType( phi * AXIS_BINS / ( 2 * M_PI ) ) & DIM_MASK ) << dim_bits;
 
     const Scalar angle = std::acos( q.w() );
-    bin |= (ReturnType( angle * ( ANGLE_BINS / M_PI ) ) & ANGLE_MASK) << ( 2 * dim_bits );
+    bin |= ( ReturnType( angle * ( ANGLE_BINS / M_PI ) ) & ANGLE_MASK ) << ( 2 * dim_bits );
     return bin;
   }
 }

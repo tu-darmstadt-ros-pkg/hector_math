@@ -20,15 +20,13 @@ namespace hector_math
 template<typename Scalar>
 inline Vector3<Scalar> msgToVector( const geometry_msgs::Point &msg )
 {
-  return { static_cast<Scalar>( msg.x ), static_cast<Scalar>( msg.y ),
-           static_cast<Scalar>( msg.z ) };
+  return { static_cast<Scalar>( msg.x ), static_cast<Scalar>( msg.y ), static_cast<Scalar>( msg.z ) };
 }
 
 template<typename Scalar>
 inline Vector3<Scalar> msgToVector( const geometry_msgs::Vector3 &msg )
 {
-  return { static_cast<Scalar>( msg.x ), static_cast<Scalar>( msg.y ),
-           static_cast<Scalar>( msg.z ) };
+  return { static_cast<Scalar>( msg.x ), static_cast<Scalar>( msg.y ), static_cast<Scalar>( msg.z ) };
 }
 
 template<typename Scalar>
@@ -120,8 +118,8 @@ template<typename Scalar>
 inline geometry_msgs::Pose poseToPoseMsg( const Pose<Scalar> &pose )
 {
   geometry_msgs::Pose msg;
-  msg.position = vectorToPointMsg( pose.translation());
-  msg.orientation = quaternionToMsg( pose.orientation());
+  msg.position = vectorToPointMsg( pose.translation() );
+  msg.orientation = quaternionToMsg( pose.orientation() );
   return msg;
 }
 
@@ -129,8 +127,8 @@ template<typename Scalar>
 inline geometry_msgs::Transform poseToTransformMsg( const Pose<Scalar> &pose )
 {
   geometry_msgs::Transform msg;
-  msg.translation = vectorToVectorMsg( pose.translation());
-  msg.rotation = quaternionToMsg( pose.orientation());
+  msg.translation = vectorToVectorMsg( pose.translation() );
+  msg.rotation = quaternionToMsg( pose.orientation() );
   return msg;
 }
 } // namespace hector_math

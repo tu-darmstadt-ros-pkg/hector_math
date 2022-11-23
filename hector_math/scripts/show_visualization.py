@@ -54,7 +54,7 @@ def inverse_bin(val):
     offset = AXIS_BINS_2
     a = (((val >> 3) & (2 ** DIM_BITS - 1)) - offset) / multiplier
     b = (((val >> (3 + DIM_BITS)) & (2 ** DIM_BITS - 1)) - offset) / multiplier
-    c = np.sqrt(1 - a**2 - b**2)
+    c = np.sqrt(1 - a ** 2 - b ** 2)
     if (val & 0b100) == 0b100:
         c = -c
     if (val & 0b11) == 0b01:

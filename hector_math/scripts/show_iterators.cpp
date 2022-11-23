@@ -2,8 +2,8 @@
 // Created by stefan on 20.08.21.
 //
 
-#include "hector_math/iterators/polygon_iterator.h"
 #include "../benchmark/iterators_input.h"
+#include "hector_math/iterators/polygon_iterator.h"
 #include <fstream>
 #include <iostream>
 
