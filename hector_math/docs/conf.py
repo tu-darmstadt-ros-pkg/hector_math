@@ -13,22 +13,23 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
+
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
 from subprocess import call
 
-call('doxygen')
+call("doxygen")
 # -- Project information -----------------------------------------------------
 
-project = 'hector_math'
-copyright = '2019-2021, Stefan Fabian'
-author = 'Stefan Fabian'
+project = "hector_math"
+copyright = "2019-2021, Stefan Fabian"
+author = "Stefan Fabian"
 
 # The short X.Y version
-version = ''
+version = ""
 # The full version, including alpha/beta/rc tags
-release = '1.0.0'
+release = "1.0.0"
 
 # -- General configuration ---------------------------------------------------
 
@@ -41,11 +42,11 @@ release = '1.0.0'
 # ones.
 extensions = [
     "breathe",
-    'sphinx_rtd_theme',
+    "sphinx_rtd_theme",
     # 'sphinx.ext.autodoc',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages',
-    'sphinxcontrib.video',
+    "sphinx.ext.viewcode",
+    "sphinx.ext.githubpages",
+    "sphinxcontrib.video",
 ]
 todo_include_todos = True
 
@@ -58,13 +59,13 @@ breathe_default_project = "project"
 add_module_names = False
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
-master_doc = 'index'
+master_doc = "index"
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -72,7 +73,7 @@ master_doc = 'index'
 # a list of builtin themes.
 #
 # html_theme = 'alabaster'
-html_theme = 'sphinx_rtd_theme'
+html_theme = "sphinx_rtd_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -83,7 +84,7 @@ html_theme = 'sphinx_rtd_theme'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
@@ -99,7 +100,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'hector_mathdoc'
+htmlhelp_basename = "hector_mathdoc"
 
 # -- Options for LaTeX output ------------------------------------------------
 
@@ -107,15 +108,12 @@ latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     #
     # 'papersize': 'letterpaper',
-
     # The font size ('10pt', '11pt' or '12pt').
     #
     # 'pointsize': '10pt',
-
     # Additional stuff for the LaTeX preamble.
     #
     # 'preamble': '',
-
     # Latex figure (float) alignment
     #
     # 'figure_align': 'htbp',
@@ -125,18 +123,20 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'hector_math.tex', 'hector_math Documentation',
-     'Michael Altfield', 'manual'),
+    (
+        master_doc,
+        "hector_math.tex",
+        "hector_math Documentation",
+        "Michael Altfield",
+        "manual",
+    ),
 ]
 
 # -- Options for manual page output ------------------------------------------
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    (master_doc, 'helloworld', 'hector_math Documentation',
-     [author], 1)
-]
+man_pages = [(master_doc, "helloworld", "hector_math Documentation", [author], 1)]
 
 # -- Options for Texinfo output ----------------------------------------------
 
@@ -144,9 +144,15 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'hector_math', 'hector_math Documentation',
-     author, 'hector_math', 'One line description of project.',
-     'Miscellaneous'),
+    (
+        master_doc,
+        "hector_math",
+        "hector_math Documentation",
+        author,
+        "hector_math",
+        "One line description of project.",
+        "Miscellaneous",
+    ),
 ]
 
 # -- Options for Epub output -------------------------------------------------
@@ -164,14 +170,14 @@ epub_title = project
 # epub_uid = ''
 
 # A list of files that should not be packed into the epub file.
-epub_exclude_files = ['search.html']
+epub_exclude_files = ["search.html"]
 
 # -- Extension configuration -------------------------------------------------
 
 # add sourcecode to path
 import sys, os
 
-sys.path.insert(0, os.path.abspath('../src'))
+sys.path.insert(0, os.path.abspath("../src"))
 
 ############################
 # SETUP THE RTD LOWER-LEFT #
@@ -180,33 +186,33 @@ try:
     html_context
 except NameError:
     html_context = dict()
-html_context['display_lower_left'] = True
+html_context["display_lower_left"] = True
 
-if 'REPO_NAME' in os.environ:
-    REPO_NAME = os.environ['REPO_NAME']
+if "REPO_NAME" in os.environ:
+    REPO_NAME = os.environ["REPO_NAME"]
 else:
-    REPO_NAME = ''
+    REPO_NAME = ""
 
 # SET CURRENT_LANGUAGE
-if 'current_language' in os.environ:
+if "current_language" in os.environ:
     # get the current_language env var set by buildDocs.sh
-    current_language = os.environ['current_language']
+    current_language = os.environ["current_language"]
 else:
     # the user is probably doing `make html`
     # set this build's current language to english
-    current_language = 'en'
+    current_language = "en"
 
 # tell the theme which language to we're currently building
-html_context['current_language'] = current_language
+html_context["current_language"] = current_language
 
 # SET CURRENT_VERSION
 from git import Repo
 
 repo = Repo(search_parent_directories=True)
 
-if 'current_version' in os.environ:
+if "current_version" in os.environ:
     # get the current_version env var set by buildDocs.sh
-    current_version = os.environ['current_version']
+    current_version = os.environ["current_version"]
 else:
     # the user is probably doing `make html`
     # set this build's current version by looking at the branch
@@ -214,49 +220,85 @@ else:
 
 # tell the theme which version we're currently on ('current_version' affects
 # the lower-left rtd menu and 'version' affects the logo-area version)
-html_context['current_version'] = current_version
-html_context['version'] = current_version
+html_context["current_version"] = current_version
+html_context["version"] = current_version
 
 # POPULATE LINKS TO OTHER LANGUAGES
-html_context['languages'] = [('en', '/' + REPO_NAME + '/en/' + current_version + '/')]
+html_context["languages"] = [("en", "/" + REPO_NAME + "/en/" + current_version + "/")]
 
 # languages = [lang.name for lang in os.scandir('locales') if lang.is_dir()]
 # for lang in languages:
 #   html_context['languages'].append( (lang, '/' +REPO_NAME+ '/' +lang+ '/' +current_version+ '/') )
 
 # POPULATE LINKS TO OTHER VERSIONS
-html_context['versions'] = list()
+html_context["versions"] = list()
 
 versions = [branch.name for branch in repo.branches]
 for version in versions:
-    html_context['versions'].append((version, '/' + REPO_NAME + '/' + current_language + '/' + version + '/'))
+    html_context["versions"].append(
+        (version, "/" + REPO_NAME + "/" + current_language + "/" + version + "/")
+    )
 
 # POPULATE LINKS TO OTHER FORMATS/DOWNLOADS
 
 # settings for creating PDF with rinoh
-rinoh_documents = [(
-    master_doc,
-    'target',
-    project + ' Documentation',
-    '© ' + copyright,
-)]
+rinoh_documents = [
+    (
+        master_doc,
+        "target",
+        project + " Documentation",
+        "© " + copyright,
+    )
+]
 today_fmt = "%B %d, %Y"
 
 # settings for EPUB
-epub_basename = 'target'
+epub_basename = "target"
 
-html_context['downloads'] = list()
-html_context['downloads'].append(('pdf',
-                                  '/' + REPO_NAME + '/' + current_language + '/' + current_version + '/' + project + '-docs_' + current_language + '_' + current_version + '.pdf'))
+html_context["downloads"] = list()
+html_context["downloads"].append(
+    (
+        "pdf",
+        "/"
+        + REPO_NAME
+        + "/"
+        + current_language
+        + "/"
+        + current_version
+        + "/"
+        + project
+        + "-docs_"
+        + current_language
+        + "_"
+        + current_version
+        + ".pdf",
+    )
+)
 
-html_context['downloads'].append(('epub',
-                                  '/' + REPO_NAME + '/' + current_language + '/' + current_version + '/' + project + '-docs_' + current_language + '_' + current_version + '.epub'))
+html_context["downloads"].append(
+    (
+        "epub",
+        "/"
+        + REPO_NAME
+        + "/"
+        + current_language
+        + "/"
+        + current_version
+        + "/"
+        + project
+        + "-docs_"
+        + current_language
+        + "_"
+        + current_version
+        + ".epub",
+    )
+)
 
 ##########################
 # "EDIT ON GITHUB" LINKS #
 ##########################
 
-html_context['display_github'] = True
-html_context['github_user'] = 'tu-darmstadt-ros-pkg'
-html_context['github_repo'] = 'hector_math'
-html_context['github_version'] = 'master/docs/'
+html_context["display_github"] = True
+html_context["github_user"] = "tu-darmstadt-ros-pkg"
+html_context["github_repo"] = "hector_math"
+html_context["github_version"] = "master/docs/"
