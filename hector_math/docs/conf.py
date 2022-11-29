@@ -43,10 +43,8 @@ release = "1.0.0"
 extensions = [
     "breathe",
     "sphinx_rtd_theme",
-    # 'sphinx.ext.autodoc',
     "sphinx.ext.viewcode",
     "sphinx.ext.githubpages",
-    "sphinxcontrib.video",
 ]
 todo_include_todos = True
 

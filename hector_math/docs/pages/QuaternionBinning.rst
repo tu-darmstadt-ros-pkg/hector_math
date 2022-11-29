@@ -42,9 +42,19 @@ Both angles are evenly discretized.
 The discretization can be computed medium fast however it is not evenly. There are more bins at the poles and less at the equator.
 
 
-.. video:: ../_static/animation_Spherical.mp4
-   :width: 100%
-   :autoplay:
+.. raw:: html
+
+    <style type="text/css">
+        div.center {
+          text-align: center;
+        }
+    </style>
+    <div class="center">
+        <video width="80%" controls loop autoplay>
+             <source src="../_static/animation_Spherical.mp4" type="video/mp4">
+             Your browser does not support the video tag.
+        </video>
+    </div>
 
 
 Largest Dim
@@ -55,10 +65,14 @@ is the largest. Then it stores discretized representations of the two remaining 
 it discretices the :math:`w` component of the quaternion.
 
 
-.. video:: ../_static/animation_Largest_dimension.mp4
-   :width: 100%
-   :autoplay:
+.. raw:: html
 
+    <div class="center">
+        <video width="80%" controls loop autoplay>
+         <source src="../_static/animation_Largest_dimension.mp4" type="video/mp4">
+         Your browser does not support the video tag.
+        </video>
+    </div>
 
 
 The largest dimension mode is somewhat faster and doesn't have a reduced resolution at the poles
@@ -69,9 +83,15 @@ sphere surface than in others.
 Spherical Fibonacci
 *******************
 
-.. video:: ../_static/animation_Spherical_Fibonacci.mp4
-   :width: 100%
-   :autoplay:
+.. raw:: html
+
+    <div class="center">
+        <video width="80%" controls loop autoplay>
+         <source src="../_static/animation_Spherical_Fibonacci.mp4" type="video/mp4">
+         Your browser does not support the video tag.
+        </video>
+    </div>
+
 
 
 Spherical Fibonacci point sets yield nearly uniform point distributions on the unit sphere.
