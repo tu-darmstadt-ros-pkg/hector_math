@@ -64,12 +64,12 @@ for current_version in ${versions}; do
       # HTML #
    sphinx-build -b html docs/ docs/_build/html/${current_language}/${current_version} -D language="${current_language}"
 
-    # PDF #
-   echo "Start pdf build"
-   sphinx-build -b rinoh docs/ docs/_build/rinoh -D language="${current_language}"
-   mkdir -p "${docroot}/${current_language}/${current_version}"
-   cp "docs/_build/rinoh/target.pdf" "${docroot}/${current_language}/${current_version}/hector_math-docs_${current_language}_${current_version}.pdf"
-   echo "End pdf build"
+    # PDF # Not working somehow rinoh fails due to @endverbatim and @see tags
+   #echo "Start pdf build" 
+   #sphinx-build -b rinoh docs/ docs/_build/rinoh -D language="${current_language}"
+   #mkdir -p "${docroot}/${current_language}/${current_version}"
+   #cp "docs/_build/rinoh/target.pdf" "${docroot}/${current_language}/${current_version}/hector_math-docs_${current_language}_${current_version}.pdf"
+   #echo "End pdf build"
 
 
     # EPUB #
@@ -91,8 +91,8 @@ git checkout master
  
 git config --global user.name "${GITHUB_ACTOR}"
 git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
- 
-pushd "${docroot}"
+
+pushd "${docroot}" || exit 1
  
 # don't bother maintaining history; just generate fresh
 git init
@@ -141,7 +141,7 @@ git commit -am "${msg}"
 # overwrite the contents of the gh-pages branch on our github.com repo
 git push deploy gh-pages --force
  
-popd # return to master repo sandbox root
+popd || exit 1 # return to master repo sandbox root
  
 # exit cleanly
 exit 0

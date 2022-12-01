@@ -125,7 +125,7 @@ latex_documents = [
         master_doc,
         "hector_math.tex",
         "hector_math Documentation",
-        "Michael Altfield",
+        "Stefan Fabian",
         "manual",
     ),
 ]
@@ -254,24 +254,24 @@ today_fmt = "%B %d, %Y"
 epub_basename = "target"
 
 html_context["downloads"] = list()
-html_context["downloads"].append(
-    (
-        "pdf",
-        "/"
-        + REPO_NAME
-        + "/"
-        + current_language
-        + "/"
-        + current_version
-        + "/"
-        + project
-        + "-docs_"
-        + current_language
-        + "_"
-        + current_version
-        + ".pdf",
-    )
-)
+# html_context["downloads"].append(
+#     (
+#         "pdf",
+#         "/"
+#         + REPO_NAME
+#         + "/"
+#         + current_language
+#         + "/"
+#         + current_version
+#         + "/"
+#         + project
+#         + "-docs_"
+#         + current_language
+#         + "_"
+#         + current_version
+#         + ".pdf",
+#     )
+# )
 
 html_context["downloads"].append(
     (
