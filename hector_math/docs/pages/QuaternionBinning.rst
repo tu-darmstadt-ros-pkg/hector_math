@@ -50,7 +50,7 @@ The discretization can be computed medium fast however it is not evenly. There a
         }
     </style>
     <div class="center">
-        <video width="80%" controls loop autoplay>
+        <video width="80%" loop autoplay>
              <source src="../_static/animation_Spherical.mp4" type="video/mp4">
              Your browser does not support the video tag.
         </video>
@@ -68,7 +68,7 @@ it discretices the :math:`w` component of the quaternion.
 .. raw:: html
 
     <div class="center">
-        <video width="80%" controls loop autoplay>
+        <video width="80%" loop autoplay>
          <source src="../_static/animation_Largest_dimension.mp4" type="video/mp4">
          Your browser does not support the video tag.
         </video>
@@ -86,7 +86,7 @@ Spherical Fibonacci
 .. raw:: html
 
     <div class="center">
-        <video width="80%" controls loop autoplay>
+        <video width="80%" loop autoplay>
          <source src="../_static/animation_Spherical_Fibonacci.mp4" type="video/mp4">
          Your browser does not support the video tag.
         </video>
