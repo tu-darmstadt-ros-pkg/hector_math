@@ -98,6 +98,8 @@ public:
     return center_of_mass_;
   }
 
+  virtual const Scalar &mass() const = 0;
+
   const Eigen::AlignedBox<Scalar, 3> &axisAlignedBoundingBox() const
   {
     if ( axis_aligned_bounding_box_valid_ )

@@ -156,12 +156,14 @@ Vector3<Scalar> dimsFromGeometry( const urdf::Geometry *geometry )
 
 template<typename Scalar>
 typename UrdfRobotModel<Scalar>::LinkTree
-UrdfRobotModel<Scalar>::buildLinkTree( const urdf::LinkSharedPtr &root )
+UrdfRobotModel<Scalar>::buildLinkTree( const urdf::LinkSharedPtr &root, Scalar &mass )
 {
   LinkTree result;
   result.inertial_mass = root->inertial != nullptr ? root->inertial->mass : 0;
-  if ( result.inertial_mass > 0 )
+  if ( result.inertial_mass > 0 ) {
     result.inertial_origin = urdfToEigenVector<Scalar>( root->inertial->origin.position );
+    mass += result.inertial_mass;
+  }
 
   // Collision information
   auto collision_array = root->collision_array.empty()
@@ -215,7 +217,7 @@ UrdfRobotModel<Scalar>::buildLinkTree( const urdf::LinkSharedPtr &root )
                                                                : joint->mimic->multiplier;
       child.mimic_offset = mimic ? joint->mimic->offset : 0;
       child.is_mimic = mimic;
-      child.child_link = buildLinkTree( link );
+      child.child_link = buildLinkTree( link, mass_ );
       result.children.push_back( child );
       break;
     }

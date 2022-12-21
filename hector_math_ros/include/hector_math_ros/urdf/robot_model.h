@@ -33,7 +33,8 @@ public:
                            std::unordered_map<std::string, Scalar> joint_states = {} )
       : RobotModel<Scalar>( joint_states ), model_( std::move( model ) )
   {
-    link_tree_ = buildLinkTree( model_.root_link_ );
+    mass_ = 0;
+    link_tree_ = buildLinkTree( model_.root_link_, mass_ );
   }
 
   /*!
@@ -47,8 +48,10 @@ public:
                            std::vector<Scalar> joint_positions = {} )
       : RobotModel<Scalar>( joint_names, joint_positions ), model_( std::move( model ) )
   {
-    link_tree_ = buildLinkTree( model_.root_link_ );
+    mass_ = 0;
+    link_tree_ = buildLinkTree( model_.root_link_, mass_ );
   }
+  const Scalar &mass() const final { return mass_; }
 
   const urdf::Model &urdfModel() const { return model_; }
 
@@ -126,11 +129,12 @@ protected:
   Scalar computeWeightedCenterOfMass( const LinkTree &root, const Isometry3<Scalar> &transform,
                                       Vector3<Scalar> &com ) const;
 
-  LinkTree buildLinkTree( const urdf::LinkSharedPtr &root );
+  LinkTree buildLinkTree( const urdf::LinkSharedPtr &root, Scalar &mass );
 
   urdf::Model model_;
   LinkTree link_tree_;
   UrdfRobotModelSettings settings_;
+  Scalar mass_;
 #if __cplusplus < 201703L
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
