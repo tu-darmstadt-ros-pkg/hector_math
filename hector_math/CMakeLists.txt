@@ -84,6 +84,7 @@ if (CATKIN_ENABLE_TESTING)
   find_package(roscpp REQUIRED)
   find_package(rostest REQUIRED)
   find_package(roslib REQUIRED) # Provides ros::package
+  set(TEST_LIBRARIES ${PROJECT_NAME} ${catkin_LIBRARIES} ${roscpp_LIBRARIES} ${roslib_LIBRARIES})
 
   include_directories(
           ${eigen_checks_INCLUDE_DIRS}
@@ -94,26 +95,26 @@ if (CATKIN_ENABLE_TESTING)
           ${rostest_INCLUDE_DIRS}
   )
   ## Add gtest based cpp test target and link libraries
-  catkin_add_gtest(test_hector_iterators test/test_hector_iterators.cpp)
-  target_link_libraries(test_hector_iterators ${PROJECT_NAME} ${catkin_LIBRARIES} ${roscpp_LIBRARIES} ${roslib_LIBRARIES})
-
   catkin_add_gtest(test_bounded_vector test/test_bounded_vector.cpp)
-  target_link_libraries(test_bounded_vector ${PROJECT_NAME} ${catkin_LIBRARIES} ${roscpp_LIBRARIES} ${roslib_LIBRARIES})
-
-  catkin_add_gtest(test_hector_map_operations test/test_hector_map_operations.cpp)
-  target_link_libraries(test_hector_map_operations ${PROJECT_NAME} ${catkin_LIBRARIES} ${roscpp_LIBRARIES} ${roslib_LIBRARIES})
+  target_link_libraries(test_bounded_vector ${TEST_LIBRARIES})
 
   catkin_add_gtest(test_bounding_box test/test_bounding_box.cpp)
-  target_link_libraries(test_bounding_box ${PROJECT_NAME} ${catkin_LIBRARIES} ${roscpp_LIBRARIES} ${roslib_LIBRARIES})
+  target_link_libraries(test_bounding_box ${TEST_LIBRARIES})
 
   catkin_add_gtest(test_eigen_helper test/test_eigen_helper.cpp)
-  target_link_libraries(test_eigen_helper ${PROJECT_NAME} ${catkin_LIBRARIES} ${roscpp_LIBRARIES} ${roslib_LIBRARIES})
+  target_link_libraries(test_eigen_helper ${TEST_LIBRARIES})
+
+  catkin_add_gtest(test_hector_iterators test/test_hector_iterators.cpp)
+  target_link_libraries(test_hector_iterators ${TEST_LIBRARIES})
+
+  catkin_add_gtest(test_hector_map_operations test/test_hector_map_operations.cpp)
+  target_link_libraries(test_hector_map_operations ${TEST_LIBRARIES})
 
   catkin_add_gtest(test_pose test/test_pose.cpp)
-  target_link_libraries(test_pose ${PROJECT_NAME})
+  target_link_libraries(test_pose ${TEST_LIBRARIES})
 
   catkin_add_gtest(test_quaternion_binning test/test_quaternion_binning.cpp)
-  target_link_libraries(test_quaternion_binning ${PROJECT_NAME})
+  target_link_libraries(test_quaternion_binning ${TEST_LIBRARIES})
 endif ()
 
 # to run: catkin build --this --no-deps -DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug -v --catkin-make-args hector_math_coverage
