@@ -8,5 +8,6 @@
 #include "hector_math/types/eigen.h"
 #include "hector_math/types/pose2d.h"
 #include "hector_math/types/pose.h"
+#include "hector_math/types/twist.h"
 
 #endif // HECTOR_MATH_TYPES_H
