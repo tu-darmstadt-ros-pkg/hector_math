@@ -14,7 +14,7 @@ template<typename Scalar>
 class Twist
 {
 public:
-  explicit Twist( const Vector3<Scalar> &linear,
+  explicit Twist( const Vector3<Scalar> &linear = Vector3<Scalar>::Zero(),
                   const Vector3<Scalar> &angular = Vector3<Scalar>::Zero() )
       : linear_( linear ), angular_( angular )
   {
