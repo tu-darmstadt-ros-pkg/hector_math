@@ -124,7 +124,7 @@ public:
 
   Eigen::Matrix<Scalar, 3, 3> rotation() const { return orientation_.toRotationMatrix(); }
 
-  Pose2D<Scalar> toPose2D()
+  Pose2D<Scalar> toPose2D() const
   {
     Eigen::Quaternion<Scalar> yaw( orientation_ );
     yaw.x() = 0;
@@ -137,7 +137,7 @@ public:
 
   void normalize() { orientation_.normalize(); }
 
-  Pose<Scalar> normalized()
+  Pose<Scalar> normalized() const
   {
     Pose<Scalar> result = *this;
     result.normalize();
@@ -169,7 +169,7 @@ public:
 
   Pose<Scalar> &operator*=( const Pose<Scalar> &rh ) { return *this = *this * rh; }
 
-  Pose<Scalar> operator*( const Pose<Scalar> &rh )
+  Pose<Scalar> operator*( const Pose<Scalar> &rh ) const
   {
     Pose<Scalar> result;
     result.orientation_ = orientation_ * rh.orientation_;
@@ -182,14 +182,14 @@ public:
     return translate( translation.vector() );
   }
 
-  Pose<Scalar> operator*( const Eigen::Translation<Scalar, 3> &translation )
+  Pose<Scalar> operator*( const Eigen::Translation<Scalar, 3> &translation ) const
   {
     Pose<Scalar> result = *this;
     result.translate( translation.vector() );
     return result;
   }
 
-  Vector3<Scalar> operator*( const Vector3<Scalar> &rh )
+  Vector3<Scalar> operator*( const Vector3<Scalar> &rh ) const
   {
     return translation_ + orientation_ * rh;
   }
@@ -201,7 +201,7 @@ public:
   }
 
   template<typename Derived>
-  Pose<Scalar> operator*( const Eigen::RotationBase<Derived, 3> &rotation )
+  Pose<Scalar> operator*( const Eigen::RotationBase<Derived, 3> &rotation ) const
   {
     Pose<Scalar> result = *this;
     result.rotate( rotation.derived() );
@@ -209,7 +209,7 @@ public:
   }
 
   template<int N>
-  Eigen::Matrix<Scalar, 3, N> operator*( const Eigen::Matrix<Scalar, 3, N> &rh )
+  Eigen::Matrix<Scalar, 3, N> operator*( const Eigen::Matrix<Scalar, 3, N> &rh ) const
   {
     return ( orientation_.toRotationMatrix() * rh ).colwise() + translation_;
   }
