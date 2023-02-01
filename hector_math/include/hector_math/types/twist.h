@@ -20,6 +20,10 @@ public:
   {
   }
 
+  static Twist<Scalar> Zero() {
+    return Twist<Scalar>();
+  }
+
   const Vector3<Scalar> &linear() const { return linear_; }
   Vector3<Scalar> &linear() { return linear_; }
 
