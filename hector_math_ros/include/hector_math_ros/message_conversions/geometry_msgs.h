@@ -100,9 +100,7 @@ Isometry3<Scalar> hector_math::msgToTransform( const geometry_msgs::Transform &m
 template<typename Scalar>
 Twist<Scalar> msgToTwist( const geometry_msgs::Twist &msg )
 {
-  const Vector3<Scalar> &linear = msgToVector<Scalar>( msg.linear );
-  const Vector3<Scalar> &angular = msgToVector<Scalar>( msg.angular );
-  return { linear, angular };
+  return Twist<Scalar>{ msgToVector<Scalar>( msg.linear ), msgToVector<Scalar>( msg.angular ) };
 }
 
 template<typename Scalar>

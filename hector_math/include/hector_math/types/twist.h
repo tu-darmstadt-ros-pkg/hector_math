@@ -33,6 +33,8 @@ public:
 private:
   Vector3<Scalar> linear_;
   Vector3<Scalar> angular_;
+
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 } // namespace hector_math
 
