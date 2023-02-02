@@ -16,12 +16,17 @@ namespace hector_math
  * @return val if it is within min and max, min if val is smaller or equal to min, max if val is larger or equal to max.
  */
 template<typename T>
-T clamp( const T &val, const T &min, const T &max )
+constexpr T clamp( const T &val, const T &min, const T &max )
 {
-  if ( val < min )
-    return min;
-  return val > max ? max : val;
+  return val < min ? min : val > max ? max : val;
 }
+
+template<typename T>
+constexpr T square( const T &x )
+{
+  return x * x;
+}
+
 } // namespace hector_math
 
 #endif // HECTOR_MATH_OPERATIONS_H
