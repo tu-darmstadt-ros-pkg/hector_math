@@ -115,6 +115,9 @@ if (CATKIN_ENABLE_TESTING)
 
   catkin_add_gtest(test_quaternion_binning test/test_quaternion_binning.cpp)
   target_link_libraries(test_quaternion_binning ${TEST_LIBRARIES})
+
+  catkin_add_gtest(test_ring_buffer test/test_ring_buffer.cpp)
+  target_link_libraries(test_ring_buffer ${TEST_LIBRARIES})
 endif ()
 
 # to run: catkin build --this --no-deps -DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug -v --catkin-make-args hector_math_coverage
