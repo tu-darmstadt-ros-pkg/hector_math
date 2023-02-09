@@ -5,6 +5,8 @@
 #ifndef HECTOR_MATH_OPERATIONS_H
 #define HECTOR_MATH_OPERATIONS_H
 
+#include <cmath>
+
 namespace hector_math
 {
 
@@ -25,6 +27,20 @@ template<typename T>
 constexpr T square( const T &x )
 {
   return x * x;
+}
+
+/*!
+ * Ensures the result value will be finite.
+ * @return value if value is finite, otherwise the provided finite_value.
+ */
+template<typename T>
+constexpr T ensureFinite( const T &value, const T &finite_value )
+{
+#if __cplusplus >= 201402L
+  assert( std::isfinite( finite_value ) &&
+          "The finite_value passed to ensureFinite should be finite!" );
+#endif
+  return std::isfinite( value ) ? value : finite_value;
 }
 
 } // namespace hector_math
