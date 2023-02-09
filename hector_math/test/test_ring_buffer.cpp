@@ -20,7 +20,7 @@ TYPED_TEST_CASE( RingBufferTest, Implementations );
 TYPED_TEST( RingBufferTest, basic ) {
   using Scalar = TypeParam;
   constexpr size_t max_size = 50;
-  RingBuffer<Scalar,max_size+1> ringBuffer;
+  RingBuffer<Scalar,max_size> ringBuffer;
   ASSERT_FALSE(ringBuffer.full());
   ASSERT_TRUE(ringBuffer.empty());
   ringBuffer.push_back(Scalar(0));
@@ -52,7 +52,7 @@ TYPED_TEST( RingBufferTest, basic ) {
 TYPED_TEST(RingBufferTest, iterators){
   using Scalar = TypeParam;
   constexpr size_t max_size = 50;
-  RingBuffer<Scalar,max_size+1> ringBuffer;
+  RingBuffer<Scalar,max_size> ringBuffer;
   // FILL RING BUFFER PARTIAL
   for(int i=0; i<25;i++){
     ringBuffer.push_back(i);
@@ -96,7 +96,7 @@ TYPED_TEST( RingBufferTest, const_iterator )
 {
   using Scalar = TypeParam;
   constexpr size_t max_size = 50;
-  RingBuffer<Scalar,max_size+1> ringBuffer;
+  RingBuffer<Scalar,max_size> ringBuffer;
   // FILL RING BUFFER PARTIAL
   for(int i=0; i<25;i++){
     ringBuffer.push_back(i);
@@ -118,7 +118,7 @@ TYPED_TEST( RingBufferTest, front_back )
 {
   using Scalar = TypeParam;
   constexpr size_t max_size = 50;
-  RingBuffer<Scalar, max_size + 1> ringBuffer;
+  RingBuffer<Scalar, max_size > ringBuffer;
   // FILL RING BUFFER PARTIAL
   for(int i=0; i<25;i++){
     ringBuffer.push_back(i);
@@ -131,7 +131,7 @@ TYPED_TEST( RingBufferTest, read_front )
 {
   using Scalar = TypeParam;
   constexpr size_t max_size = 50;
-  RingBuffer<Scalar, max_size + 1> ringBuffer;
+  RingBuffer<Scalar, max_size> ringBuffer;
   // FILL RING BUFFER PARTIAL
   for ( int i = 0; i < 25; i++ ) { ringBuffer.push_back( i ); }
   // READ ELEMENTS

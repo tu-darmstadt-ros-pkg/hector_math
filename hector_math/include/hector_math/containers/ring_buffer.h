@@ -7,7 +7,7 @@
 
 #include <array>
 #include <assert.h>
-#include<type_traits>
+#include <type_traits>
 
 namespace hector_math
 {
@@ -26,7 +26,8 @@ public:
     using reference = T &;
     using const_reference = T const &;
 
-    ring_iterator( std::array<T, MaxSize> *items, size_t index ) : items_( items ), index_( index )
+    ring_iterator( std::array<T, MaxSize+1> *items, size_t index ) : items_( items ),
+                                                                                index_( index )
     {
     }
 
@@ -53,14 +54,16 @@ public:
 
     ring_iterator<C> &operator++()
     {
-      index_ = ++index_ % MaxSize;
+      index_ = ++index_ % items_->size();
+      counter_++;
       return *this;
     }
 
     const ring_iterator<C> operator++( int )
     {
       auto tmp = *this;
-      index_ = ++index_ % MaxSize;
+      index_ = ++index_ % items_->size();
+      counter_++;
       return tmp;
     }
     size_t index() { return index_; }
@@ -74,9 +77,11 @@ public:
     };
 
   private:
-    std::array<T, MaxSize> *items_; // array ?
+    std::array<T, MaxSize+1> *items_;
     size_t index_;
+    size_t counter_=0;
   };
+
 
   using iterator = ring_iterator<false>;
   using const_iterator = ring_iterator<true>;
@@ -147,7 +152,7 @@ public:
 
   // const T &operator[]( size_t index ) const { return items_[index]; }
 
-  bool full() { return size_ == MaxSize - 1; }
+  bool full() { return size_ == items_.size() - 1; }
 
   bool empty() { return size_ == 0; }
 
@@ -155,21 +160,21 @@ private:
   void added_element_head_adapt_indices()
   {
     if ( full() ) {
-      tail_index = ++tail_index % MaxSize;
+      tail_index = ++tail_index % items_.size();
       ; // overwrite oldest element
     } else {
       size_++;
     }
-    head_index = ++head_index % MaxSize;
+    head_index = ++head_index % items_.size();
   }
 
   void removed_element_tail_adapt_indices()
   {
-    tail_index = ++tail_index % MaxSize;
+    tail_index = ++tail_index % items_.size();
     size_--;
   }
 
-  std::array<T, MaxSize> items_;
+  std::array<T, MaxSize+1> items_;
   size_t size_ = 0;
   size_t head_index = 0;
   size_t tail_index = 0;
