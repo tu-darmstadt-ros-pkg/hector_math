@@ -93,7 +93,7 @@ public:
   // push and pop
   void push_back( T val )
   {
-    items_[head_index] = val;
+    items_[head_index_] = val;
     added_element_head_adapt_indices();
   }
 
@@ -107,9 +107,9 @@ public:
 
   T read_and_pop_front()
   {
-    if ( size_ < 0 )
+    if ( size_ <= 0 )
       throw std::length_error( "RingBuffer is empty!" );
-    T tmp = std::move( items_[tail_index] );
+    T tmp = std::move( items_[get_tail_index()] );
     pop_front();
     return tmp;
   }
@@ -117,35 +117,34 @@ public:
   template<typename... Args>
   void emplace_back( Args... args )
   {
-    items_[head_index] = T( args... );
+    items_[head_index_] = T( args... );
     added_element_head_adapt_indices();
   }
 
   // begin "points" to the oldest element in ringbuffer
-  iterator begin() noexcept { return iterator( &items_, tail_index, size_ ); }
+  iterator begin() noexcept { return iterator( &items_, get_tail_index(), size_ ); }
   // end points to the first empty cell
-  iterator end() noexcept { return iterator( &items_, head_index, size_ ); }
+  iterator end() noexcept { return iterator( &items_, head_index_, size_ ); }
 
   // begin "points" to the oldest element in ringbuffer
-  const_iterator cbegin() noexcept { return const_iterator( &items_, tail_index, size_ ); }
+  const_iterator cbegin() noexcept { return const_iterator( &items_, get_tail_index(), size_ ); }
   // end points to the first empty cell
-  const_iterator cend() noexcept { return const_iterator( &items_, head_index, size_ ); }
+  const_iterator cend() noexcept { return const_iterator( &items_, head_index_, size_ ); }
 
   // front
-  T &front() { return items_[tail_index]; }
+  T &front() { return items_[get_tail_index()]; }
 
-  const T &front() const { return items_[tail_index]; }
+  const T &front() const { return items_[get_tail_index()]; }
 
   // back
-  T &back() { return items_[head_index - 1]; }
+  T &back() { return items_[head_index_ - 1]; }
 
-  const T &back() const { return items_[head_index - 1]; }
+  const T &back() const { return items_[head_index_ - 1]; }
 
   void clear()
   {
     if ( std::is_trivially_destructible<T>::value ) {
-      head_index = 0;
-      tail_index = 0;
+      head_index_ = 0;
       size_ = 0;
     } else {
       while ( size_ > 0 ) pop_front();
@@ -161,25 +160,23 @@ public:
 private:
   void added_element_head_adapt_indices()
   {
-    if ( full() ) {
-      tail_index = ++tail_index % items_.size();
-      ; // overwrite oldest element
-    } else {
+    if ( !full() ) {
       size_++;
     }
-    head_index = ++head_index % items_.size();
+    head_index_ = ++head_index_ % MaxSize;
   }
 
   void removed_element_tail_adapt_indices()
   {
-    tail_index = ++tail_index % items_.size();
     size_--;
+  }
+  size_t get_tail_index(){
+      return (head_index_-size_+MaxSize)%MaxSize;
   }
 
   std::array<T, MaxSize> items_;
   size_t size_ = 0;
-  size_t head_index = 0;
-  size_t tail_index = 0;
+  size_t head_index_ = 0;
 };
 } // namespace hector_math
 

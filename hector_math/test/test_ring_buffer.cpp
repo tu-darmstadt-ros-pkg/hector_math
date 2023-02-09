@@ -151,7 +151,8 @@ TYPED_TEST( RingBufferTest, read_front )
   // after removing max_size elements the buffer must be empty
   ASSERT_TRUE(ringBuffer.empty());
   ASSERT_EQ(ringBuffer.size(),0);
-
+  // is empty -> can not retrieve image
+  ASSERT_ANY_THROW(ringBuffer.read_and_pop_front());
 }
 
 int main( int argc, char **argv )
