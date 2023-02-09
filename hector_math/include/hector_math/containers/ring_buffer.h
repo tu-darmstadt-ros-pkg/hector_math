@@ -26,8 +26,9 @@ public:
     using reference = T &;
     using const_reference = T const &;
 
-    ring_iterator( std::array<T, MaxSize+1> *items, size_t index ) : items_( items ),
-                                                                                index_( index )
+    ring_iterator( std::array<T, MaxSize> *items, size_t index, size_t size ) : items_( items ),
+                                                                                index_( index ),
+                                                                                    size_(size)
     {
     }
 
@@ -69,17 +70,18 @@ public:
     size_t index() { return index_; }
     friend bool operator==( const ring_iterator &a, const ring_iterator &b )
     {
-      return a.index_ == b.index_;
+      return a.size_ == b.counter_ || a.counter_ == b.size_;
     };
     friend bool operator!=( const ring_iterator &a, const ring_iterator &b )
     {
-      return a.index_ != b.index_;
+      return a.size_ != b.counter_ && a.counter_ != b.size_;
     };
 
   private:
-    std::array<T, MaxSize+1> *items_;
+    std::array<T, MaxSize> *items_;
     size_t index_;
     size_t counter_=0;
+    size_t size_;
   };
 
 
@@ -120,14 +122,14 @@ public:
   }
 
   // begin "points" to the oldest element in ringbuffer
-  iterator begin() noexcept { return iterator( &items_, tail_index ); }
+  iterator begin() noexcept { return iterator( &items_, tail_index, size_ ); }
   // end points to the first empty cell
-  iterator end() noexcept { return iterator( &items_, head_index ); }
+  iterator end() noexcept { return iterator( &items_, head_index, size_ ); }
 
   // begin "points" to the oldest element in ringbuffer
-  const_iterator cbegin() noexcept { return const_iterator( &items_, tail_index ); }
+  const_iterator cbegin() noexcept { return const_iterator( &items_, tail_index, size_ ); }
   // end points to the first empty cell
-  const_iterator cend() noexcept { return const_iterator( &items_, head_index ); }
+  const_iterator cend() noexcept { return const_iterator( &items_, head_index, size_ ); }
 
   // front
   T &front() { return items_[tail_index]; }
@@ -152,7 +154,7 @@ public:
 
   // const T &operator[]( size_t index ) const { return items_[index]; }
 
-  bool full() { return size_ == items_.size() - 1; }
+  bool full() { return size_ == MaxSize; }
 
   bool empty() { return size_ == 0; }
 
@@ -174,7 +176,7 @@ private:
     size_--;
   }
 
-  std::array<T, MaxSize+1> items_;
+  std::array<T, MaxSize> items_;
   size_t size_ = 0;
   size_t head_index = 0;
   size_t tail_index = 0;
