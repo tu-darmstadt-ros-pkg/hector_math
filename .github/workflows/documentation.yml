@@ -1,5 +1,4 @@
 name: Documentation Build
-# execute for every push no matter which branch
 on:
   push:
     branches: [ master ]
@@ -24,8 +23,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        # TODO: remove branch change
-        git checkout documentation 
+        git checkout master 
         cd hector_math
         docs/build_docs.sh
       shell: bash
