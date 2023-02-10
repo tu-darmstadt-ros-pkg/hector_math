@@ -275,6 +275,6 @@ Pose<Scalar> operator*( const Isometry3<Scalar> &transform, const Pose<Scalar> &
 {
   return Pose<Scalar>( transform ) * pose;
 }
-}
+} // namespace hector_math
 
 #endif // HECTOR_MATH_POSE_H
