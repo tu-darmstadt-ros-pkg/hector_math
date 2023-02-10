@@ -18,7 +18,8 @@ python3 -m pip install -I docutils==0.16
 #####################
 # DECLARE VARIABLES #
 #####################
- 
+export REPO_NAME="${GITHUB_REPOSITORY##*/}"
+git config --global --add safe.directory /__w/${REPO_NAME}/${REPO_NAME}
 pwd
 ls -lah
 export SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
@@ -26,7 +27,6 @@ export SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
 # make a new temp dir which will be our GitHub Pages docroot
 docroot=`mktemp -d`
 
-export REPO_NAME="${GITHUB_REPOSITORY##*/}"
  
 ##############
 # BUILD DOCS #
