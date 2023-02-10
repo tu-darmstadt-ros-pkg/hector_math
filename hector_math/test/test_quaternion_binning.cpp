@@ -31,14 +31,15 @@ TYPED_TEST( QuaternionBinning, bitOperations )
   EXPECT_EQ( detail::computeBitMask( 3 ), 0b111 );
   EXPECT_EQ( detail::computeBitMask( 8 ), 0b11111111 );
 }
+
 TYPED_TEST( QuaternionBinning, quaternionBinning )
 {
   using Scalar = TypeParam;
   Scalar theta, phi = 0;
   const int fibonacci_sqrt = 50;
-  Scalar angle_increment = M_PI/32;
+  Scalar angle_increment = M_PI / 32;
   while ( phi < 2 * M_PI ) {
-    theta = M_PI *(-1/2.0);
+    theta = M_PI * ( -1 / 2.0 );
     while ( theta < M_PI / 2 ) {
       Eigen::Quaternion<Scalar> q{ 0, cos( phi ) * sin( theta ), sin( phi ) * sin( theta ),
                                    cos( theta ) };

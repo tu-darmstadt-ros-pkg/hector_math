@@ -1,7 +1,6 @@
 
 #include <hector_math/map_operations/find_minmax.h>
 
-
 #include <gtest/gtest.h>
 #include <ros/ros.h>
 
@@ -87,8 +86,8 @@ TYPED_TEST( IteratorTest, find_minmax )
       -1, -std::numeric_limits<Scalar>::infinity(), std::numeric_limits<Scalar>::max();
   // @formatter:on
   // clang-format on
-  EXPECT_EQ(findMinimum<Scalar>( map, polygon ), -std::numeric_limits<Scalar>::infinity());
-  EXPECT_EQ(findMaximum<Scalar>( map, polygon ), std::numeric_limits<Scalar>::infinity());
+  EXPECT_EQ( findMinimum<Scalar>( map, polygon ), -std::numeric_limits<Scalar>::infinity() );
+  EXPECT_EQ( findMaximum<Scalar>( map, polygon ), std::numeric_limits<Scalar>::infinity() );
 }
 
 int main( int argc, char **argv )

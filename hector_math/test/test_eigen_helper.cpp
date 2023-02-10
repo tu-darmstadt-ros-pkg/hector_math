@@ -68,7 +68,6 @@ TYPED_TEST( EigenHelperTest, wrap_with_constant )
   actual_map = eigen::wrapWithConstant<Eigen::Array<Scalar, Eigen::Dynamic, Eigen::Dynamic>>(
       start_map, MAX, 6, 6, 3, 3 );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) ) << "Wrap with constant Test Case 3";
-  
 }
 
 TYPED_TEST( EigenHelperTest, shift )
@@ -278,7 +277,7 @@ TYPED_TEST( EigenHelperTest, flip )
     expected_map <<  NaN, MAX, -1,
                       3,  4,  5,
                       0,  1,  2;
-      // clang-format on
+    // clang-format on
     actual_map =
         eigen::flip<Eigen::Array<Scalar, Eigen::Dynamic, Eigen::Dynamic>>( start_map, FlipOp::Rows );
     EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
@@ -289,7 +288,7 @@ TYPED_TEST( EigenHelperTest, flip )
     expected_map <<  2,  1,   0,
                      5,  4,   3,
                      -1, MAX, NaN;
-      // clang-format on
+    // clang-format on
     actual_map = eigen::flip<Eigen::Array<Scalar, Eigen::Dynamic, Eigen::Dynamic>>(
         start_map, FlipOp::Columns );
     EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
@@ -321,21 +320,21 @@ TYPED_TEST( EigenHelperTest, flip )
                 6, 5, 4,
                 3, 2, 1;
     // clang-format on
-    actual = eigen::flip( input, FlipOp::Both);
+    actual = eigen::flip( input, FlipOp::Both );
     EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected, actual ) );
     // clang-format off
     expected << 7, 8, 9,
                 4, 5, 6,
                 1, 2, 3;
     // clang-format on
-    actual = eigen::flip ( input , FlipOp::Rows);
+    actual = eigen::flip( input, FlipOp::Rows );
     EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected, actual ) );
     // clang-format off
     expected << 3, 2, 1,
                 6, 5, 4,
                 9, 8, 7;
     // clang-format on
-    actual = eigen::flip( input , FlipOp::Columns);
+    actual = eigen::flip( input, FlipOp::Columns );
     EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected, actual ) );
   }
 }

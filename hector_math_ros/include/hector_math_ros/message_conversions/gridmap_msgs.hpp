@@ -27,7 +27,7 @@ Eigen::Ref<const GridMap<Scalar>> mapMultiArrayMessageToGridMap( const MultiArra
   Eigen::Index rows = row_major ? msg.layout.dim.at( 0 ).size : msg.layout.dim.at( 1 ).size;
   if ( ( (bool)GridMap<Scalar>::IsRowMajor ) != row_major ) {
     return Eigen::Map<const Eigen::Array<Scalar, Eigen::Dynamic, Eigen::Dynamic,
-                                   GridMap<Scalar>::IsRowMajor ? Eigen::ColMajor : Eigen::RowMajor>>(
+                                         GridMap<Scalar>::IsRowMajor ? Eigen::ColMajor : Eigen::RowMajor>>(
         msg.data.data(), rows, cols );
   }
 
