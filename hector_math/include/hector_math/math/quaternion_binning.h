@@ -5,6 +5,7 @@
 #ifndef HECTOR_MATH_QUATERNION_BINNING_H
 #define HECTOR_MATH_QUATERNION_BINNING_H
 
+#include "hector_math/math/operations.h"
 #include <Eigen/Geometry>
 
 namespace hector_math
@@ -30,6 +31,12 @@ struct QuaternionBinType {
   using BinType =
       typename std::conditional<_required_bits >= 8 * sizeof( int ), unsigned long, unsigned int>::type;
 };
+
+template<typename Scalar>
+Scalar madfrac( Scalar a, Scalar b )
+{
+  return a * b - std::floor( a * b );
+}
 } // namespace detail
 
 namespace quaternion_binning_modes
@@ -38,7 +45,7 @@ namespace quaternion_binning_modes
 //! LargestDim is somewhat faster and doesn't have a reduced resolution at the poles due to the
 //! equidistant angles used in spherical but at the cost of overlapping regions with increased
 //! bin resolution
-enum QuaternionBinningMode { LargestDim, Spherical };
+enum QuaternionBinningMode { LargestDim, Spherical, SphericalFibonacci };
 } // namespace quaternion_binning_modes
 using QuaternionBinningMode = quaternion_binning_modes::QuaternionBinningMode;
 
@@ -108,6 +115,50 @@ ReturnType computeBin( const Eigen::Quaternion<Scalar> &q )
     bin |= ( ReturnType( angle * ( ANGLE_BINS / M_PI ) ) & ANGLE_MASK ) << ( 2 * dim_bits + 3 );
     return bin;
 
+  } else if ( mode == quaternion_binning_modes::SphericalFibonacci ) {
+    constexpr Scalar PHI = ( std::sqrt( 5 ) + Scalar( 1 ) ) / Scalar( 2 );
+    constexpr int fibonacci_n = ANGLE_BINS * ANGLE_BINS;
+    ; // TODO: Fibonacci_n input param
+    const Scalar norm = q.vec().norm();
+    Scalar x = q.x() / norm;
+    Scalar y = q.y() / norm;
+    Scalar z = q.z() / norm;
+    Scalar phi = std::min<Scalar>( std::atan2<Scalar>( y, x ), M_PI );
+    Scalar sin_theta, cos_theta = z;
+    Scalar k = std::max(
+        2.0, std::floor( std::log( fibonacci_n * M_PI * sqrt( 5 ) * ( 1.0 - square( cos_theta ) ) ) /
+                         std::log( PHI + 1.0 ) ) );
+    Scalar fk = pow( PHI, k ) / std::sqrt( 5 );
+    Scalar f0 = std::round( fk );
+    Scalar f1 = std::round( fk * PHI );
+    Eigen::Matrix<Scalar, 2, 2> b;
+    b << 2.0 * M_PI * ( detail::madfrac( f0 + 1.0, PHI - 1.0 ) - ( PHI - 1.0 ) ),
+        2.0 * M_PI * ( detail::madfrac( f1 + 1.0, PHI - 1.0 ) - ( PHI - 1.0 ) ),
+        -2.0 * f0 / fibonacci_n, -2.0 * f1 / fibonacci_n;
+    Eigen::Matrix<Scalar, 2, 1> c =
+        ( b.inverse() * Eigen::Matrix<Scalar, 2, 1>{ phi, cos_theta - ( 1.0 - 1.0 / fibonacci_n ) } );
+    c = c.array().floor().matrix();
+    Scalar d = std::numeric_limits<Scalar>::max();
+    ReturnType j = 0;
+    for ( int s = 0; s < 4; s++ ) {
+      cos_theta = b.row( 1 ).dot( Eigen::Matrix<Scalar, 2, 1>{ s % 2, s / 2 } + c ) +
+                  ( 1.0 - 1.0 / fibonacci_n );
+      cos_theta = clamp( cos_theta, Scalar( -1.0 ), Scalar( 1.0 ) ) * 2.0 - cos_theta;
+
+      ReturnType i = std::floor( fibonacci_n * 0.5 * ( 1.0 - cos_theta ) );
+      phi = 2.0 * M_PI * detail::madfrac( (Scalar)i, Scalar( PHI - 1.0 ) );
+      cos_theta = 1.0 - ( 2.0 * i + 1.0 ) / fibonacci_n;
+      sin_theta = std::sqrt( 1 - std::min<Scalar>( cos_theta * cos_theta, 1.0 ) );
+
+      Scalar squared_distance = square( x - std::cos( phi ) * sin_theta ) +
+                                square( y - std::sin( phi ) * sin_theta ) + square( z - cos_theta );
+      if ( squared_distance < d ) {
+        d = squared_distance;
+        j = i;
+      }
+    }
+    return j;
+
   } else { // SPHERICAL
 
     const Scalar norm = q.vec().norm();
@@ -119,6 +170,21 @@ ReturnType computeBin( const Eigen::Quaternion<Scalar> &q )
     const Scalar angle = std::acos( q.w() );
     bin |= ( ReturnType( angle * ( ANGLE_BINS / M_PI ) ) & ANGLE_MASK ) << ( 2 * dim_bits );
     return bin;
+  }
+}
+template<typename Scalar, int AXIS_BINS, int ANGLE_BINS, QuaternionBinningMode mode,
+         typename ReturnType = typename detail::QuaternionBinType<AXIS_BINS, ANGLE_BINS>::BinType>
+Eigen::Matrix<Scalar, 3, 1> computeDirectionFromBin( const ReturnType &i )
+{
+  if ( mode == quaternion_binning_modes::SphericalFibonacci ) {
+    constexpr Scalar PHI = ( std::sqrt( 5 ) + Scalar( 1 ) ) / Scalar( 2 );
+    int fibonacci_n = ANGLE_BINS * ANGLE_BINS;
+    Scalar phi = 2 * M_PI * ( i / PHI - std::floor( i / PHI ) );
+    Scalar cos_theta = 1.0 - ( 1.0 + 2.0 * i ) / fibonacci_n;
+    Scalar sin_theta = std::sqrt( std::max( 0.0, 1.0 - pow( cos_theta, 2 ) ) );
+    return { std::cos( phi ) * sin_theta, std::sin( phi ) * sin_theta, cos_theta };
+  } else {
+    throw std::runtime_error( "Not implemented." );
   }
 }
 } // namespace hector_math
