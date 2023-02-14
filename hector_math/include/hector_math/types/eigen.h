@@ -1,6 +1,5 @@
-//
-// Created by Stefan Fabian on 19.01.23.
-//
+// Copyright (c) 2023 Stefan Fabian. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #ifndef HECTOR_MATH_TYPES_EIGEN_H
 #define HECTOR_MATH_TYPES_EIGEN_H

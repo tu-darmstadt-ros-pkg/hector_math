@@ -1,6 +1,5 @@
-//
-// Created by Stefan Fabian on 17.08.21.
-//
+// Copyright (c) 2021 Stefan Fabian. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #ifndef HECTOR_MATH_URDF_ROBOT_MODEL_H
 #define HECTOR_MATH_URDF_ROBOT_MODEL_H
