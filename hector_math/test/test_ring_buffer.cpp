@@ -64,6 +64,10 @@ TYPED_TEST(RingBufferTest, iterators){
 
   }
   ASSERT_EQ(index, ringBuffer.size());
+  index = 0;
+  for(auto const_it=ringBuffer.cbegin();const_it!=ringBuffer.cend();const_it++){
+    ASSERT_EQ(*const_it,index++);
+  }
   //FILL AGAIN AND OVERWRITE FIRST ELEMENTS
   for(int i=0; i<max_size;i++){
     ringBuffer.push_back(i);
@@ -92,27 +96,6 @@ TYPED_TEST(RingBufferTest, iterators){
   ASSERT_EQ(*x,7);
 }
 
-TYPED_TEST( RingBufferTest, const_iterator )
-{
-  using Scalar = TypeParam;
-  constexpr size_t max_size = 50;
-  RingBuffer<Scalar,max_size> ringBuffer;
-  // FILL RING BUFFER PARTIAL
-  for(int i=0; i<25;i++){
-    ringBuffer.push_back(i);
-  }
-  ASSERT_EQ(ringBuffer.size(),25);
-  // Normal iterator can read and write
-  auto it = ringBuffer.begin();
-  ASSERT_NO_THROW(*it=-1);
-  ASSERT_EQ(*ringBuffer.begin(), -1);
-  ASSERT_NO_THROW(*it=0);
-  //CONST ITERATOR can oly read
-  int index = 0;
-  for(auto const_it=ringBuffer.cbegin();const_it!=ringBuffer.cend();const_it++){
-    ASSERT_EQ(*const_it,index++);
-  }
-}
 
 TYPED_TEST( RingBufferTest, front_back )
 {
