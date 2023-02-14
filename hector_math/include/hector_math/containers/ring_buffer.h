@@ -26,8 +26,8 @@ public:
     using reference = T &;
     using const_reference = T const &;
 
-    ring_iterator( RingBuffer<T,MaxSize>* buffer, size_t index) : buffer_( buffer ),
-                                                                                index_( index )
+    ring_iterator( RingBuffer<T, MaxSize> *buffer, size_t index )
+        : buffer_( buffer ), index_( index )
 
     {
     }
@@ -38,19 +38,13 @@ public:
 
       return ( *buffer_ )[index_];
     }
-    const_reference operator*() const noexcept
-    {
-      return ( *buffer_ )[index_];
-    }
+    const_reference operator*() const noexcept { return ( *buffer_ )[index_]; }
     template<bool Z = IS_CONST, typename std::enable_if<( !Z ), int>::type * = nullptr>
     reference operator->() noexcept
     {
       return &( ( *buffer_ )[index_] );
     }
-    const_reference operator->() const noexcept
-    {
-      return &( ( *buffer_ )[index_] );
-    }
+    const_reference operator->() const noexcept { return &( ( *buffer_ )[index_] ); }
 
     ring_iterator<IS_CONST> &operator++()
     {
@@ -68,33 +62,33 @@ public:
     }
     size_t index() { return index_; }
 
-//    Would work if size of array MaxSize + 1
-//    bool operator==(ring_iterator other){
-//      return &( ( *buffer_ )[index_] ) == &( ( *other.buffer_ )[other.index_] );
-//    }
-//
-//    bool operator!=(ring_iterator other){
-//      return &( ( *buffer_ )[index_] ) != &( ( *other.buffer_ )[other.index_] );
-//    }
+    //    Would work if size of array MaxSize + 1
+    //    bool operator==(ring_iterator other){
+    //      return &( ( *buffer_ )[index_] ) == &( ( *other.buffer_ )[other.index_] );
+    //    }
+    //
+    //    bool operator!=(ring_iterator other){
+    //      return &( ( *buffer_ )[index_] ) != &( ( *other.buffer_ )[other.index_] );
+    //    }
 
     // Iterator must iterate from start to end, for every ++ counter increases until reaches size
     // the index the iterator points to is the same for start and end if the buffer is full
     template<bool IS_CONST_OTHER>
-    bool operator==(ring_iterator<IS_CONST_OTHER> other){
-      return  buffer_->size() == other.counter_ || counter_ == other.buffer_->size();
+    bool operator==( ring_iterator<IS_CONST_OTHER> other )
+    {
+      return buffer_->size() == other.counter_ || counter_ == other.buffer_->size();
     }
     template<bool IS_CONST_OTHER>
-    bool operator!=(ring_iterator<IS_CONST_OTHER> other){
+    bool operator!=( ring_iterator<IS_CONST_OTHER> other )
+    {
       return buffer_->size() != other.counter_ && counter_ != other.buffer_->size();
     }
 
-
   private:
-    RingBuffer<T,MaxSize>* buffer_;
+    RingBuffer<T, MaxSize> *buffer_;
     size_t index_;
-    size_t counter_=0;
+    size_t counter_ = 0;
   };
-
 
   using iterator = ring_iterator<false>;
   using const_iterator = ring_iterator<true>;
@@ -162,13 +156,11 @@ public:
     }
   }
 
-
   bool full() { return size_ == MaxSize; }
 
   bool empty() { return size_ == 0; }
 
 private:
-
   const T &operator[]( size_t index ) const { return items_[index]; }
 
   T &operator[]( size_t index ) { return items_[index]; }
@@ -181,13 +173,8 @@ private:
     head_index_ = ++head_index_ % MaxSize;
   }
 
-  void removed_element_tail_adapt_indices()
-  {
-    size_--;
-  }
-  size_t get_tail_index(){
-      return (head_index_-size_+MaxSize)%MaxSize;
-  }
+  void removed_element_tail_adapt_indices() { size_--; }
+  size_t get_tail_index() { return ( head_index_ - size_ + MaxSize ) % MaxSize; }
 
   std::array<T, MaxSize> items_;
   size_t size_ = 0;
