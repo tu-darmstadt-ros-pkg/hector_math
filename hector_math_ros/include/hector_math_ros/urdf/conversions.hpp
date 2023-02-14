@@ -1,6 +1,5 @@
-//
-// Created by stefan on 19.08.21.
-//
+// Copyright (c) 19.08.21. stefan All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #ifndef HECTOR_MATH_URDF_CONVERSIONS_HPP
 #define HECTOR_MATH_URDF_CONVERSIONS_HPP

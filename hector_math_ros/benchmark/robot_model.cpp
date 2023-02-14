@@ -1,6 +1,5 @@
-//
-// Created by stefan on 19.08.21.
-//
+// Copyright (c) 2021 Stefan Fabian. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #include "hector_math_ros/urdf/robot_model.h"
 #include <benchmark/benchmark.h>

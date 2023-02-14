@@ -1,6 +1,5 @@
-//
-// Created by stefan on 15.09.21.
-//
+// Copyright (c) 2021 Stefan Fabian. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #ifndef HECTOR_MATH_CIRCLE_ITERATOR_H
 #define HECTOR_MATH_CIRCLE_ITERATOR_H

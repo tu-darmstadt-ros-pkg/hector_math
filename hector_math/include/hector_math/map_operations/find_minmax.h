@@ -1,6 +1,5 @@
-//
-// Created by stefan on 07.09.21.
-//
+// Copyright (c) 2021 Stefan Fabian. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #ifndef HECTOR_MATH_FIND_MINMAX_H
 #define HECTOR_MATH_FIND_MINMAX_H

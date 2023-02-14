@@ -1,4 +1,5 @@
-
+// Copyright (c) 2022 Aljoscha Schmidt. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #include <gtest/gtest.h>
 #include <ros/ros.h>
