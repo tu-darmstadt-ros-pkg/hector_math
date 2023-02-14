@@ -20,9 +20,7 @@ public:
   {
   }
 
-  static Twist<Scalar> Zero() {
-    return Twist<Scalar>();
-  }
+  static Twist<Scalar> Zero() { return Twist<Scalar>(); }
 
   const Vector3<Scalar> &linear() const { return linear_; }
   Vector3<Scalar> &linear() { return linear_; }
@@ -33,6 +31,8 @@ public:
 private:
   Vector3<Scalar> linear_;
   Vector3<Scalar> angular_;
+
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 } // namespace hector_math
 

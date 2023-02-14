@@ -46,6 +46,9 @@ if (${benchmark_FOUND})
   add_executable(benchmark_caches benchmark/caches.cpp)
   target_link_libraries(benchmark_caches ${PROJECT_NAME} ${catkin_LIBRARIES} benchmark benchmark_main pthread)
 
+  add_executable(quaternion_binning_modes benchmark/quaternion_binning_modes.cpp)
+  target_link_libraries(quaternion_binning_modes ${PROJECT_NAME} ${catkin_LIBRARIES} benchmark benchmark_main pthread)
+
   add_executable(show_iterators scripts/show_iterators.cpp)
   target_link_libraries(show_iterators ${PROJECT_NAME} ${catkin_LIBRARIES})
 else()

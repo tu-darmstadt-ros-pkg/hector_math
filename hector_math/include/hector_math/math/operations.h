@@ -5,6 +5,8 @@
 #ifndef HECTOR_MATH_OPERATIONS_H
 #define HECTOR_MATH_OPERATIONS_H
 
+#include <cmath>
+
 namespace hector_math
 {
 
@@ -16,12 +18,31 @@ namespace hector_math
  * @return val if it is within min and max, min if val is smaller or equal to min, max if val is larger or equal to max.
  */
 template<typename T>
-T clamp( const T &val, const T &min, const T &max )
+constexpr T clamp( const T &val, const T &min, const T &max )
 {
-  if ( val < min )
-    return min;
-  return val > max ? max : val;
+  return val < min ? min : val > max ? max : val;
 }
+
+template<typename T>
+constexpr T square( const T &x )
+{
+  return x * x;
+}
+
+/*!
+ * Ensures the result value will be finite.
+ * @return value if value is finite, otherwise the provided finite_value.
+ */
+template<typename T>
+constexpr T ensureFinite( const T &value, const T &finite_value )
+{
+#if __cplusplus >= 201402L
+  assert( std::isfinite( finite_value ) &&
+          "The finite_value passed to ensureFinite should be finite!" );
+#endif
+  return std::isfinite( value ) ? value : finite_value;
+}
+
 } // namespace hector_math
 
 #endif // HECTOR_MATH_OPERATIONS_H

@@ -62,10 +62,10 @@ void iteratePolygon( const Polygon<Scalar> &polygon, Eigen::Index row_min, Eigen
     return;
   if ( polygon.cols() <= 15 ) {
     detail::iteratePolygon<Scalar, Functor, 15>( polygon, row_min, row_max, col_min, col_max,
-                                                functor );
+                                                 functor );
   } else if ( polygon.cols() <= 63 ) {
     detail::iteratePolygon<Scalar, Functor, 63>( polygon, row_min, row_max, col_min, col_max,
-                                                functor );
+                                                 functor );
   } else {
     detail::iteratePolygon<Scalar, Functor>( polygon, row_min, row_max, col_min, col_max, functor );
   }
@@ -130,8 +130,7 @@ void iteratePolygon( const Polygon<Scalar> &polygon, Eigen::Index row_min, Eigen
   LineContainer active_lines;
   RegionContainer x_region_segments;
 
-  Eigen::Index y =
-      std::max<Eigen::Index>( col_min, std::round( lines[active_line_index].start_y ) );
+  Eigen::Index y = std::max<Eigen::Index>( col_min, std::round( lines[active_line_index].start_y ) );
   for ( ; y < max_y; ++y ) {
     // Determine lines that ended
     for ( int i = active_lines.size() - 1; i >= 0; --i ) {
@@ -144,7 +143,8 @@ void iteratePolygon( const Polygon<Scalar> &polygon, Eigen::Index row_min, Eigen
     for ( ; active_line_index < lines.size(); ++active_line_index ) {
       if ( lines[active_line_index].start_y >= y + 0.5 )
         break;
-      if (lines[active_line_index].end_y < y + 0.5) continue; // Ignore lines that start and end before current column
+      if ( lines[active_line_index].end_y < y + 0.5 )
+        continue; // Ignore lines that start and end before current column
       if ( lines[active_line_index].start_y < y )
         lines[active_line_index].x += lines[active_line_index].x_increment;
       active_lines.push_back( lines[active_line_index] );

@@ -57,8 +57,7 @@ Scalar UrdfRobotModel<Scalar>::computeWeightedCenterOfMass( const LinkTree &root
 
   for ( const Joint &joint : root.children ) {
     Isometry3<Scalar> child_transform = transformForJoint( joint );
-    sum_of_mass +=
-        computeWeightedCenterOfMass( joint.child_link, transform * child_transform, com );
+    sum_of_mass += computeWeightedCenterOfMass( joint.child_link, transform * child_transform, com );
   }
   return sum_of_mass;
 }
@@ -67,8 +66,7 @@ template<typename Scalar>
 Vector3<Scalar> UrdfRobotModel<Scalar>::computeCenterOfMass() const
 {
   Vector3<Scalar> com = Vector3<Scalar>::Zero();
-  Scalar sum_of_mass =
-      computeWeightedCenterOfMass( link_tree_, Isometry3<Scalar>::Identity(), com );
+  Scalar sum_of_mass = computeWeightedCenterOfMass( link_tree_, Isometry3<Scalar>::Identity(), com );
   if ( std::abs( sum_of_mass ) < 1E-8 )
     return com;
   com /= sum_of_mass;
@@ -90,8 +88,8 @@ UrdfRobotModel<Scalar>::computeAxisAlignedBoundingBox( const LinkTree &root,
       result.extend( computeBoundingBoxForBox<Scalar>( shape.dims, transform * shape.origin ) );
       break;
     case urdf::Geometry::CYLINDER:
-      result.extend(
-          computeBoundingBoxForCylinder<Scalar>( shape.dims.x(), shape.dims.z(), transform * shape.origin ) );
+      result.extend( computeBoundingBoxForCylinder<Scalar>( shape.dims.x(), shape.dims.z(),
+                                                            transform * shape.origin ) );
       break;
     case urdf::Geometry::SPHERE:
       result.extend( computeBoundingBoxForSphere<Scalar>( shape.dims.x(), transform * shape.origin ) );
