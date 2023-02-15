@@ -5,9 +5,27 @@ on:
   pull_request:
     branches: [ master ]
 
-
 jobs:
+  Linting:
+    name: Lint Code Base
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Lint Code Base
+        uses: github/super-linter/slim@v4
+        env:
+          VALIDATE_CLANG_FORMAT: true
+          # VALIDATE_PYTHON_BLACK: true
+          VALIDATE_ALL_CODEBASE: true
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   build-and-test:
+    needs: Linting
     runs-on: [ubuntu-20.04]
     container:
       image: rostooling/setup-ros-docker:ubuntu-focal-ros-noetic-ros-base-latest
@@ -15,14 +33,8 @@ jobs:
       - name: install catkin
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-catkin-tools python3-empy libeigen3-dev
-      - name: init
-        run: |
-          cd $GITHUB_WORKSPACE
-          mkdir hector
-          cd hector
-          catkin config --extend /opt/ros/noetic --cmake-args -DCMAKE_BUILD_TYPE=Release
-      - uses: actions/checkout@v2.5.0
+          sudo apt-get install -y python3-catkin-tools python3-empy
+      - uses: actions/checkout@v3
         with:
           path: hector/src
       - name: rosdep
@@ -32,6 +44,8 @@ jobs:
           rosdep install -y --from-paths . --ignore-src --rosdistro noetic
       - name: build
         run: |
+          cd $GITHUB_WORKSPACE/hector
+          catkin config --extend /opt/ros/noetic --cmake-args -DCMAKE_BUILD_TYPE=Release
           cd $GITHUB_WORKSPACE/hector/src
           catkin build
       - name: build_and_test

@@ -238,6 +238,6 @@ private:
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
-}
+} // namespace hector_math
 
 #endif // HECTOR_MATH_POSE2D_H

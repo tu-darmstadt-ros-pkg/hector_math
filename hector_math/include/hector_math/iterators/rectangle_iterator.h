@@ -85,7 +85,8 @@ void iterateRectangle( const Vector2<Scalar> &a, const Vector2<Scalar> &b, const
   const auto &right = points[index_right];
 
   struct Line {
-    Line( const Vector2<Scalar> &start, const Vector2<Scalar> &end, const Eigen::Index y, const bool left )
+    Line( const Vector2<Scalar> &start, const Vector2<Scalar> &end, const Eigen::Index y,
+          const bool left )
     {
       if ( std::abs( end.y() - start.y() ) < 1E-4 ) {
         x_increment = 0;
