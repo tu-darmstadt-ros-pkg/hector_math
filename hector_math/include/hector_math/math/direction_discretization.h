@@ -212,6 +212,6 @@ constexpr Scalar minAngleBetweenDirections( int from, int to )
     direction_diff -= DIRECTIONS;
   return angleFromDirectionDifference<DIRECTIONS, Scalar>( direction_diff );
 }
-}
+} // namespace hector_math
 
 #endif // HECTOR_MATH_DIRECTION_DISCRETIZATION_H
