@@ -142,9 +142,9 @@ public:
   const T &front() const { return items_[get_tail_index()]; }
 
   // back
-  T &back() { return items_[head_index_ - 1]; }
+  T &back() { return items_[get_1_before_head()]; }
 
-  const T &back() const { return items_[head_index_ - 1]; }
+  const T &back() const { return items_[get_1_before_head()]; }
 
   void clear()
   {
@@ -175,6 +175,7 @@ private:
 
   void removed_element_tail_adapt_indices() { size_--; }
   size_t get_tail_index() { return ( head_index_ - size_ + MaxSize ) % MaxSize; }
+  size_t get_1_before_head() { return ( head_index_ - 1 + MaxSize ) % MaxSize; }
 
   std::array<T, MaxSize> items_;
   size_t size_ = 0;
