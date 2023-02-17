@@ -81,6 +81,12 @@ TYPED_TEST( RingBufferTest, iterators )
   // FIND
   auto x = std::find( ringBuffer.begin(), ringBuffer.end(), 7 );
   ASSERT_EQ( *x, 7 );
+
+  // Previous failure case: back failing when filling exactly to head_index_ = 0
+  ringBuffer.clear();
+  for ( int i = 0; i < max_size; i++ ) ringBuffer.push_back( i );
+  ASSERT_EQ( ringBuffer.front(), 0 );
+  ASSERT_EQ( ringBuffer.back(), max_size - 1 );
 }
 
 TYPED_TEST( RingBufferTest, front_back )
