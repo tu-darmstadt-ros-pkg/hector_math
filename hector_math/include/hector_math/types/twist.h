@@ -28,6 +28,15 @@ public:
   const Vector3<Scalar> &angular() const { return angular_; }
   Vector3<Scalar> &angular() { return angular_; }
 
+  bool isZero( Scalar precision = Eigen::NumTraits<Scalar>::dummy_precision() ) const
+  {
+    return linear_.isZero( precision ) && angular_.isZero( precision );
+  }
+
+  bool hasNaN() const { return linear_.hasNaN() || angular_.hasNaN(); }
+
+  bool allFinite() const { return linear_.allFinite() && angular_.allFinite(); }
+
 private:
   Vector3<Scalar> linear_;
   Vector3<Scalar> angular_;
