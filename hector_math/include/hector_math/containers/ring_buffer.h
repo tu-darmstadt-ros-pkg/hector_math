@@ -111,8 +111,8 @@ public:
    */
   void push_back( T val )
   {
-    items_[head_index_] = val;
     added_element_head_adapt_indices();
+    items_[head_index_] = val;
   }
   /*!
    * Deletes the oldest element in the RingBuffer.
@@ -145,8 +145,8 @@ public:
   template<typename... Args>
   void emplace_back( Args... args )
   {
-    items_[head_index_] = T( args... );
     added_element_head_adapt_indices();
+    items_[head_index_] = T( args... );
   }
 
   /*!
@@ -157,7 +157,7 @@ public:
    * end points to the first empty cell
    * @return iterator to the newest element
    */
-  iterator end() noexcept { return iterator( this, head_index_ ); }
+  iterator end() noexcept { return iterator( this, get_next_head() ); }
 
   /*!
    * begin "points" to the oldest element in ringbuffer
@@ -169,32 +169,32 @@ public:
    *  end points to the first empty cell
    * @return  a const_iterator the newest element
    */
-  const_iterator cend() noexcept { return const_iterator( this, head_index_ ); }
-
-  /*!
-   * @return A reference to the newest element in the buffer
-   */
-  T &front() { return items_[get_tail_index()]; }
-  /*!
-   * @return A const reference to the newest element in the buffer
-   */
-  const T &front() const { return items_[get_tail_index()]; }
+  const_iterator cend() noexcept { return const_iterator( this, get_next_head() ); }
 
   /*!
    * @return A reference to the oldest element in the buffer
    */
-  T &back() { return items_[get_1_before_head()]; }
+  T &front() { return items_[get_tail_index()]; }
   /*!
    * @return A const reference to the oldest element in the buffer
    */
-  const T &back() const { return items_[get_1_before_head()]; }
+  const T &front() const { return items_[get_tail_index()]; }
+
+  /*!
+   * @return A reference to the newest element in the buffer
+   */
+  T &back() { return items_[head_index_]; }
+  /*!
+   * @return A const reference to the newest element in the buffer
+   */
+  const T &back() const { return items_[head_index_]; }
   /*!
    * Clears the Ringbuffer. If necessary deconstructs all ojbects in the buffer.
    */
   void clear()
   {
     if ( std::is_trivially_destructible<T>::value ) {
-      head_index_ = 0;
+      head_index_ = MaxSize;
       size_ = 0;
     } else {
       while ( size_ > 0 ) pop_front();
@@ -203,11 +203,11 @@ public:
   /*!
    * @return if the RingBuffer is already full.
    */
-  bool full() { return size_ == MaxSize; }
+  bool full() const { return size_ == MaxSize; }
   /*!
    * @return if the buffer contains no elements
    */
-  bool empty() { return size_ == 0; }
+  bool empty() const { return size_ == 0; }
 
   const T &operator[]( size_t index ) const { return items_[index]; }
 
@@ -223,12 +223,11 @@ private:
   }
 
   void removed_element_tail_adapt_indices() { size_--; }
-  size_t get_tail_index() { return ( head_index_ - size_ + items_.size() ) % items_.size(); }
-  size_t get_1_before_head() { return ( head_index_ - 1 + items_.size() ) % items_.size(); }
-
+  size_t get_tail_index() { return ( head_index_ - size_ + items_.size() + 1 ) % items_.size(); }
+  size_t get_next_head() { return ( head_index_ + 1 ) % items_.size(); }
   std::array<T, MaxSize + 1> items_;
   size_t size_ = 0;
-  size_t head_index_ = 0;
+  size_t head_index_ = MaxSize;
 };
 } // namespace hector_math
 
