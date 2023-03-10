@@ -10,7 +10,6 @@
 
   <author email="fabian@sim.tu-darmstadt.de">Stefan Fabian</author>
 
-
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>hector_math</build_depend>
   <build_depend>urdf</build_depend>

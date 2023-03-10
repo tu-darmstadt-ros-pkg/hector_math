@@ -4,7 +4,7 @@
 #ifndef HECTOR_MATH_URDF_ROBOT_MODEL_IMPL_HPP
 #define HECTOR_MATH_URDF_ROBOT_MODEL_IMPL_HPP
 
-#include "hector_math_ros/urdf/conversions.hpp"
+#include "hector_math_ros/urdf/conversions.h"
 #include "hector_math_ros/urdf/robot_model.h"
 #include <hector_math/shapes/bounding_box.h>
 
