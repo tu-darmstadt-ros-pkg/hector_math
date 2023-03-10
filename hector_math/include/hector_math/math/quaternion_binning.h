@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Stefan Fabian. All rights reserved.
+// Copyright (c) 2021 Stefan Fabian, Aljoscha Schmidt. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #ifndef HECTOR_MATH_QUATERNION_BINNING_H

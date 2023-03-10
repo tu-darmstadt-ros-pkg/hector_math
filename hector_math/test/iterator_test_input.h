@@ -1,3 +1,6 @@
+// Copyright (c) 2020 Aljoscha Schmidt. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 #ifndef HECTOR_MATH_ITERATOR_TEST_INPUT_H
 #define HECTOR_MATH_ITERATOR_TEST_INPUT_H
 #include <hector_math/types.h>
