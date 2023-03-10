@@ -17,6 +17,8 @@ Isometry3<Scalar>
 UrdfRobotModel<Scalar>::Joint::getTransform( const std::vector<Scalar> &joint_positions ) const
 {
   Isometry3<Scalar> child_transform = parent_to_joint_transform;
+  if ( type == urdf::Joint::FIXED )
+    return child_transform; // Fixed joint has no joint state, hence, index would be invalid
   Scalar joint_value = joint_positions[joint_state_index];
   if ( is_mimic )
     joint_value = mimic_multiplier * joint_value + mimic_offset;
@@ -26,8 +28,6 @@ UrdfRobotModel<Scalar>::Joint::getTransform( const std::vector<Scalar> &joint_po
     return child_transform * Eigen::AngleAxis<Scalar>( joint_value, axis );
   case urdf::Joint::PRISMATIC:
     child_transform.translation() += child_transform.linear() * joint_value * axis;
-    return child_transform;
-  case urdf::Joint::FIXED:
     return child_transform;
   case urdf::Joint::FLOATING:
   case urdf::Joint::UNKNOWN:
@@ -199,7 +199,9 @@ UrdfRobotModel<Scalar>::buildLinkTree( const urdf::LinkSharedPtr &root, Scalar &
       const std::string &name = mimic ? joint->mimic->joint_name : joint->name;
       auto it = std::find( this->joint_names_.begin(), this->joint_names_.end(), name );
       size_t index = static_cast<size_t>( it - this->joint_names_.begin() );
-      if ( it == this->joint_names_.end() ) {
+      if ( joint->type == urdf::Joint::FIXED ) {
+        index = 13371337;
+      } else if ( it == this->joint_names_.end() ) {
         index = this->joint_names_.size();
         this->joint_names_.push_back( name );
         this->joint_positions_.push_back( 0 );
