@@ -4,7 +4,12 @@ set -x
 # file adapted from  https://tech.michaelaltfield.net/2020/07/18/sphinx-rtd-github-pages-1 by Michael Altfield <michael@michaelaltfield.net>
 # added doxygen code documentation and downgraded docutils (otherwise bullet points are not shown correctly)
 
- 
+#####################
+# GO TO DOCS FOLDER #
+#####################
+
+cd ../hector_math/docs || exit
+
 ###################
 # INSTALL DEPENDS #
 ###################

@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     container: debian:buster-slim
     steps:
-      - name: Prereqs
+      - name: Prerequisites
         run: |
           apt-get update
           apt-get install -y git doxygen graphviz
@@ -25,6 +25,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cd hector_math
-          docs/build_docs.sh
+          cd .github
+          ./build_docs_on_github.sh
         shell: bash
