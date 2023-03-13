@@ -8,7 +8,7 @@ set -x
 # GO TO DOCS FOLDER #
 #####################
 
-cd ../hector_math/docs || exit
+cd ../hector_math || exit
 
 ###################
 # INSTALL DEPENDS #
@@ -39,7 +39,13 @@ docroot=`mktemp -d`
  
 # first, cleanup any old builds' static assets
 make -C docs clean
- 
+if [ $? -ne 0 ]; then
+  echo "Failed to clean docs"
+  exit 1
+fi
+
+docs_found=false
+
 # get a list of branches, excluding 'HEAD' and 'gh-pages'
 versions="`git for-each-ref '--format=%(refname:lstrip=-1)' refs/remotes/origin/ | grep -viE '^(HEAD|gh-pages)$'`"
 for current_version in ${versions}; do
@@ -55,7 +61,9 @@ for current_version in ${versions}; do
       echo -e "\tINFO: Couldn't find 'docs/conf.py' (skipped)"
       continue
    fi
- 
+
+  docs_found=true
+
    #languages="en `find docs/locales/ -mindepth 1 -maxdepth 1 -type d -exec basename '{}' \;`"
    current_language='en'
 
@@ -86,7 +94,13 @@ for current_version in ${versions}; do
    rsync -av "docs/_build/html/" "${docroot}/"
 
 done
- 
+
+# if build documentation for no branch exit with error
+if ! $docs_found; then
+  echo "ERROR: No branches were found that include documentations, 'docs/conf.py'"
+  exit 1
+fi
+
 # return to master branch
 git checkout master
  
