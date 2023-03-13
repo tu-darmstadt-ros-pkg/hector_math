@@ -47,7 +47,9 @@ fi
 docs_found=false
 
 # get a list of branches, excluding 'HEAD' and 'gh-pages'
-versions="`git for-each-ref '--format=%(refname:lstrip=-1)' refs/remotes/origin/ | grep -viE '^(HEAD|gh-pages)$'`"
+versions=$(git for-each-ref --format='%(refname:short)' refs/remotes/origin/ |
+                    sed 's/^[^/]*\///' |
+                    grep -viE '^(HEAD|gh-pages)$' )
 for current_version in ${versions}; do
  
    # make the current language available to conf.py
