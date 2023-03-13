@@ -10,7 +10,6 @@ class RingBufferTest : public testing::Test
 
 typedef testing::Types<float, double> Implementations;
 
-
 TYPED_TEST_CASE( RingBufferTest, Implementations );
 
 TYPED_TEST( RingBufferTest, basic )

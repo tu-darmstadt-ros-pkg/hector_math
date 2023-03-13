@@ -57,7 +57,6 @@ public:
     ring_iterator<IS_CONST> &operator--()
     {
       index_ = ( index_ + MaxSize ) % ( MaxSize + 1 ); // index-- and back to 0 if > MaxSize
-
       return *this;
     }
 
@@ -257,8 +256,11 @@ private:
   }
 
   void removed_element_at_head_adapt_indices() { size_--; }
-  size_t get_head_index() { return ( tail_index_ + items_.size() + 1 - size_ ) % items_.size(); }
-  size_t get_next_tail_index() { return ( tail_index_ + 1 ) % items_.size(); }
+  size_t get_head_index() const
+  {
+    return ( tail_index_ + items_.size() + 1 - size_ ) % items_.size();
+  }
+  size_t get_next_tail_index() const { return ( tail_index_ + 1 ) % items_.size(); }
   std::array<T, MaxSize + 1> items_;
   size_t size_ = 0;
   size_t tail_index_ = MaxSize;
