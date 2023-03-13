@@ -30,7 +30,7 @@ ls -lah
 export SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
  
 # make a new temp dir which will be our GitHub Pages docroot
-docroot=`mktemp -d`
+docroot=$(mktemp -d)
 
  
 ##############
@@ -52,10 +52,12 @@ versions=$(git for-each-ref --format='%(refname:short)' refs/remotes/origin/ |
                     grep -viE '^(HEAD|gh-pages)$' )
 for current_version in ${versions}; do
  
+
+   git checkout "${current_version}"
+   current_version=$(echo "$current_version" | tr '/' '_')
    # make the current language available to conf.py
    export current_version
-   git checkout ${current_version}
- 
+
    echo "INFO: Building sites for ${current_version}"
  
    # skip this branch if it doesn't have our docs dir & sphinx config
@@ -64,7 +66,7 @@ for current_version in ${versions}; do
       continue
    fi
 
-  docs_found=true
+   docs_found=true
 
    #languages="en `find docs/locales/ -mindepth 1 -maxdepth 1 -type d -exec basename '{}' \;`"
    current_language='en'
@@ -77,7 +79,7 @@ for current_version in ${versions}; do
    ##########
    echo "INFO: Building for ${current_language}"
       # HTML #
-   sphinx-build -b html docs/ docs/_build/html/${current_language}/${current_version} -D language="${current_language}"
+   sphinx-build -b html docs/ docs/_build/html/${current_language}/"${current_version}" -D language="${current_language}"
 
     # PDF # Not working somehow rinoh fails due to @endverbatim and @see tags
    #echo "Start pdf build" 
