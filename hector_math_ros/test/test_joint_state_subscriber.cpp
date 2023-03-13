@@ -111,7 +111,8 @@ TEST( JointStateSubscriber, tests )
 
   model = std::make_shared<MockRobotModel>( true ); // empty model
   sub = std::make_shared<JointStateSubscriber<double>>( model, "/test_joint_states" );
-  ASSERT_TRUE( sub->waitForFullState( ros::Duration( 0.1 ) ) ); // Empty model should return immediately
+  ASSERT_TRUE(
+      sub->waitForFullState( ros::Duration( 0.1 ) ) ); // Empty model should return immediately
 }
 
 int main( int argc, char **argv )
