@@ -1,38 +1,43 @@
 
-![workflow](https://github.com/tu-darmstadt-ros-pkg/hector_math/actions/workflows/ci.yml/badge.svg)
-![workflow](https://github.com/tu-darmstadt-ros-pkg/hector_math/actions/workflows/documentation.yml/badge.svg)
+[![workflow](https://github.com/tu-darmstadt-ros-pkg/hector_math/actions/workflows/ci.yml/badge.svg)](https://github.com/tu-darmstadt-ros-pkg/hector_math/actions/workflows/ci.yml)
+[![workflow](https://github.com/tu-darmstadt-ros-pkg/hector_math/actions/workflows/documentation.yml/badge.svg)](https://tu-darmstadt-ros-pkg.github.io/hector_math/en/master/)
+
 # Hector Math
-The hector_math ROS package provides a set of implementations for common math-related problems encountered in robotic
+
+The `hector_math` ROS package provides a set of implementations for common math-related problems encountered in robotic
 applications.
 
 ### Robot Model
 
-Hector_math includes a set of convenience functions for constructing a robot model, continuously updating its joint
+Hector Math includes a set of convenience functions for constructing a robot model, continuously updating its joint
 positions, and computing the center of mass and estimated footprint of the robot.
 More details can be found [here](https://tu-darmstadt-ros-pkg.github.io/hector_math/en/master/pages/Robot.html).
 
 ### 2D Map Operations
 
-Hector_math also includes a set of tools for performing operations on 2D maps.
+Hector Math also includes a set of tools for performing operations on 2D maps.
 
-* finding minima/maxima on the map
-* iterating over all positions inside a given polygon
+* Iterating over all 2D grid indexes inside a given rectangle, circle or polygon
+* Finding minima/maxima on the map
+
+<img src="https://github.com/tu-darmstadt-ros-pkg/hector_math/raw/feature/readme/hector_math/docs/pages/img/iterator_polygon_example.svg" alt="Polygon Iterator" width="320"/>
 
 More details can be found [here](https://tu-darmstadt-ros-pkg.github.io/hector_math/en/master/pages/MapOperations.html).
 
 ### Direction Discretization
 
 The package includes direction discretization tools for quickly converting continuous angles into discrete
-directions. More details can be found
+directions.
+
+It also contains methods to bin quaternions into hashes which can be used to discretize quaternions.
+More details can be found
 [here](https://tu-darmstadt-ros-pkg.github.io/hector_math/en/master/pages/QuaternionBinning.html).
 
 ### Containers
 
-Hector_math also includes several containers that are useful for robotics applications.
-
-* BoundedVector: vector-like structure but with limited size
-* QuaternionCache: stores direction-dependent data
-* RingBuffer: as a FIFO structure with a limited size (overwriting the oldest elements if the buffer is full)
+* BoundedVector: A vector-like structure but with limited size. For small sizes this structure can be kept on the stack and may have vastly greater performance.
+* QuaternionCache: Uses the included quaternion binning to store orientation-dependent data
+* RingBuffer: A FIFO structure with a limited size (overwriting the oldest elements if the buffer is full)
 
 More details can be found [here](https://tu-darmstadt-ros-pkg.github.io/hector_math/en/master/pages/Containers.html).
 
