@@ -50,7 +50,6 @@ fi
 current_version="master"
 
 git checkout "${current_version}"
-current_version=$(echo "$current_version" | tr '/' '_')
 # make the current language available to conf.py
 export current_version
 
