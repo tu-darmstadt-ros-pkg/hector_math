@@ -1,6 +1,6 @@
 PROJECT_NAME="Hector Math"
 # List the source input folders from which the documentation is generated here
-INPUT=../include
+INPUT=../include,../../hector_math_ros/include
 RECURSIVE=YES
 GENERATE_HTML=YES
 GENERATE_XML=YES

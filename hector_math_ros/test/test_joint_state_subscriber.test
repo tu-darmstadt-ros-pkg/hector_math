@@ -1,0 +1,3 @@
+<launch>
+  <test test-name="joint_state_subscriber" pkg="hector_math_ros" type="test_joint_state_subscriber"/>
+</launch>
