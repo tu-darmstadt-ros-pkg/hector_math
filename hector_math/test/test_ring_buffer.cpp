@@ -22,6 +22,7 @@ TYPED_TEST( RingBufferTest, basic )
   ringBuffer.push_back( Scalar( 0 ) );
   ASSERT_FALSE( ringBuffer.empty() );
   ASSERT_EQ( ringBuffer.size(), 1 );
+  ASSERT_EQ(ringBuffer.capacity(), max_size);
   for ( size_t i = 1; i < max_size - 1; i++ ) {
     ringBuffer.push_back( i );
     ASSERT_EQ( i + 1, ringBuffer.size() );

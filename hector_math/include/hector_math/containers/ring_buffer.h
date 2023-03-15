@@ -15,6 +15,8 @@ template<typename T, int ElementSize>
 class RingBuffer
 {
 public:
+  static constexpr int StorageSize = ElementSize + 1;
+
   // template parameter controls whether the iterator returns const references
   template<bool IS_CONST>
   struct ring_iterator {
@@ -22,8 +24,8 @@ public:
     using difference_type = std::ptrdiff_t;
     // using difference_type = typename std::iterator<std::random_access_iterator_tag, T>::difference_type;
     using value_type = T;
-    using pointer = std::conditional_t<IS_CONST, const T *, T *>;
-    using reference = std::conditional_t<IS_CONST, const T &, T &>;
+    using pointer = typename std::conditional<IS_CONST, const T *, T *>::type;
+    using reference = typename std::conditional<IS_CONST, const T &, T &>::type;
     using const_reference = T const &;
 
     ring_iterator( RingBuffer<T, ElementSize> *buffer, size_t index )
@@ -32,17 +34,9 @@ public:
     {
     }
 
-    template<bool Z = IS_CONST, typename std::enable_if<( !Z ), int>::type * = nullptr>
-    reference operator*() noexcept
-    {
-      return ( *buffer_ )[index_];
-    }
+    reference operator*() noexcept { return ( *buffer_ )[index_]; }
     const_reference operator*() const noexcept { return ( *buffer_ )[index_]; }
-    template<bool Z = IS_CONST, typename std::enable_if<( !Z ), int>::type * = nullptr>
-    reference operator->() noexcept
-    {
-      return &( ( *buffer_ )[index_] );
-    }
+    reference operator->() noexcept { return &( ( *buffer_ )[index_] ); }
     const_reference operator->() const noexcept { return &( ( *buffer_ )[index_] ); }
 
     ring_iterator<IS_CONST> &operator++()
@@ -134,7 +128,7 @@ public:
    * Controlled by the template argument ElementSize.
    * @return
    */
-  size_t capacity() const { return ElementSize; };
+  constexpr size_t capacity() const { return ElementSize; };
 
   /*!
    * Appends an element to the RingBuffer. Elements are appended to the RingBuffer.
@@ -244,7 +238,6 @@ public:
   const T &operator[]( size_t index ) const { return items_[index]; }
 
   T &operator[]( size_t index ) { return items_[index]; }
-  static constexpr int StorageSize = ElementSize + 1;
 
 private:
   void added_element_tail_adapt_indices()
