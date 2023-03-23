@@ -1,6 +1,5 @@
-//
-// Created by aljoscha on 08.11.22.
-//
+// Copyright (c) 2022 Aljoscha Schmidt. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 #include "hector_math/containers/quaternion_cache.h"
 
 #include <benchmark/benchmark.h>

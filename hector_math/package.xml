@@ -6,9 +6,7 @@
 
   <maintainer email="fabian@sim.tu-darmstadt.de">Stefan Fabian</maintainer>
 
-
   <license>MIT</license>
-
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>eigen</build_depend>

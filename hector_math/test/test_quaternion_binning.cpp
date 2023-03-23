@@ -1,6 +1,5 @@
-//
-// Created by stefan on 08.04.22.
-//
+// Copyright (c) 2022 Stefan Fabian. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #include "eigen_tests.h"
 #include <hector_math/math/quaternion_binning.h>

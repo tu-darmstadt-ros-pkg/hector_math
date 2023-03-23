@@ -1,4 +1,5 @@
-
+// Copyright (c) 2022 Aljoscha Schmidt. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 #include <hector_math/map_operations/find_minmax.h>
 
 #include <gtest/gtest.h>

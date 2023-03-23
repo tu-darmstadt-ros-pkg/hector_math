@@ -1,6 +1,5 @@
-//
-// Created by stefan on 19.10.21.
-//
+// Copyright (c) 2021 Stefan Fabian. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #ifndef HECTOR_MATH_ROS_CONVERSIONS_GEOMETRY_MSGS_H
 #define HECTOR_MATH_ROS_CONVERSIONS_GEOMETRY_MSGS_H
