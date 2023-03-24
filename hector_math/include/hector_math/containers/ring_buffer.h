@@ -30,11 +30,10 @@ public:
   using size_type = std::size_t;
   using difference_type = std::ptrdiff_t;
 
-  // template parameter controls whether the iterator returns const references
-  template<bool IS_CONST>
+  template<typename Iterator>
   struct ring_iterator;
-  using iterator = ring_iterator<false>;
-  using const_iterator = ring_iterator<true>;
+  using iterator = ring_iterator<pointer>;
+  using const_iterator = ring_iterator<const_pointer>;
 
   //! @returns true if the container is empty, false otherwise
   constexpr bool empty() const { return size_ == 0; }
@@ -156,58 +155,73 @@ private:
   size_t tail_index_ = 0;
 };
 
-template<typename T, size_t TSize>
-template<bool IS_CONST>
-struct RingBuffer<T, TSize>::ring_iterator {
-  using iterator_category = std::random_access_iterator_tag;
-  using difference_type = std::ptrdiff_t;
-  // using difference_type = typename std::iterator<std::random_access_iterator_tag, T>::difference_type;
-  using value_type = T;
-  using pointer = typename std::conditional<IS_CONST, const T *, T *>::type;
-  using reference = typename std::conditional<IS_CONST, const T &, T &>::type;
-  using const_reference = T const &;
+template<typename T, size_t N>
+template<typename Iterator>
+struct RingBuffer<T, N>::ring_iterator {
+private:
+  using _traits = std::iterator_traits<Iterator>;
 
-  ring_iterator( RingBuffer<T, TSize> *buffer, int offset, int index = 0 )
-      : buffer_( buffer ), offset_( offset ), buffer_index_( ( offset + index ) % TSize ),
+public:
+  using iterator_type = Iterator;
+  using iterator_category = std::random_access_iterator_tag;
+  using value_type = typename _traits::value_type;
+  using difference_type = typename _traits::difference_type;
+  using reference = typename _traits::reference;
+  using pointer = typename _traits ::pointer;
+
+  ring_iterator( RingBuffer<T, N> *buffer, int offset, int index = 0 ) noexcept
+      : buffer_( buffer ), offset_( offset ), buffer_index_( ( offset + index ) % N ),
         iterator_index_( index )
   {
   }
 
-  reference operator*() noexcept { return buffer_->items_[buffer_index_]; }
-  const_reference operator*() const noexcept { return buffer_->items_[buffer_index_]; }
-  reference operator->() noexcept { return &( buffer_->items_[buffer_index_] ); }
-  const_reference operator->() const noexcept { return &( buffer_->items_[buffer_index_] ); }
+  reference operator*() const noexcept { return buffer_->items_[buffer_index_]; }
+  pointer operator->() const noexcept { return &( buffer_->items_[buffer_index_] ); }
 
-  ring_iterator<IS_CONST> &operator++()
+  ring_iterator<Iterator> &operator++() noexcept
   {
     buffer_index_ = buffer_index_ == ( Size - 1 ) ? 0 : ( buffer_index_ + 1 );
     ++iterator_index_;
     return *this;
   }
 
-  ring_iterator<IS_CONST> &operator--()
-  {
-    buffer_index_ = buffer_index_ == 0 ? ( Size - 1 ) : ( buffer_index_ - 1 );
-    --iterator_index_;
-    return *this;
-  }
-
   // NOLINTNEXTLINE(cert-dcl21-cpp) lvalue ref-qualify to prevent (it++)++ mistakes without const.
-  ring_iterator<IS_CONST> operator++( int ) &
+  ring_iterator<Iterator> operator++( int ) &noexcept
   {
     auto tmp = *this;
     ++( *this );
     return tmp;
   }
 
-  ring_iterator<IS_CONST> operator--( int ) & // NOLINT(cert-dcl21-cpp)
+  ring_iterator<Iterator> &operator+=( int nums ) noexcept
+  {
+    iterator_index_ += nums;
+    buffer_index_ = (buffer_index_ + nums) % N;
+    return *this;
+  }
+
+  ring_iterator<Iterator> &operator--() noexcept
+  {
+    buffer_index_ = buffer_index_ == 0 ? ( Size - 1 ) : ( buffer_index_ - 1 );
+    --iterator_index_;
+    return *this;
+  }
+
+  ring_iterator<Iterator> operator--( int ) &noexcept // NOLINT(cert-dcl21-cpp)
   {
     auto tmp = *this;
     --( *this );
     return tmp;
   }
 
-  difference_type operator-( const ring_iterator<IS_CONST> &other ) const
+  ring_iterator<Iterator> &operator-=( int nums ) noexcept
+  {
+    iterator_index_ -= nums;
+    buffer_index_ = (buffer_index_ - nums) % N;
+    return *this;
+  }
+
+  difference_type operator-( const ring_iterator<Iterator> &other ) const noexcept
   {
     assert( buffer_ == other.buffer_ && "Iterators have to point to the same buffer!" );
     assert( offset_ == other.offset_ && "You are performing arithmetic with two iterators from "
@@ -215,23 +229,25 @@ struct RingBuffer<T, TSize>::ring_iterator {
     return iterator_index_ - other.iterator_index_;
   }
 
-  ring_iterator<IS_CONST> operator+( difference_type nums ) const
+  ring_iterator<Iterator> operator+( difference_type nums ) const noexcept
   {
-    return ring_iterator<IS_CONST>( buffer_, offset_, iterator_index_ + nums );
+    return ring_iterator<Iterator>( buffer_, offset_, iterator_index_ + nums );
   }
 
-  ring_iterator<IS_CONST> operator-( difference_type nums ) const
+  ring_iterator<Iterator> operator-( difference_type nums ) const noexcept
   {
-    return ring_iterator<IS_CONST>( buffer_, offset_, iterator_index_ - nums );
+    return ring_iterator<Iterator>( buffer_, offset_, iterator_index_ - nums );
   }
 
-  operator ring_iterator<true>() const // NOLINT(google-explicit-constructor)
+  // Always allow implicit cast to a const iterator.
+  // NOLINTNEXTLINE(google-explicit-constructor)
+  operator RingBuffer<T, N>::const_iterator() const noexcept
   {
-    return ring_iterator<true>( buffer_, offset_, iterator_index_ );
+    return RingBuffer<T, N>::const_iterator( buffer_, offset_, iterator_index_ );
   }
 
-  template<bool IS_CONST_OTHER>
-  bool operator==( const ring_iterator<IS_CONST_OTHER> &other ) const
+  template<typename IteratorR>
+  bool operator==( const ring_iterator<IteratorR> &other ) const noexcept
   {
     assert( buffer_ == other.buffer_ &&
             "You are comparing two iterators from different ring buffers. This indicates a bug." );
@@ -240,8 +256,8 @@ struct RingBuffer<T, TSize>::ring_iterator {
     return iterator_index_ == other.iterator_index_;
   }
 
-  template<bool IS_CONST_OTHER>
-  bool operator!=( const ring_iterator<IS_CONST_OTHER> &other ) const
+  template<typename IteratorR>
+  bool operator!=( const ring_iterator<IteratorR> &other ) const noexcept
   {
     assert( buffer_ == other.buffer_ &&
             "You are comparing two iterators from different ring buffers. This indicates a bug." );
@@ -251,7 +267,7 @@ struct RingBuffer<T, TSize>::ring_iterator {
   }
 
 private:
-  RingBuffer<T, TSize> *buffer_;
+  RingBuffer<T, N> *buffer_;
   int offset_;
   int iterator_index_;
   int buffer_index_;

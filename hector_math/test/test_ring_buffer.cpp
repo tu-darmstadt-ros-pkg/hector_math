@@ -68,6 +68,26 @@ TEST( RingBufferTest, arithmetic )
   it2 = it + 2;
   EXPECT_EQ( it2 - it, 2 );
   EXPECT_EQ( it - it2, -2 );
+  it += 2;
+  EXPECT_EQ( it, it2 );
+}
+
+TEST( RingBufferTest, complexType )
+{
+  constexpr size_t max_size = 10;
+  struct ComplexStruct {
+    size_t value;
+  };
+  RingBuffer<ComplexStruct, max_size> ringBuffer;
+  for ( size_t i = 0; i < max_size; ++i ) ringBuffer.push_back( { .value = i } );
+  ASSERT_TRUE( ringBuffer.full() );
+
+  auto it = ringBuffer.begin();
+  EXPECT_EQ( it->value, 0 );
+  ++it;
+  EXPECT_EQ( ( *it ).value, 1 );
+  it += max_size - 2;
+  EXPECT_EQ( it->value, max_size - 1 );
 }
 
 TEST( RingBufferTest, iterators )
@@ -94,6 +114,10 @@ TEST( RingBufferTest, iterators )
 
   // begin() and [0] point to same element
   ASSERT_EQ( *ringBuffer.begin(), ringBuffer[0] );
+  // Make const
+  RingBuffer<int, max_size>::iterator it = ringBuffer.begin();
+  RingBuffer<int, max_size>::const_iterator cit = it;
+  ASSERT_EQ( *it, *cit );
 
   // algorithms
   //  FOR_EACH
@@ -196,6 +220,9 @@ TEST( RingBufferTest, front_back )
   // FILL RING BUFFER PARTIAL
   for ( int i = 0; i < 25; i++ ) { ringBuffer.push_back( i ); }
   ASSERT_EQ( ringBuffer.front(), 0 );
+  ASSERT_EQ( ringBuffer.back(), 24 );
+  ringBuffer.pop_front();
+  ASSERT_EQ( ringBuffer.front(), 1 );
   ASSERT_EQ( ringBuffer.back(), 24 );
 }
 
