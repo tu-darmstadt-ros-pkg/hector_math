@@ -196,7 +196,7 @@ public:
   ring_iterator<Iterator> &operator+=( int nums ) noexcept
   {
     iterator_index_ += nums;
-    buffer_index_ = (buffer_index_ + nums) % N;
+    buffer_index_ = ( buffer_index_ + nums ) % N;
     return *this;
   }
 
@@ -217,7 +217,7 @@ public:
   ring_iterator<Iterator> &operator-=( int nums ) noexcept
   {
     iterator_index_ -= nums;
-    buffer_index_ = (buffer_index_ - nums) % N;
+    buffer_index_ = ( buffer_index_ - nums ) % N;
     return *this;
   }
 
