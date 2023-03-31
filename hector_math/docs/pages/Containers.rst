@@ -41,14 +41,37 @@ regions with increased bin resolution.
 
 For more details, see :doc:`QuaternionBinning`.
 
+Ring Buffer
+-----------
+
+The Ring Buffer is a container with a limited size which is controlled with the template argument MaxSize.
+If the Ring Buffer is full, adding new elements will overwrite the oldest elements! It can be used as
+a FIFO data structure. The oldest element can be easily retrieved while adding new elements will
+append them to the container. The container keeps track of which element is the oldest and the newest
+without ever moving any elements. Additionally, the container support any algorithm that work with
+forward iterators, like std::for_each() and of course range loops.
+
 API
 ---
+
+Bounded Vector
+**************
 .. doxygenclass:: hector_math::BoundedVector
    :members:
    :private-members:
    :undoc-members:
 
+Quaternion Cache
+****************
 .. doxygenclass:: hector_math::QuaternionCache
    :members:
    :private-members:
    :undoc-members:
+
+Ring Buffer
+***********
+.. doxygenclass:: hector_math::RingBuffer
+   :members:
+   :private-members:
+   :undoc-members:
+
