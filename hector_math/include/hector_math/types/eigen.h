@@ -65,14 +65,22 @@ using Isometry2d = Isometry2<double>;
 
 template<typename Scalar>
 using Point = Eigen::Array<Scalar, 2, 1>;
+using Pointf = Point<float>;
+using Pointd = Point<double>;
 template<typename Scalar>
 using PointList = std::vector<Point<Scalar>, Eigen::aligned_allocator<Point<Scalar>>>;
+using PointfList = PointList<float>;
+using PointdList = PointList<double>;
 
 template<typename Scalar>
 using Polygon = Eigen::Array<Scalar, 2, Eigen::Dynamic>;
+using Polygonf = Polygon<float>;
+using Polygond = Polygon<double>;
 
 template<typename Scalar>
 using GridMap = Eigen::Array<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
+using GridMapf = GridMap<float>;
+using GridMapd = GridMap<double>;
 
 struct BlockIndices {
   Eigen::Index x0;
