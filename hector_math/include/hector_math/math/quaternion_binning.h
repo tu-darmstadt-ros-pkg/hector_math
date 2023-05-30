@@ -115,7 +115,8 @@ ReturnType computeBin( const Eigen::Quaternion<Scalar> &q )
     return bin;
 
   } else if ( mode == quaternion_binning_modes::SphericalFibonacci ) {
-    constexpr Scalar PHI = ( std::sqrt( 5 ) + Scalar( 1 ) ) / Scalar( 2 );
+    static constexpr Scalar SQRT_5 = 2.23606797749978969640917366873127623544061835961152572427089;
+    constexpr Scalar PHI = ( SQRT_5 + Scalar( 1 ) ) / Scalar( 2 );
     constexpr int fibonacci_n = ANGLE_BINS * ANGLE_BINS;
     ; // TODO: Fibonacci_n input param
     const Scalar norm = q.vec().norm();
@@ -125,9 +126,9 @@ ReturnType computeBin( const Eigen::Quaternion<Scalar> &q )
     Scalar phi = std::min<Scalar>( std::atan2<Scalar>( y, x ), M_PI );
     Scalar sin_theta, cos_theta = z;
     Scalar k = std::max(
-        2.0, std::floor( std::log( fibonacci_n * M_PI * sqrt( 5 ) * ( 1.0 - square( cos_theta ) ) ) /
+        2.0, std::floor( std::log( fibonacci_n * M_PI * SQRT_5 * ( 1.0 - square( cos_theta ) ) ) /
                          std::log( PHI + 1.0 ) ) );
-    Scalar fk = pow( PHI, k ) / std::sqrt( 5 );
+    Scalar fk = pow( PHI, k ) / SQRT_5;
     Scalar f0 = std::round( fk );
     Scalar f1 = std::round( fk * PHI );
     Eigen::Matrix<Scalar, 2, 2> b;
@@ -176,7 +177,8 @@ template<typename Scalar, int AXIS_BINS, int ANGLE_BINS, QuaternionBinningMode m
 Eigen::Matrix<Scalar, 3, 1> computeDirectionFromBin( const ReturnType &i )
 {
   if ( mode == quaternion_binning_modes::SphericalFibonacci ) {
-    constexpr Scalar PHI = ( std::sqrt( 5 ) + Scalar( 1 ) ) / Scalar( 2 );
+    static constexpr Scalar SQRT_5 = 2.23606797749978969640917366873127623544061835961152572427089;
+    constexpr Scalar PHI = ( SQRT_5 + Scalar( 1 ) ) / Scalar( 2 );
     int fibonacci_n = ANGLE_BINS * ANGLE_BINS;
     Scalar phi = 2 * M_PI * ( i / PHI - std::floor( i / PHI ) );
     Scalar cos_theta = 1.0 - ( 1.0 + 2.0 * i ) / fibonacci_n;
