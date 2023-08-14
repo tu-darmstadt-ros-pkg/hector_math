@@ -128,7 +128,7 @@ void iteratePolygon( const Polygon<T> &polygon, Eigen::Index row_min, Eigen::Ind
 
   Eigen::Index y = std::max<Eigen::Index>( col_min, std::round( lines[active_line_index].start_y ) );
   for ( ; y < max_y; ++y ) {
-    const double y_cell_limit = double(y) + 0.5;
+    const double y_cell_limit = double( y ) + 0.5;
     // Determine lines that ended
     for ( int i = active_lines.size() - 1; i >= 0; --i ) {
       active_lines[i].x += active_lines[i].x_increment;
