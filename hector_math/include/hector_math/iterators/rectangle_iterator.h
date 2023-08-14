@@ -29,41 +29,40 @@ namespace hector_math
  * @param polygon The polygon that is iterated over.
  * @param functor The function that will be called for each index (x, y) inside the polygon.
  */
-template<typename Scalar, typename Functor>
-void iterateRectangle( const Vector2<Scalar> &a, const Vector2<Scalar> &b, const Vector2<Scalar> &c,
+template<typename T, typename Functor>
+void iterateRectangle( const Vector2<T> &a, const Vector2<T> &b, const Vector2<T> &c,
                        Eigen::Index row_min, Eigen::Index row_max, Eigen::Index col_min,
                        Eigen::Index col_max, Functor functor );
 
 //! Overload of iterateRectangle where row_min and col_min are set to 0 to allow for bounded
 //! iteration of 2D matrices and arrays.
-template<typename Scalar, typename Functor>
-void iterateRectangle( const Vector2<Scalar> &a, const Vector2<Scalar> &b, const Vector2<Scalar> &c,
+template<typename T, typename Functor>
+void iterateRectangle( const Vector2<T> &a, const Vector2<T> &b, const Vector2<T> &c,
                        Eigen::Index rows, Eigen::Index cols, Functor functor )
 {
   iterateRectangle( a, b, c, 0, rows, 0, cols, functor );
 }
 
 //! Overload of iterateRectangle where the indexes are not bounded.
-template<typename Scalar, typename Functor>
-void iterateRectangle( const Vector2<Scalar> &a, const Vector2<Scalar> &b, const Vector2<Scalar> &c,
-                       Functor functor )
+template<typename T, typename Functor>
+void iterateRectangle( const Vector2<T> &a, const Vector2<T> &b, const Vector2<T> &c, Functor functor )
 {
   constexpr Eigen::Index min = std::numeric_limits<Eigen::Index>::min();
   constexpr Eigen::Index max = std::numeric_limits<Eigen::Index>::max();
   iterateRectangle( a, b, c, min, max, min, max, functor );
 }
 
-template<typename Scalar, typename Functor>
-void iterateRectangle( const Vector2<Scalar> &a, const Vector2<Scalar> &b, const Vector2<Scalar> &c,
+template<typename T, typename Functor>
+void iterateRectangle( const Vector2<T> &a, const Vector2<T> &b, const Vector2<T> &c,
                        Eigen::Index row_min, Eigen::Index row_max, Eigen::Index col_min,
                        Eigen::Index col_max, Functor functor )
 {
   const auto &d = b + c - a;
 
-  std::array<Vector2<Scalar>, 4> points = { a, b, d, c };
+  std::array<Vector2<T>, 4> points = { a, b, d, c };
   // Find the corner with the lowest y value
   size_t smallest_index = std::min_element( points.begin(), points.end(),
-                                            []( const Vector2<Scalar> &a, const Vector2<Scalar> &b ) {
+                                            []( const Vector2<T> &a, const Vector2<T> &b ) {
                                               if ( std::abs( a.y() - b.y() ) < 1E-5 )
                                                 return a.x() < b.x();
                                               return a.y() < b.y();
@@ -84,31 +83,29 @@ void iterateRectangle( const Vector2<Scalar> &a, const Vector2<Scalar> &b, const
   const auto &right = points[index_right];
 
   struct Line {
-    Line( const Vector2<Scalar> &start, const Vector2<Scalar> &end, const Eigen::Index y,
-          const bool left )
+    Line( const Vector2<T> &start, const Vector2<T> &end, const Eigen::Index y, const bool left )
     {
       if ( std::abs( end.y() - start.y() ) < 1E-4 ) {
         x_increment = 0;
-        x = left ? std::min( start.x(), end.x() ) : std::max( start.x(), end.x() );
+        x = double( left ? std::min( start.x(), end.x() ) : std::max( start.x(), end.x() ) );
         return;
       }
-      x_increment = ( end.x() - start.x() ) / ( end.y() - start.y() );
+      x_increment = double( end.x() - start.x() ) / double( end.y() - start.y() );
 
       // Compute x value at center of y-column
-      const Scalar diff_start_y =
+      const double diff_start_y =
           y - std::floor( start.y() ) + 0.5 - ( start.y() - std::floor( start.y() ) );
       x = start.x() + diff_start_y * x_increment;
     }
 
-    Scalar x;
-    Scalar x_increment;
+    double x;
+    double x_increment;
   };
 
   Eigen::Index y = std::max<Eigen::Index>( col_min, std::round( lowest.y() ) );
   const Eigen::Index max_y = std::min<Eigen::Index>( col_max, std::round( highest.y() ) );
   const Eigen::Index left_switch = std::round( left.y() );
   const Eigen::Index right_switch = std::round( right.y() );
-  Scalar left_x, right_x;
   Line left_line( lowest, left, y, true ), right_line( lowest, right, y, false );
   Eigen::Index next_y = std::min( left_switch, right_switch );
   // Loop until next corner

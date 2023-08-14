@@ -24,22 +24,21 @@ namespace hector_math
  * @param polygon The polygon that is iterated over.
  * @param functor The function that will be called for each index (x, y) inside the polygon.
  */
-template<typename Scalar, typename Functor>
-void iteratePolygon( const Polygon<Scalar> &polygon, Eigen::Index row_min, Eigen::Index row_max,
+template<typename T, typename Functor>
+void iteratePolygon( const Polygon<T> &polygon, Eigen::Index row_min, Eigen::Index row_max,
                      Eigen::Index col_min, Eigen::Index col_max, Functor functor );
 
 //! Overload of iteratePolygon where row_min and col_min are set to 0 to allow for bounded iteration
 //! of 2D matrices and arrays.
-template<typename Scalar, typename Functor>
-void iteratePolygon( const Polygon<Scalar> &polygon, Eigen::Index rows, Eigen::Index cols,
-                     Functor functor )
+template<typename T, typename Functor>
+void iteratePolygon( const Polygon<T> &polygon, Eigen::Index rows, Eigen::Index cols, Functor functor )
 {
   iteratePolygon( polygon, 0, rows, 0, cols, functor );
 }
 
 //! Overload of iteratePolygon where the indexes are not bounded.
-template<typename Scalar, typename Functor>
-void iteratePolygon( const Polygon<Scalar> &polygon, Functor functor )
+template<typename T, typename Functor>
+void iteratePolygon( const Polygon<T> &polygon, Functor functor )
 {
   constexpr Eigen::Index min = std::numeric_limits<Eigen::Index>::min();
   constexpr Eigen::Index max = std::numeric_limits<Eigen::Index>::max();
@@ -48,32 +47,30 @@ void iteratePolygon( const Polygon<Scalar> &polygon, Functor functor )
 
 namespace detail
 {
-template<typename Scalar, typename Functor, int LIMIT = 0>
-void iteratePolygon( const Polygon<Scalar> &polygon, Eigen::Index row_min, Eigen::Index row_max,
+template<typename T, typename Functor, int LIMIT = 0>
+void iteratePolygon( const Polygon<T> &polygon, Eigen::Index row_min, Eigen::Index row_max,
                      Eigen::Index col_min, Eigen::Index col_max, Functor functor );
 }
 
-template<typename Scalar, typename Functor>
-void iteratePolygon( const Polygon<Scalar> &polygon, Eigen::Index row_min, Eigen::Index row_max,
+template<typename T, typename Functor>
+void iteratePolygon( const Polygon<T> &polygon, Eigen::Index row_min, Eigen::Index row_max,
                      Eigen::Index col_min, Eigen::Index col_max, Functor functor )
 {
   if ( polygon.cols() < 3 )
     return;
   if ( polygon.cols() <= 15 ) {
-    detail::iteratePolygon<Scalar, Functor, 15>( polygon, row_min, row_max, col_min, col_max,
-                                                 functor );
+    detail::iteratePolygon<T, Functor, 15>( polygon, row_min, row_max, col_min, col_max, functor );
   } else if ( polygon.cols() <= 63 ) {
-    detail::iteratePolygon<Scalar, Functor, 63>( polygon, row_min, row_max, col_min, col_max,
-                                                 functor );
+    detail::iteratePolygon<T, Functor, 63>( polygon, row_min, row_max, col_min, col_max, functor );
   } else {
-    detail::iteratePolygon<Scalar, Functor>( polygon, row_min, row_max, col_min, col_max, functor );
+    detail::iteratePolygon<T, Functor>( polygon, row_min, row_max, col_min, col_max, functor );
   }
 }
 
 namespace detail
 {
-template<typename Scalar, typename Functor, int LIMIT>
-void iteratePolygon( const Polygon<Scalar> &polygon, Eigen::Index row_min, Eigen::Index row_max,
+template<typename T, typename Functor, int LIMIT>
+void iteratePolygon( const Polygon<T> &polygon, Eigen::Index row_min, Eigen::Index row_max,
                      Eigen::Index col_min, Eigen::Index col_max, Functor functor )
 {
   // Build iteration lines from the polygon points that allow us to get the x value for each
@@ -81,17 +78,17 @@ void iteratePolygon( const Polygon<Scalar> &polygon, Eigen::Index row_min, Eigen
   struct Line {
     Line() = default;
 
-    Line( const Point<Scalar> &a, const Point<Scalar> &b )
+    Line( const Point<T> &a, const Point<T> &b )
     {
-      Point<Scalar> start = a;
-      Point<Scalar> end = b;
+      Point<T> start = a;
+      Point<T> end = b;
       if ( a.y() > b.y() )
         std::swap( start, end );
-      Scalar diff_y = b.y() - a.y();
+      T diff_y = b.y() - a.y();
       if ( std::abs( diff_y ) < 1E-4 )
         x_increment = 0;
       else
-        x_increment = ( b.x() - a.x() ) / ( b.y() - a.y() );
+        x_increment = double( b.x() - a.x() ) / double( b.y() - a.y() );
 
       // Compute x value at center of y-column
       x = start.x() + ( 0.5 - ( start.y() - std::floor( start.y() ) ) ) * x_increment;
@@ -99,15 +96,15 @@ void iteratePolygon( const Polygon<Scalar> &polygon, Eigen::Index row_min, Eigen
       end_y = end.y();
     }
 
-    Scalar start_y;
-    Scalar end_y;
-    Scalar x;
-    Scalar x_increment;
+    double start_y;
+    double end_y;
+    double x;
+    double x_increment;
   };
   using LineContainer =
       typename std::conditional<LIMIT == 0, std::vector<Line>, BoundedVector<Line, LIMIT + 1>>::type;
-  using RegionContainer =
-      typename std::conditional<LIMIT == 0, std::vector<Scalar>, BoundedVector<Scalar, LIMIT>>::type;
+  using RegionContainer = typename std::conditional<LIMIT == 0, std::vector<Eigen::Index>,
+                                                    BoundedVector<Eigen::Index, LIMIT>>::type;
 
   LineContainer lines;
   lines.reserve( polygon.cols() );
@@ -131,18 +128,19 @@ void iteratePolygon( const Polygon<Scalar> &polygon, Eigen::Index row_min, Eigen
 
   Eigen::Index y = std::max<Eigen::Index>( col_min, std::round( lines[active_line_index].start_y ) );
   for ( ; y < max_y; ++y ) {
+    const double y_cell_limit = double(y) + 0.5;
     // Determine lines that ended
     for ( int i = active_lines.size() - 1; i >= 0; --i ) {
       active_lines[i].x += active_lines[i].x_increment;
-      if ( active_lines[i].end_y >= y + 0.5 )
+      if ( active_lines[i].end_y >= y_cell_limit )
         continue;
       active_lines.erase( active_lines.begin() + i );
     }
     // Determine new lines that started
     for ( ; active_line_index < lines.size(); ++active_line_index ) {
-      if ( lines[active_line_index].start_y >= y + 0.5 )
+      if ( lines[active_line_index].start_y >= y_cell_limit )
         break;
-      if ( lines[active_line_index].end_y < y + 0.5 )
+      if ( lines[active_line_index].end_y < y_cell_limit )
         continue; // Ignore lines that start and end before current column
       if ( lines[active_line_index].start_y < y )
         lines[active_line_index].x += lines[active_line_index].x_increment;
@@ -159,8 +157,8 @@ void iteratePolygon( const Polygon<Scalar> &polygon, Eigen::Index row_min, Eigen
     std::sort( x_region_segments.begin(), x_region_segments.end() );
 
     for ( size_t i = 0; i < x_region_segments.size() - 1; i += 2 ) {
-      Eigen::Index x_start = std::max<Eigen::Index>( row_min, std::round( x_region_segments[i] ) );
-      Eigen::Index x_end = std::min<Eigen::Index>( row_max, std::round( x_region_segments[i + 1] ) );
+      Eigen::Index x_start = std::max<Eigen::Index>( row_min, x_region_segments[i] );
+      Eigen::Index x_end = std::min<Eigen::Index>( row_max, x_region_segments[i + 1] );
       for ( Eigen::Index x = x_start; x < x_end; ++x ) { functor( x, y ); }
     }
   }

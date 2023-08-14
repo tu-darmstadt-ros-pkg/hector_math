@@ -69,12 +69,13 @@ class IteratorTest : public testing::Test
 
 typedef testing::Types<float, double> Implementations;
 
-TYPED_TEST_CASE( IteratorTest, Implementations );
+TYPED_TEST_SUITE( IteratorTest, Implementations );
 
 TYPED_TEST( IteratorTest, rectangleTest )
 {
   using Scalar = TypeParam;
-  using Vector2 = Vector2<Scalar>;
+  using Vector2S = Vector2<Scalar>;
+  using Vector2I = Vector2<Eigen::Index>;
   GridMap<Eigen::Index> expected_map( 5, 5 );
   // @formatter:off
   // clang-format off
@@ -88,10 +89,18 @@ TYPED_TEST( IteratorTest, rectangleTest )
   GridMap<Eigen::Index> actual_map( 5, 5 );
   actual_map.setZero();
   iterateRectangle<Scalar>(
-      Vector2( 1, 0 ), Vector2( 1, 4 ), Vector2( 4, 0 ),
+      Vector2S( 1, 0 ), Vector2S( 1, 4 ), Vector2S( 4, 0 ),
       [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Rectangle with a (0, 1), b (4, 1) and c (0, 3).";
+
+  // Try also with non-floating point rectangle
+  actual_map.setZero();
+  iterateRectangle<Eigen::Index>(
+      Vector2I( 1, 0 ), Vector2I( 1, 4 ), Vector2I( 4, 0 ),
+      [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+      << "Rectangle with a (0, 1), b (4, 1) and c (0, 3) and integers.";
 
   // @formatter:off
   // clang-format off
@@ -104,14 +113,14 @@ TYPED_TEST( IteratorTest, rectangleTest )
   // clang-format on
   actual_map.setZero();
   iterateRectangle<Scalar>(
-      Vector2( 0.4, 0.4 ), Vector2( 3.4, 1.6 ), Vector2( 1.6, 3.4 ),
+      Vector2S( 0.4, 0.4 ), Vector2S( 3.4, 1.6 ), Vector2S( 1.6, 3.4 ),
       [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Rectangle with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4).";
   // swapped corners b and c -> should result in same expected map
   actual_map.setZero();
   iterateRectangle<Scalar>(
-      Vector2( 0.4, 0.4 ), Vector2( 1.6, 3.4 ), Vector2( 3.4, 1.6 ),
+      Vector2S( 0.4, 0.4 ), Vector2S( 1.6, 3.4 ), Vector2S( 3.4, 1.6 ),
       [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Rectangle with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4).";
@@ -119,7 +128,7 @@ TYPED_TEST( IteratorTest, rectangleTest )
   expected_map.setZero();
   actual_map.setZero();
   iterateRectangle<Scalar>(
-      Vector2( 1.6, 0 ), Vector2( 2.4, 0 ), Vector2( 1.6, 4.4 ),
+      Vector2S( 1.6, 0 ), Vector2S( 2.4, 0 ), Vector2S( 1.6, 4.4 ),
       [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Rectangle with a (1.6, 0), b (2.4, 0) and c (1.6, 4.4).";
@@ -135,7 +144,7 @@ TYPED_TEST( IteratorTest, rectangleTest )
   // clang-format on
   actual_map.setZero();
   iterateRectangle<Scalar>(
-      Vector2( 0.4, 0.4 ), Vector2( 3.4, 1.6 ), Vector2( 1.6, 3.4 ), 3, 4,
+      Vector2S( 0.4, 0.4 ), Vector2S( 3.4, 1.6 ), Vector2S( 1.6, 3.4 ), 3, 4,
       [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Rectangle with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4).";
@@ -152,7 +161,7 @@ TYPED_TEST( IteratorTest, rectangleTest )
   // clang-format on
   actual_map.setZero();
   iterateRectangle<Scalar>(
-      Vector2( 0.4, 0.4 ), Vector2( 3.4, 1.6 ), Vector2( 1.6, 3.4 ), 1, 3, 2, 4,
+      Vector2S( 0.4, 0.4 ), Vector2S( 3.4, 1.6 ), Vector2S( 1.6, 3.4 ), 1, 3, 2, 4,
       [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Rectangle with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4).";
@@ -184,7 +193,7 @@ TYPED_TEST( IteratorTest, rectangleTest )
   // clang-format on
   actual_map = GridMap<Eigen::Index>::Zero( 20, 20 );
   iterateRectangle<Scalar>(
-      Vector2( 0, 1 ), Vector2( 1, 19 ), Vector2( 18, 0 ),
+      Vector2S( 0, 1 ), Vector2S( 1, 19 ), Vector2S( 18, 0 ),
       [&actual_map]( Eigen::Index x, Eigen::Index y ) { ++actual_map( x, y ); } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Rectangle with a (1, 2), b (0, 5) and c (9, 4).";
@@ -193,7 +202,8 @@ TYPED_TEST( IteratorTest, rectangleTest )
 TYPED_TEST( IteratorTest, circleTest )
 {
   using Scalar = TypeParam;
-  using Vector2 = Vector2<Scalar>;
+  using Vector2S = Vector2<Scalar>;
+  using Vector2I = Vector2<Eigen::Index>;
   // normal case in area x: -4 bis 4 and y: -4 bis 4, center (0,0) and radius 2,
   GridMap<Eigen::Index> expected_map( 5, 5 );
   // @formatter:off
@@ -208,7 +218,7 @@ TYPED_TEST( IteratorTest, circleTest )
   GridMap<Eigen::Index> actual_map( 5, 5 );
   actual_map.setZero();
   iterateCircle<Scalar>(
-      Vector2( 0.49, 0.49 ), 2, -4, 4, -4, 4,
+      Vector2S( 0.49, 0.49 ), 2, -4, 4, -4, 4,
       [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x + 2, y + 2 ) += 1; } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Circle with radius 2 at (0.49, 0.49) with negative x- and y- indices.";
@@ -225,12 +235,22 @@ TYPED_TEST( IteratorTest, circleTest )
   // clang-format on
   actual_map.setZero();
   iterateCircle<Scalar>(
-      Vector2( 2, 2 ), 2, 0, 6, 0, 6, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+      Vector2S( 2, 2 ), 2, 0, 6, 0, 6, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
         EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
         actual_map( x, y ) += 1;
       } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Circle with radius 2 at (2, 2).";
+
+  // Try with non-floating point values
+  actual_map.setZero();
+  iterateCircle<Eigen::Index>(
+      Vector2I( 2, 2 ), 2, 0, 6, 0, 6, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+        EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
+        actual_map( x, y ) += 1;
+      } );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+      << "Circle with radius 2 at (2, 2) and integer.";
 
   // case 3 restrict max_row to be 1
   actual_map.setZero();
@@ -244,7 +264,7 @@ TYPED_TEST( IteratorTest, circleTest )
   // @formatter:on
   // clang-format on
   iterateCircle<Scalar>(
-      Vector2( 2, 2 ), 2, 0, 3, 0, 6, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+      Vector2S( 2, 2 ), 2, 0, 3, 0, 6, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
         EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
         actual_map( x, y ) += 1;
       } );
@@ -263,7 +283,7 @@ TYPED_TEST( IteratorTest, circleTest )
   // @formatter:on
   // clang-format on
   iterateCircle<Scalar>(
-      Vector2( 2, 2 ), 2, 1, 6, 0, 6, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+      Vector2S( 2, 2 ), 2, 1, 6, 0, 6, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
         EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
         actual_map( x, y ) += 1;
       } );
@@ -281,7 +301,7 @@ TYPED_TEST( IteratorTest, circleTest )
   // @formatter:on
   // clang-format on
   iterateCircle<Scalar>(
-      Vector2( 2, 2 ), 2, 0, 6, 1, 3, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+      Vector2S( 2, 2 ), 2, 0, 6, 1, 3, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
         EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
         actual_map( x, y ) += 1;
       } );
@@ -294,12 +314,12 @@ TYPED_TEST( IteratorTest, circleTest )
   actual_map.setZero();
   expected_map.setZero();
   iterateCircle<Scalar>(
-      Vector2( 2, 2 ), 2, 5, 8, -8, 8, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+      Vector2S( 2, 2 ), 2, 5, 8, -8, 8, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
         EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
         actual_map( x + 3, y + 3 ) += 1;
       } );
   iterateCircle<Scalar>(
-      Vector2( 2, 2 ), 2, -8, 8, 5, 8, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+      Vector2S( 2, 2 ), 2, -8, 8, 5, 8, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
         EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
         actual_map( x + 3, y + 3 ) += 1;
       } );
@@ -317,7 +337,7 @@ TYPED_TEST( IteratorTest, circleTest )
                   0, 0, 0, 0;
   // @formatter:on
   // clang-format on
-  iterateCircle<Scalar>( Vector2( 0, 0 ), 2, 4, 4, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+  iterateCircle<Scalar>( Vector2S( 0, 0 ), 2, 4, 4, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
     EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
     actual_map( x, y ) += 1;
   } );
