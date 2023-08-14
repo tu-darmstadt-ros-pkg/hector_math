@@ -1,0 +1,420 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Robot &mdash; hector_math 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Shapes - Bounding Boxes" href="Shapes.html" />
+    <link rel="prev" title="Quaternion Binning" href="QuaternionBinning.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> hector_math
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                master
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Containers.html">Containers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="EigenHelpers.html">Eigen Helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Iterators.html">Iterators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MapOperations.html">Map Operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QuaternionBinning.html">Quaternion Binning</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Robot</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Shapes.html">Shapes - Bounding Boxes</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">hector_math</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Robot</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/tu-darmstadt-ros-pkg/hector_math/blob/master/docs/pages/Robot.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="robot">
+<h1>Robot<a class="headerlink" href="#robot" title="Permalink to this heading">¶</a></h1>
+<p>The Robot model class is a base class for storing the current state of the roboter.
+For example,it keeps track of the joint positions and recomputes the center of mass every time the robot moves.
+It also stores the footprint and mass of the robot.</p>
+<p>The <a class="reference internal" href="#_CPPv4I0EN11hector_math20JointStateSubscriberE" title="hector_math::JointStateSubscriber"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">JointStateSubscriber</span></code></a> in <cite>hector_math_ros</cite> can be used to keep the model in sync with an actual or simulated robot.</p>
+<p><strong>Example</strong></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">robot_model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">hector_math</span><span class="o">::</span><span class="n">UrdfRobotModel</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="w"> </span><span class="n">urdf_model</span><span class="w"> </span><span class="p">);</span>
+<span class="n">hector_math</span><span class="o">::</span><span class="n">JointStateSubscriber</span><span class="w"> </span><span class="nf">sub</span><span class="p">(</span><span class="w"> </span><span class="n">robot_model</span><span class="w"> </span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="o">!</span><span class="n">sub</span><span class="p">.</span><span class="n">waitForFullState</span><span class="p">(</span><span class="w"> </span><span class="n">ros</span><span class="o">::</span><span class="n">Duration</span><span class="p">(</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Didn&#39;t get the state for all joints within 3 seconds</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this heading">¶</a></h2>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN11hector_math10RobotModelE">
+<span id="_CPPv3I0EN11hector_math10RobotModelE"></span><span id="_CPPv2I0EN11hector_math10RobotModelE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Scalar</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classhector__math_1_1_robot_model"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RobotModel</span></span></span><a class="headerlink" href="#_CPPv4I0EN11hector_math10RobotModelE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Subclassed by UrdfRobotModel&lt; Scalar &gt;</p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-types">Public Types</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RobotModel3PtrE">
+<span id="_CPPv3N11hector_math10RobotModel3PtrE"></span><span id="_CPPv2N11hector_math10RobotModel3PtrE"></span><span class="target" id="classhector__math_1_1_robot_model_1ad31e3c7bb14add00a255c3c19d3b2a2b"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Ptr</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RobotModelE" title="hector_math::RobotModel"><span class="n"><span class="pre">RobotModel</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RobotModelE" title="hector_math::RobotModel::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RobotModel3PtrE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RobotModel8ConstPtrE">
+<span id="_CPPv3N11hector_math10RobotModel8ConstPtrE"></span><span id="_CPPv2N11hector_math10RobotModel8ConstPtrE"></span><span class="target" id="classhector__math_1_1_robot_model_1a8de385e224aacb4e850efadf047a81e9"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ConstPtr</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">shared_ptr</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RobotModelE" title="hector_math::RobotModel"><span class="n"><span class="pre">RobotModel</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RobotModelE" title="hector_math::RobotModel::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RobotModel8ConstPtrE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RobotModel10RobotModelENSt6vectorINSt6stringEEENSt6vectorI6ScalarEE">
+<span id="_CPPv3N11hector_math10RobotModel10RobotModelENSt6vectorINSt6stringEEENSt6vectorI6ScalarEE"></span><span id="_CPPv2N11hector_math10RobotModel10RobotModelENSt6vectorINSt6stringEEENSt6vectorI6ScalarEE"></span><span id="hector_math::RobotModel::RobotModel__std::vector:ss:.std::vector:Scalar:"></span><span class="target" id="classhector__math_1_1_robot_model_1ad146a17ae7398d6fe3b2469940ea9658"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RobotModel</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">joint_names</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RobotModelE" title="hector_math::RobotModel::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">joint_positions</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math10RobotModel10RobotModelENSt6vectorINSt6stringEEENSt6vectorI6ScalarEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RobotModel10RobotModelENSt13unordered_mapINSt6stringE6ScalarEE">
+<span id="_CPPv3N11hector_math10RobotModel10RobotModelENSt13unordered_mapINSt6stringE6ScalarEE"></span><span id="_CPPv2N11hector_math10RobotModel10RobotModelENSt13unordered_mapINSt6stringE6ScalarEE"></span><span id="hector_math::RobotModel::RobotModel__std::unordered_map:ss.Scalar:"></span><span class="target" id="classhector__math_1_1_robot_model_1af8fb6e6ca75e7b1fced88ab9a45c436b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RobotModel</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unordered_map</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RobotModelE" title="hector_math::RobotModel::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">joint_states</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math10RobotModel10RobotModelENSt13unordered_mapINSt6stringE6ScalarEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RobotModel20updateJointPositionsERKNSt13unordered_mapINSt6stringE6ScalarEE">
+<span id="_CPPv3N11hector_math10RobotModel20updateJointPositionsERKNSt13unordered_mapINSt6stringE6ScalarEE"></span><span id="_CPPv2N11hector_math10RobotModel20updateJointPositionsERKNSt13unordered_mapINSt6stringE6ScalarEE"></span><span id="hector_math::RobotModel::updateJointPositions__std::unordered_map:ss.Scalar:CR"></span><span class="target" id="classhector__math_1_1_robot_model_1abf7c76a6af0d8d414e92a1a1e42289bf"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateJointPositions</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unordered_map</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RobotModelE" title="hector_math::RobotModel::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">positions</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math10RobotModel20updateJointPositionsERKNSt13unordered_mapINSt6stringE6ScalarEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Updates the joint positions of the robot model with the given values for the corresponding joint name. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RobotModel20updateJointPositionsERKNSt6vectorI6ScalarEE">
+<span id="_CPPv3N11hector_math10RobotModel20updateJointPositionsERKNSt6vectorI6ScalarEE"></span><span id="_CPPv2N11hector_math10RobotModel20updateJointPositionsERKNSt6vectorI6ScalarEE"></span><span id="hector_math::RobotModel::updateJointPositions__std::vector:Scalar:CR"></span><span class="target" id="classhector__math_1_1_robot_model_1ab74798dd6819d2b7d8ac31a0e73423e7"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateJointPositions</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RobotModelE" title="hector_math::RobotModel::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">positions</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math10RobotModel20updateJointPositionsERKNSt6vectorI6ScalarEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Updates the joint positions of the robot model with the given values. Indices have to correspond to names in <a class="reference internal" href="#classhector__math_1_1_robot_model_1ad8f5977bef78e08dc9275479873a62b7"><span class="std std-ref">jointNames()</span></a>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RobotModel19updateJointPositionE6size_t6Scalar">
+<span id="_CPPv3N11hector_math10RobotModel19updateJointPositionE6size_t6Scalar"></span><span id="_CPPv2N11hector_math10RobotModel19updateJointPositionE6size_t6Scalar"></span><span id="hector_math::RobotModel::updateJointPosition__s.Scalar"></span><span class="target" id="classhector__math_1_1_robot_model_1a845d851badb5f75f2754fc95ce22d68f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">updateJointPosition</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">index</span></span>, <a class="reference internal" href="#_CPPv4I0EN11hector_math10RobotModelE" title="hector_math::RobotModel::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">position</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math10RobotModel19updateJointPositionE6size_t6Scalar" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Updates the joint position of a single joint of the robot model with the given value. The index corresponds to the names in <a class="reference internal" href="#classhector__math_1_1_robot_model_1ad8f5977bef78e08dc9275479873a62b7"><span class="std std-ref">jointNames()</span></a>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RobotModel10jointNamesEv">
+<span id="_CPPv3NK11hector_math10RobotModel10jointNamesEv"></span><span id="_CPPv2NK11hector_math10RobotModel10jointNamesEv"></span><span id="hector_math::RobotModel::jointNamesC"></span><span class="target" id="classhector__math_1_1_robot_model_1ad8f5977bef78e08dc9275479873a62b7"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">jointNames</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RobotModel10jointNamesEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The names of the joints represented in this robot model. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RobotModel14jointPositionsEv">
+<span id="_CPPv3NK11hector_math10RobotModel14jointPositionsEv"></span><span id="_CPPv2NK11hector_math10RobotModel14jointPositionsEv"></span><span id="hector_math::RobotModel::jointPositionsC"></span><span class="target" id="classhector__math_1_1_robot_model_1af78ee050a40a4c259d2452d82513afc6"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RobotModelE" title="hector_math::RobotModel::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">jointPositions</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RobotModel14jointPositionsEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RobotModel16getJointPositionERKNSt6stringE">
+<span id="_CPPv3NK11hector_math10RobotModel16getJointPositionERKNSt6stringE"></span><span id="_CPPv2NK11hector_math10RobotModel16getJointPositionERKNSt6stringE"></span><span id="hector_math::RobotModel::getJointPosition__ssCRC"></span><span class="target" id="classhector__math_1_1_robot_model_1ad606c5848f81cf7f26b0bd1706f1fab2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RobotModelE" title="hector_math::RobotModel::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getJointPosition</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">name</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RobotModel16getJointPositionERKNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RobotModel12centerOfMassEv">
+<span id="_CPPv3NK11hector_math10RobotModel12centerOfMassEv"></span><span id="_CPPv2NK11hector_math10RobotModel12centerOfMassEv"></span><span id="hector_math::RobotModel::centerOfMassC"></span><span class="target" id="classhector__math_1_1_robot_model_1a14eb9eb0b6bb86e2c78bbf9e0ca82162"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Vector3</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RobotModelE" title="hector_math::RobotModel::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">centerOfMass</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RobotModel12centerOfMassEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The position of the center of mass in the robot coordinate frame. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RobotModel4massEv">
+<span id="_CPPv3NK11hector_math10RobotModel4massEv"></span><span id="_CPPv2NK11hector_math10RobotModel4massEv"></span><span id="hector_math::RobotModel::massC"></span><span class="target" id="classhector__math_1_1_robot_model_1a63b9440e67c5c6e49a207aa32496db84"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RobotModelE" title="hector_math::RobotModel::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">mass</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RobotModel4massEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RobotModel22axisAlignedBoundingBoxEv">
+<span id="_CPPv3NK11hector_math10RobotModel22axisAlignedBoundingBoxEv"></span><span id="_CPPv2NK11hector_math10RobotModel22axisAlignedBoundingBoxEv"></span><span id="hector_math::RobotModel::axisAlignedBoundingBoxC"></span><span class="target" id="classhector__math_1_1_robot_model_1a74416af4a0476f8aa2d11a889a1c2cc3"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">AlignedBox</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RobotModelE" title="hector_math::RobotModel::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">axisAlignedBoundingBox</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RobotModel22axisAlignedBoundingBoxEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RobotModel9footprintEv">
+<span id="_CPPv3NK11hector_math10RobotModel9footprintEv"></span><span id="_CPPv2NK11hector_math10RobotModel9footprintEv"></span><span id="hector_math::RobotModel::footprintC"></span><span class="target" id="classhector__math_1_1_robot_model_1ab9a4c7f3134409cc8084bf154a28fe72"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Polygon</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RobotModelE" title="hector_math::RobotModel::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">footprint</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RobotModel9footprintEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The footprint is an approximated polygon of the robots hull projected to the ground. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN11hector_math14RobotFootprintE">
+<span id="_CPPv3I0EN11hector_math14RobotFootprintE"></span><span id="_CPPv2I0EN11hector_math14RobotFootprintE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Scalar</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classhector__math_1_1_robot_footprint"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RobotFootprint</span></span></span><a class="headerlink" href="#_CPPv4I0EN11hector_math14RobotFootprintE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Subclassed by UrdfRobotFootprint&lt; Scalar &gt;</p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math14RobotFootprint10getMinimumERK7GridMapI6ScalarERK7Vector2I6ScalarE6Scalar6Scalar">
+<span id="_CPPv3NK11hector_math14RobotFootprint10getMinimumERK7GridMapI6ScalarERK7Vector2I6ScalarE6Scalar6Scalar"></span><span id="_CPPv2NK11hector_math14RobotFootprint10getMinimumERK7GridMapI6ScalarERK7Vector2I6ScalarE6Scalar6Scalar"></span><span id="hector_math::RobotFootprint::getMinimum__GridMap:Scalar:CR.Vector2:Scalar:CR.Scalar.ScalarC"></span><span class="target" id="classhector__math_1_1_robot_footprint_1a0dd762d843148f17b6644aa5c94e0203"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math14RobotFootprintE" title="hector_math::RobotFootprint::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getMinimum</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">GridMap</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math14RobotFootprintE" title="hector_math::RobotFootprint::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">map</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Vector2</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math14RobotFootprintE" title="hector_math::RobotFootprint::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pos</span></span>, <a class="reference internal" href="#_CPPv4I0EN11hector_math14RobotFootprintE" title="hector_math::RobotFootprint::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">orientation</span></span>, <a class="reference internal" href="#_CPPv4I0EN11hector_math14RobotFootprintE" title="hector_math::RobotFootprint::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">maximum</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4NK11hector_math14RobotFootprint10getMinimumERK7GridMapI6ScalarERK7Vector2I6ScalarE6Scalar6Scalar" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN11hector_math20JointStateSubscriberE">
+<span id="_CPPv3I0EN11hector_math20JointStateSubscriberE"></span><span id="_CPPv2I0EN11hector_math20JointStateSubscriberE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Scalar</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classhector__math_1_1_joint_state_subscriber"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">JointStateSubscriber</span></span></span><a class="headerlink" href="#_CPPv4I0EN11hector_math20JointStateSubscriberE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Convenience class to keep a <a class="reference internal" href="#classhector__math_1_1_robot_model"><span class="std std-ref">RobotModel</span></a> in sync with the actual joint positions as published on /joint_states </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math20JointStateSubscriber16waitForFullStateERKN3ros8DurationEb">
+<span id="_CPPv3N11hector_math20JointStateSubscriber16waitForFullStateERKN3ros8DurationEb"></span><span id="_CPPv2N11hector_math20JointStateSubscriber16waitForFullStateERKN3ros8DurationEb"></span><span id="hector_math::JointStateSubscriber::waitForFullState__ros::DurationCR.b"></span><span class="target" id="classhector__math_1_1_joint_state_subscriber_1a962c235d04678b1b78e5af8d1040694f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">waitForFullState</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">ros</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Duration</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">duration</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">ros</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Duration</span></span><span class="p"><span class="pre">(</span></span><span class="m"><span class="pre">0</span></span><span class="p"><span class="pre">)</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">spin</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math20JointStateSubscriber16waitForFullStateERKN3ros8DurationEb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Wait for a full update of all joint positions. Usually, the joint states are broadcast by multiple publishers, hence, this method waits until it received an update for each joint position in the <a class="reference internal" href="#classhector__math_1_1_robot_model"><span class="std std-ref">RobotModel</span></a>. If ros::Time is not valid, this method will first wait until it is before waiting the specified duration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>duration</strong> – The maximum duration to wait before giving up. Pass 0 to wait indefinitely. Default: 0 </p></li>
+<li><p><strong>spin</strong> – If true spin the ros main CallbackQueue while waiting to process messages, if you have your own spinner, pass false. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if a full update was received, false if not. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math20JointStateSubscriber5pauseEv">
+<span id="_CPPv3N11hector_math20JointStateSubscriber5pauseEv"></span><span id="_CPPv2N11hector_math20JointStateSubscriber5pauseEv"></span><span id="hector_math::JointStateSubscriber::pause"></span><span class="target" id="classhector__math_1_1_joint_state_subscriber_1a7167f5c196fc5e167bfabde1a730e81d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pause</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math20JointStateSubscriber5pauseEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Stops updating the joint states of the model but will continue collecting changes. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math20JointStateSubscriber6resumeEv">
+<span id="_CPPv3N11hector_math20JointStateSubscriber6resumeEv"></span><span id="_CPPv2N11hector_math20JointStateSubscriber6resumeEv"></span><span id="hector_math::JointStateSubscriber::resume"></span><span class="target" id="classhector__math_1_1_joint_state_subscriber_1a41de8150eff044a237990c271d57ea27"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">resume</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math20JointStateSubscriber6resumeEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Updates the joint positions of the model to the latest information and resumes continuously updating the model. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Shapes.html" class="btn btn-neutral float-right" title="Shapes - Bounding Boxes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="QuaternionBinning.html" class="btn btn-neutral float-left" title="Quaternion Binning" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019-2023, Stefan Fabian
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: master
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+      
+      <dl>
+        <dt>Languages</dt>
+        
+           <strong> 
+          <dd><a href="/hector_math/en/master/">en</a></dd>
+           </strong> 
+        
+      </dl>
+      
+      
+      <dl>
+        <dt>Versions</dt>
+        
+           <strong> 
+          <dd><a href="/hector_math/en/master/">master</a></dd>
+           </strong> 
+        
+      </dl>
+      
+      
+      <dl>
+        <dt>Downloads</dt>
+        
+          <dd><a href="/hector_math/en/master/hector_math-docs_en_master.epub">epub</a></dd>
+        
+      </dl>
+      
+      
+      <hr/>
+      <a href="https://tech.michaelaltfield.net/2020/07/18/sphinx-rtd-github-pages-1/">Continuous Documentation</a> hosting provided by <a href="https://pages.github.com/">GitHub Pages</a>.
+ 
+    </div>
+  </div>
+
+ 
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

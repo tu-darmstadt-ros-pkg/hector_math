@@ -1,0 +1,408 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Quaternion Binning &mdash; hector_math 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Robot" href="Robot.html" />
+    <link rel="prev" title="Map Operations" href="MapOperations.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> hector_math
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                master
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Containers.html">Containers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="EigenHelpers.html">Eigen Helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Iterators.html">Iterators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MapOperations.html">Map Operations</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quaternion Binning</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#spherical">Spherical</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#largest-dim">Largest Dim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#spherical-fibonacci">Spherical Fibonacci</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Robot.html">Robot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Shapes.html">Shapes - Bounding Boxes</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">hector_math</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Quaternion Binning</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/tu-darmstadt-ros-pkg/hector_math/blob/master/docs/pages/QuaternionBinning.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="quaternion-binning">
+<h1>Quaternion Binning<a class="headerlink" href="#quaternion-binning" title="Permalink to this heading">¶</a></h1>
+<p>Quaternion Binning can be used to discretize directions. This can be interpreted as discretizing the surface of a sphere.
+In general, it is impossible to discretize the sphere with <cite>n</cite> points such that all points are evenly
+spaced for an arbitrary <cite>n</cite>. There must be a mapping between directions
+and unique indices to store and retrieve direction-dependent data.</p>
+<p>Hector_math implements three modes: <cite>Spherical</cite>, <cite>Largest dim</cite> and <cite>Spherical Fibonacci</cite>.
+They differ in how evenly they discretize the sphere surface and how fast they compute the mapping from a direction to its index.</p>
+<table class="colwidths-given docutils align-center" id="id2">
+<caption><span class="caption-text">Discretization Mode Comparison</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Mode</p></th>
+<th class="head"><p>Speed</p></th>
+<th class="head"><p>Evenly Discretization</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Spherical</p></td>
+<td><p>🟡</p></td>
+<td><p>❌</p></td>
+</tr>
+<tr class="row-odd"><td><p>Largest Dimension</p></td>
+<td><p>✅</p></td>
+<td><p>🟡</p></td>
+</tr>
+<tr class="row-even"><td><p>Spherical Fibonacci</p></td>
+<td><p>❌</p></td>
+<td><p>✅</p></td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="spherical">
+<h2>Spherical<a class="headerlink" href="#spherical" title="Permalink to this heading">¶</a></h2>
+<p>The Spherical mode uses polar coordinates to compute <span class="math notranslate nohighlight">\(\theta\)</span> and <span class="math notranslate nohighlight">\(\phi\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}x&amp; = \cos(\phi) \sin(\theta)\\
+y&amp; = \sin(\phi) \sin(\theta)\\
+z&amp; = \cos(\theta)\end{split}\]</div>
+<p>Both angles are evenly discretized.
+The discretization can be computed medium fast however it is not evenly. There are more bins at the poles and less at the equator.</p>
+<style type="text/css">
+    div.center {
+      text-align: center;
+    }
+</style>
+<div class="center">
+    <video width="80%" loop autoplay>
+         <source src="../_static/animation_Spherical.mp4" type="video/mp4">
+         Your browser does not support the video tag.
+    </video>
+</div></div>
+<div class="section" id="largest-dim">
+<h2>Largest Dim<a class="headerlink" href="#largest-dim" title="Permalink to this heading">¶</a></h2>
+<p>The Largest Dim Mode starts by evaluating which of the <span class="math notranslate nohighlight">\(x\)</span>-, <span class="math notranslate nohighlight">\(y\)</span>- or <span class="math notranslate nohighlight">\(z\)</span>-component of the quaternion
+is the largest. Then it stores discretized representations of the two remaining components. Lastly,
+it discretices the <span class="math notranslate nohighlight">\(w\)</span> component of the quaternion.</p>
+<div class="center">
+    <video width="80%" loop autoplay>
+     <source src="../_static/animation_Largest_dimension.mp4" type="video/mp4">
+     Your browser does not support the video tag.
+    </video>
+</div><p>The largest dimension mode is somewhat faster and doesn’t have a reduced resolution at the poles
+due to the equidistant angles used in spherical but at the cost of overlapping regions with
+increased bin resolution. Therefore the bin distribution is much higher in some areas of the
+sphere surface than in others.</p>
+</div>
+<div class="section" id="spherical-fibonacci">
+<h2>Spherical Fibonacci<a class="headerlink" href="#spherical-fibonacci" title="Permalink to this heading">¶</a></h2>
+<div class="center">
+    <video width="80%" loop autoplay>
+     <source src="../_static/animation_Spherical_Fibonacci.mp4" type="video/mp4">
+     Your browser does not support the video tag.
+    </video>
+</div><p>Spherical Fibonacci point sets yield nearly uniform point distributions on the unit sphere.
+The forward generation of these point sets has been widely researched and is easy to implement,
+such that they have been used in various applications. The Fibonacci lattice’s points are
+arranged in a tightly wound generative spiral, each fitting into the smallest gap between
+the previous points.
+Because the consecutive points are so far apart, the spiral is normally not visible.
+The points are evenly spaced in a very isotropic way. Compared to the other modes implemented
+here, it is the slowest but achieves the best discretization accuracy. For more details on how
+to compute the spherical fibonacci mapping see <a class="reference external" href="https://dl.acm.org/doi/10.1145/2816795.2818131">Spherical Fibonacci Mapping</a>.</p>
+<div class="figure align-center" id="id3">
+<a class="reference internal image-reference" href="../_images/spherical_fibonacci_spiral.svg"><img alt="Spherical Fibonacci dimension Discretization." src="../_images/spherical_fibonacci_spiral.svg" width="75%" /></a>
+<p class="caption"><span class="caption-text">A visualization of the spherical fibonacci mapping,
+also showing the generative spiral.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this heading">¶</a></h2>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math24quaternion_binning_modes21QuaternionBinningModeE">
+<span id="_CPPv3N11hector_math24quaternion_binning_modes21QuaternionBinningModeE"></span><span id="_CPPv2N11hector_math24quaternion_binning_modes21QuaternionBinningModeE"></span><span class="target" id="quaternion__binning_8h_1a4f6cd9ca2b65e0d7fc300878995157cd"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">hector_math</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">quaternion_binning_modes</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">QuaternionBinningMode</span></span></span><a class="headerlink" href="#_CPPv4N11hector_math24quaternion_binning_modes21QuaternionBinningModeE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>You can visualize the different binning modes using visualize_binning.py LargestDim is somewhat faster and doesn’t have a reduced resolution at the poles due to the equidistant angles used in spherical but at the cost of overlapping regions with increased bin resolution </p>
+<p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math24quaternion_binning_modes21QuaternionBinningMode10LargestDimE">
+<span id="_CPPv3N11hector_math24quaternion_binning_modes21QuaternionBinningMode10LargestDimE"></span><span id="_CPPv2N11hector_math24quaternion_binning_modes21QuaternionBinningMode10LargestDimE"></span><span class="target" id="quaternion__binning_8h_1a4f6cd9ca2b65e0d7fc300878995157cda2100e6b17e896d471cd137f508c8084c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LargestDim</span></span></span><a class="headerlink" href="#_CPPv4N11hector_math24quaternion_binning_modes21QuaternionBinningMode10LargestDimE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math24quaternion_binning_modes21QuaternionBinningMode9SphericalE">
+<span id="_CPPv3N11hector_math24quaternion_binning_modes21QuaternionBinningMode9SphericalE"></span><span id="_CPPv2N11hector_math24quaternion_binning_modes21QuaternionBinningMode9SphericalE"></span><span class="target" id="quaternion__binning_8h_1a4f6cd9ca2b65e0d7fc300878995157cdabbb451f6aaf6fec9a9ee6eeb2c872c5c"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Spherical</span></span></span><a class="headerlink" href="#_CPPv4N11hector_math24quaternion_binning_modes21QuaternionBinningMode9SphericalE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math24quaternion_binning_modes21QuaternionBinningMode18SphericalFibonacciE">
+<span id="_CPPv3N11hector_math24quaternion_binning_modes21QuaternionBinningMode18SphericalFibonacciE"></span><span id="_CPPv2N11hector_math24quaternion_binning_modes21QuaternionBinningMode18SphericalFibonacciE"></span><span class="target" id="quaternion__binning_8h_1a4f6cd9ca2b65e0d7fc300878995157cda5ab05fc9e6fff57944503e115a72fba7"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SphericalFibonacci</span></span></span><a class="headerlink" href="#_CPPv4N11hector_math24quaternion_binning_modes21QuaternionBinningMode18SphericalFibonacciE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0_i_i_21QuaternionBinningMode0EN11hector_math10computeBinE10ReturnTypeRKN5Eigen10QuaternionI6ScalarEE">
+<span id="_CPPv3I0_i_i_21QuaternionBinningMode0EN11hector_math10computeBinERKN5Eigen10QuaternionI6ScalarEE"></span><span id="_CPPv2I0_i_i_21QuaternionBinningMode0EN11hector_math10computeBinERKN5Eigen10QuaternionI6ScalarEE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Scalar</span></span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AXIS_BINS</span></span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ANGLE_BINS</span></span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">QuaternionBinningMode</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mode</span></span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ReturnType</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="n"><span class="pre">detail</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">QuaternionBinType</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0_i_i_21QuaternionBinningMode0EN11hector_math10computeBinE10ReturnTypeRKN5Eigen10QuaternionI6ScalarEE" title="hector_math::computeBin::AXIS_BINS"><span class="n"><span class="pre">AXIS_BINS</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_i_i_21QuaternionBinningMode0EN11hector_math10computeBinE10ReturnTypeRKN5Eigen10QuaternionI6ScalarEE" title="hector_math::computeBin::ANGLE_BINS"><span class="n"><span class="pre">ANGLE_BINS</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">BinType</span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="quaternion__binning_8h_1a319c67f241ce49f7fc3bdb4ad86afd4b"></span><a class="reference internal" href="#_CPPv4I0_i_i_21QuaternionBinningMode0EN11hector_math10computeBinE10ReturnTypeRKN5Eigen10QuaternionI6ScalarEE" title="hector_math::computeBin::ReturnType"><span class="n"><span class="pre">ReturnType</span></span></a><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">hector_math</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">computeBin</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Quaternion</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0_i_i_21QuaternionBinningMode0EN11hector_math10computeBinE10ReturnTypeRKN5Eigen10QuaternionI6ScalarEE" title="hector_math::computeBin::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">q</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0_i_i_21QuaternionBinningMode0EN11hector_math10computeBinE10ReturnTypeRKN5Eigen10QuaternionI6ScalarEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Computes the bin for the given quaternion. Close quaternions should land in the same bin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>AXIS_BINS</strong> – </p></li>
+<li><p><strong>ANGLE_BINS</strong> – </p></li>
+<li><p><strong>mode</strong> – </p></li>
+<li><p><strong>Scalar</strong> – </p></li>
+<li><p><strong>ReturnType</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><p><strong>q</strong> – </p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Robot.html" class="btn btn-neutral float-right" title="Robot" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="MapOperations.html" class="btn btn-neutral float-left" title="Map Operations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019-2023, Stefan Fabian
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: master
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+      
+      <dl>
+        <dt>Languages</dt>
+        
+           <strong> 
+          <dd><a href="/hector_math/en/master/">en</a></dd>
+           </strong> 
+        
+      </dl>
+      
+      
+      <dl>
+        <dt>Versions</dt>
+        
+           <strong> 
+          <dd><a href="/hector_math/en/master/">master</a></dd>
+           </strong> 
+        
+      </dl>
+      
+      
+      <dl>
+        <dt>Downloads</dt>
+        
+          <dd><a href="/hector_math/en/master/hector_math-docs_en_master.epub">epub</a></dd>
+        
+      </dl>
+      
+      
+      <hr/>
+      <a href="https://tech.michaelaltfield.net/2020/07/18/sphinx-rtd-github-pages-1/">Continuous Documentation</a> hosting provided by <a href="https://pages.github.com/">GitHub Pages</a>.
+ 
+    </div>
+  </div>
+
+ 
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

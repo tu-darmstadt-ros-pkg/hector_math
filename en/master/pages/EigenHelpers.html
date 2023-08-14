@@ -1,0 +1,400 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Eigen Helpers &mdash; hector_math 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Iterators" href="Iterators.html" />
+    <link rel="prev" title="Containers" href="Containers.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> hector_math
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                master
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Containers.html">Containers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Eigen Helpers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#wrap-with-constant">Wrap With Constant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#shift">Shift</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#flip">Flip</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Iterators.html">Iterators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MapOperations.html">Map Operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QuaternionBinning.html">Quaternion Binning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Robot.html">Robot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Shapes.html">Shapes - Bounding Boxes</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">hector_math</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Eigen Helpers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/tu-darmstadt-ros-pkg/hector_math/blob/master/docs/pages/EigenHelpers.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="eigen-helpers">
+<h1>Eigen Helpers<a class="headerlink" href="#eigen-helpers" title="Permalink to this heading">¶</a></h1>
+<div class="section" id="wrap-with-constant">
+<h2>Wrap With Constant<a class="headerlink" href="#wrap-with-constant" title="Permalink to this heading">¶</a></h2>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN11hector_math5eigen16wrapWithConstantEN5Eigen14CwiseNullaryOpI26wrap_with_constant_functorI7ArgTypeEN24array_passthrough_helperI7ArgTypeE9ArrayTypeEEERKN5Eigen9ArrayBaseI7ArgTypeEEN7ArgType6ScalarEN5Eigen5IndexEN5Eigen5IndexEN5Eigen5IndexEN5Eigen5IndexE">
+<span id="_CPPv3I0EN11hector_math5eigen16wrapWithConstantERKN5Eigen9ArrayBaseI7ArgTypeEEN7ArgType6ScalarEN5Eigen5IndexEN5Eigen5IndexEN5Eigen5IndexEN5Eigen5IndexE"></span><span id="_CPPv2I0EN11hector_math5eigen16wrapWithConstantERKN5Eigen9ArrayBaseI7ArgTypeEEN7ArgType6ScalarEN5Eigen5IndexEN5Eigen5IndexEN5Eigen5IndexEN5Eigen5IndexE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ArgType</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="helpers_2eigen_8h_1ae1cc8fe1d4a311d4c1b9206e7ccbaea4"></span><span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">CwiseNullaryOp</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">wrap_with_constant_functor</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math5eigen16wrapWithConstantEN5Eigen14CwiseNullaryOpI26wrap_with_constant_functorI7ArgTypeEN24array_passthrough_helperI7ArgTypeE9ArrayTypeEEERKN5Eigen9ArrayBaseI7ArgTypeEEN7ArgType6ScalarEN5Eigen5IndexEN5Eigen5IndexEN5Eigen5IndexEN5Eigen5IndexE" title="hector_math::eigen::wrapWithConstant::ArgType"><span class="n"><span class="pre">ArgType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="n"><span class="pre">array_passthrough_helper</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math5eigen16wrapWithConstantEN5Eigen14CwiseNullaryOpI26wrap_with_constant_functorI7ArgTypeEN24array_passthrough_helperI7ArgTypeE9ArrayTypeEEERKN5Eigen9ArrayBaseI7ArgTypeEEN7ArgType6ScalarEN5Eigen5IndexEN5Eigen5IndexEN5Eigen5IndexEN5Eigen5IndexE" title="hector_math::eigen::wrapWithConstant::ArgType"><span class="n"><span class="pre">ArgType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ArrayType</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">hector_math</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">eigen</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">wrapWithConstant</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ArrayBase</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math5eigen16wrapWithConstantEN5Eigen14CwiseNullaryOpI26wrap_with_constant_functorI7ArgTypeEN24array_passthrough_helperI7ArgTypeE9ArrayTypeEEERKN5Eigen9ArrayBaseI7ArgTypeEEN7ArgType6ScalarEN5Eigen5IndexEN5Eigen5IndexEN5Eigen5IndexEN5Eigen5IndexE" title="hector_math::eigen::wrapWithConstant::ArgType"><span class="n"><span class="pre">ArgType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">mat</span></span>, <span class="k"><span class="pre">typename</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math5eigen16wrapWithConstantEN5Eigen14CwiseNullaryOpI26wrap_with_constant_functorI7ArgTypeEN24array_passthrough_helperI7ArgTypeE9ArrayTypeEEERKN5Eigen9ArrayBaseI7ArgTypeEEN7ArgType6ScalarEN5Eigen5IndexEN5Eigen5IndexEN5Eigen5IndexEN5Eigen5IndexE" title="hector_math::eigen::wrapWithConstant::ArgType"><span class="n"><span class="pre">ArgType</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Scalar</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span>, <span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Index</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rows</span></span>, <span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Index</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">cols</span></span>, <span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Index</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">row_offset</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span>, <span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Index</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">column_offset</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN11hector_math5eigen16wrapWithConstantEN5Eigen14CwiseNullaryOpI26wrap_with_constant_functorI7ArgTypeEN24array_passthrough_helperI7ArgTypeE9ArrayTypeEEERKN5Eigen9ArrayBaseI7ArgTypeEEN7ArgType6ScalarEN5Eigen5IndexEN5Eigen5IndexEN5Eigen5IndexEN5Eigen5IndexE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Wraps the given array with a constant value. Example: <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span>   <span class="mi">1</span> <span class="mi">2</span>
+<span class="o">*</span>   <span class="mi">3</span> <span class="mi">4</span>
+<span class="o">*</span>
+</pre></div>
+</div>
+ wrapped to rows = 4, cols = 5, row_offset = 1, col_offset = 2 and value = 0 results in <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span>   <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span>
+<span class="o">*</span>   <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">0</span>
+<span class="o">*</span>   <span class="mi">0</span> <span class="mi">0</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">0</span>
+<span class="o">*</span>   <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span>
+<span class="o">*</span>
+</pre></div>
+</div>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An array of size rows, cols where every value outside of the by the offset shifted mat is the passed constant value. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="shift">
+<h2>Shift<a class="headerlink" href="#shift" title="Permalink to this heading">¶</a></h2>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN11hector_math5eigen5shiftEN5Eigen14CwiseNullaryOpI13shift_functorI7ArgTypeEN24array_passthrough_helperI7ArgTypeE9ArrayTypeEEERKN5Eigen9ArrayBaseI7ArgTypeEEN5Eigen5IndexEN5Eigen5IndexE">
+<span id="_CPPv3I0EN11hector_math5eigen5shiftERKN5Eigen9ArrayBaseI7ArgTypeEEN5Eigen5IndexEN5Eigen5IndexE"></span><span id="_CPPv2I0EN11hector_math5eigen5shiftERKN5Eigen9ArrayBaseI7ArgTypeEEN5Eigen5IndexEN5Eigen5IndexE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ArgType</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="helpers_2eigen_8h_1a8edda6c0e1d8ff4de1d4691adcec88d1"></span><span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">CwiseNullaryOp</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">shift_functor</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math5eigen5shiftEN5Eigen14CwiseNullaryOpI13shift_functorI7ArgTypeEN24array_passthrough_helperI7ArgTypeE9ArrayTypeEEERKN5Eigen9ArrayBaseI7ArgTypeEEN5Eigen5IndexEN5Eigen5IndexE" title="hector_math::eigen::shift::ArgType"><span class="n"><span class="pre">ArgType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="n"><span class="pre">array_passthrough_helper</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math5eigen5shiftEN5Eigen14CwiseNullaryOpI13shift_functorI7ArgTypeEN24array_passthrough_helperI7ArgTypeE9ArrayTypeEEERKN5Eigen9ArrayBaseI7ArgTypeEEN5Eigen5IndexEN5Eigen5IndexE" title="hector_math::eigen::shift::ArgType"><span class="n"><span class="pre">ArgType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ArrayType</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">hector_math</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">eigen</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">shift</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ArrayBase</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math5eigen5shiftEN5Eigen14CwiseNullaryOpI13shift_functorI7ArgTypeEN24array_passthrough_helperI7ArgTypeE9ArrayTypeEEERKN5Eigen9ArrayBaseI7ArgTypeEEN5Eigen5IndexEN5Eigen5IndexE" title="hector_math::eigen::shift::ArgType"><span class="n"><span class="pre">ArgType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">mat</span></span>, <span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Index</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">row_shift</span></span>, <span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Index</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">column_shift</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN11hector_math5eigen5shiftEN5Eigen14CwiseNullaryOpI13shift_functorI7ArgTypeEN24array_passthrough_helperI7ArgTypeE9ArrayTypeEEERKN5Eigen9ArrayBaseI7ArgTypeEEN5Eigen5IndexEN5Eigen5IndexE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Shifts the given Eigen Array by the given row and column values. I.e. the access to arr(x, y) is mapped to arr(x+row_shift, y+column_shift). E.g. the array: <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span>   <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span>
+<span class="o">*</span>   <span class="mi">4</span> <span class="mi">5</span> <span class="mi">6</span>
+<span class="o">*</span>   <span class="mi">7</span> <span class="mi">8</span> <span class="mi">9</span>
+<span class="o">*</span>
+</pre></div>
+</div>
+ shifted by row_shift=2 and column_shift=1 would result in <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span>   <span class="mi">8</span> <span class="mi">9</span> <span class="mi">7</span>
+<span class="o">*</span>   <span class="mi">2</span> <span class="mi">3</span> <span class="mi">1</span>
+<span class="o">*</span>   <span class="mi">5</span> <span class="mi">6</span> <span class="mi">4</span>
+<span class="o">*</span>
+</pre></div>
+</div>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>row_shift</strong> – The number of rows that are added to the accessed location. In essence, this shifts the rows upwards by the given value. </p></li>
+<li><p><strong>column_shift</strong> – The number of columns that are added to the accessed location. In essence, this shifts the rows to the left by the given value. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The shifted array. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="flip">
+<h2>Flip<a class="headerlink" href="#flip" title="Permalink to this heading">¶</a></h2>
+<dl class="cpp enum">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math5eigen8flip_ops6FlipOpE">
+<span id="_CPPv3N11hector_math5eigen8flip_ops6FlipOpE"></span><span id="_CPPv2N11hector_math5eigen8flip_ops6FlipOpE"></span><span class="target" id="helpers_2eigen_8h_1a3595c10779014320ba7c3680b0696eae"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">hector_math</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">flip_ops</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">FlipOp</span></span></span><a class="headerlink" href="#_CPPv4N11hector_math5eigen8flip_ops6FlipOpE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math5eigen8flip_ops6FlipOp4RowsE">
+<span id="_CPPv3N11hector_math5eigen8flip_ops6FlipOp4RowsE"></span><span id="_CPPv2N11hector_math5eigen8flip_ops6FlipOp4RowsE"></span><span class="target" id="helpers_2eigen_8h_1a3595c10779014320ba7c3680b0696eaead4fe14997f377d92837f0042180faad4"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Rows</span></span></span><a class="headerlink" href="#_CPPv4N11hector_math5eigen8flip_ops6FlipOp4RowsE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math5eigen8flip_ops6FlipOp7ColumnsE">
+<span id="_CPPv3N11hector_math5eigen8flip_ops6FlipOp7ColumnsE"></span><span id="_CPPv2N11hector_math5eigen8flip_ops6FlipOp7ColumnsE"></span><span class="target" id="helpers_2eigen_8h_1a3595c10779014320ba7c3680b0696eaea9224c998783c2be9543f0415e62f544b"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Columns</span></span></span><a class="headerlink" href="#_CPPv4N11hector_math5eigen8flip_ops6FlipOp7ColumnsE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp enumerator">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math5eigen8flip_ops6FlipOp4BothE">
+<span id="_CPPv3N11hector_math5eigen8flip_ops6FlipOp4BothE"></span><span id="_CPPv2N11hector_math5eigen8flip_ops6FlipOp4BothE"></span><span class="target" id="helpers_2eigen_8h_1a3595c10779014320ba7c3680b0696eaeaedf69634e61e7ec5d006874d299bc0d4"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Both</span></span></span><a class="headerlink" href="#_CPPv4N11hector_math5eigen8flip_ops6FlipOp4BothE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0_6FlipOpEN11hector_math5eigen4flipEN5Eigen14CwiseNullaryOpI12flip_functorI7ArgType7FLIP_OPEN24array_passthrough_helperI7ArgTypeE9ArrayTypeEEERKN5Eigen9ArrayBaseI7ArgTypeEE">
+<span id="_CPPv3I0_6FlipOpEN11hector_math5eigen4flipERKN5Eigen9ArrayBaseI7ArgTypeEE"></span><span id="_CPPv2I0_6FlipOpEN11hector_math5eigen4flipERKN5Eigen9ArrayBaseI7ArgTypeEE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ArgType</span></span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">FlipOp</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FLIP_OP</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">flip_ops</span></span><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N11hector_math5eigen8flip_ops6FlipOp4BothE" title="hector_math::eigen::flip_ops::Both"><span class="n"><span class="pre">Both</span></span></a><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="helpers_2eigen_8h_1a961d7cb0587b1570dd0b37b0a924cd1d"></span><span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">CwiseNullaryOp</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">flip_functor</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0_6FlipOpEN11hector_math5eigen4flipEN5Eigen14CwiseNullaryOpI12flip_functorI7ArgType7FLIP_OPEN24array_passthrough_helperI7ArgTypeE9ArrayTypeEEERKN5Eigen9ArrayBaseI7ArgTypeEE" title="hector_math::eigen::flip::ArgType"><span class="n"><span class="pre">ArgType</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_6FlipOpEN11hector_math5eigen4flipEN5Eigen14CwiseNullaryOpI12flip_functorI7ArgType7FLIP_OPEN24array_passthrough_helperI7ArgTypeE9ArrayTypeEEERKN5Eigen9ArrayBaseI7ArgTypeEE" title="hector_math::eigen::flip::FLIP_OP"><span class="n"><span class="pre">FLIP_OP</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="n"><span class="pre">array_passthrough_helper</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0_6FlipOpEN11hector_math5eigen4flipEN5Eigen14CwiseNullaryOpI12flip_functorI7ArgType7FLIP_OPEN24array_passthrough_helperI7ArgTypeE9ArrayTypeEEERKN5Eigen9ArrayBaseI7ArgTypeEE" title="hector_math::eigen::flip::ArgType"><span class="n"><span class="pre">ArgType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ArrayType</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">hector_math</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">eigen</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">flip</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ArrayBase</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0_6FlipOpEN11hector_math5eigen4flipEN5Eigen14CwiseNullaryOpI12flip_functorI7ArgType7FLIP_OPEN24array_passthrough_helperI7ArgTypeE9ArrayTypeEEERKN5Eigen9ArrayBaseI7ArgTypeEE" title="hector_math::eigen::flip::ArgType"><span class="n"><span class="pre">ArgType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">mat</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0_6FlipOpEN11hector_math5eigen4flipEN5Eigen14CwiseNullaryOpI12flip_functorI7ArgType7FLIP_OPEN24array_passthrough_helperI7ArgTypeE9ArrayTypeEEERKN5Eigen9ArrayBaseI7ArgTypeEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Flips the given Eigen Array in the specified axis (default: Both). Example: <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span>   <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span>
+<span class="o">*</span>   <span class="mi">4</span> <span class="mi">5</span> <span class="mi">6</span>
+<span class="o">*</span>   <span class="mi">7</span> <span class="mi">8</span> <span class="mi">9</span>
+<span class="o">*</span>
+</pre></div>
+</div>
+ flipped with FLIP_OP = flip_ops::Rows results in <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span>   <span class="mi">7</span> <span class="mi">8</span> <span class="mi">9</span>
+<span class="o">*</span>   <span class="mi">4</span> <span class="mi">5</span> <span class="mi">6</span>
+<span class="o">*</span>   <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span>
+<span class="o">*</span>
+</pre></div>
+</div>
+ flipped with FLIP_OP = flip_ops::Both instead would result in <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">*</span>   <span class="mi">9</span> <span class="mi">8</span> <span class="mi">7</span>
+<span class="o">*</span>   <span class="mi">6</span> <span class="mi">5</span> <span class="mi">4</span>
+<span class="o">*</span>   <span class="mi">3</span> <span class="mi">2</span> <span class="mi">1</span>
+<span class="o">*</span>
+</pre></div>
+</div>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters</dt>
+<dd class="field-odd"><p><strong>FLIP_OP</strong> – The flip operation that is performed. </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The flipped array. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN11hector_math5eigen4flipEN5Eigen14CwiseNullaryOpI20runtime_flip_functorI7ArgTypeEN24array_passthrough_helperI7ArgTypeE9ArrayTypeEEERKN5Eigen9ArrayBaseI7ArgTypeEE6FlipOp">
+<span id="_CPPv3I0EN11hector_math5eigen4flipERKN5Eigen9ArrayBaseI7ArgTypeEE6FlipOp"></span><span id="_CPPv2I0EN11hector_math5eigen4flipERKN5Eigen9ArrayBaseI7ArgTypeEE6FlipOp"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ArgType</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="helpers_2eigen_8h_1a6ff2017d32346adcc3edd42262f68732"></span><span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">CwiseNullaryOp</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">runtime_flip_functor</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math5eigen4flipEN5Eigen14CwiseNullaryOpI20runtime_flip_functorI7ArgTypeEN24array_passthrough_helperI7ArgTypeE9ArrayTypeEEERKN5Eigen9ArrayBaseI7ArgTypeEE6FlipOp" title="hector_math::eigen::flip::ArgType"><span class="n"><span class="pre">ArgType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="n"><span class="pre">array_passthrough_helper</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math5eigen4flipEN5Eigen14CwiseNullaryOpI20runtime_flip_functorI7ArgTypeEN24array_passthrough_helperI7ArgTypeE9ArrayTypeEEERKN5Eigen9ArrayBaseI7ArgTypeEE6FlipOp" title="hector_math::eigen::flip::ArgType"><span class="n"><span class="pre">ArgType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ArrayType</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">hector_math</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">eigen</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">flip</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ArrayBase</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math5eigen4flipEN5Eigen14CwiseNullaryOpI20runtime_flip_functorI7ArgTypeEN24array_passthrough_helperI7ArgTypeE9ArrayTypeEEERKN5Eigen9ArrayBaseI7ArgTypeEE6FlipOp" title="hector_math::eigen::flip::ArgType"><span class="n"><span class="pre">ArgType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">mat</span></span>, <span class="n"><span class="pre">FlipOp</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">flip_op</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN11hector_math5eigen4flipEN5Eigen14CwiseNullaryOpI20runtime_flip_functorI7ArgTypeEN24array_passthrough_helperI7ArgTypeE9ArrayTypeEEERKN5Eigen9ArrayBaseI7ArgTypeEE6FlipOp" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>
+Also flips the given Eigen::Array but can be used with flip ops determined at runtime.<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>flip(const Eigen::ArrayBase&lt;ArgType&gt;&amp;)</p>
+</div>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>flip_op</strong> – The flip operation that is performed. </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The flipped array. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Iterators.html" class="btn btn-neutral float-right" title="Iterators" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Containers.html" class="btn btn-neutral float-left" title="Containers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019-2023, Stefan Fabian
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: master
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+      
+      <dl>
+        <dt>Languages</dt>
+        
+           <strong> 
+          <dd><a href="/hector_math/en/master/">en</a></dd>
+           </strong> 
+        
+      </dl>
+      
+      
+      <dl>
+        <dt>Versions</dt>
+        
+           <strong> 
+          <dd><a href="/hector_math/en/master/">master</a></dd>
+           </strong> 
+        
+      </dl>
+      
+      
+      <dl>
+        <dt>Downloads</dt>
+        
+          <dd><a href="/hector_math/en/master/hector_math-docs_en_master.epub">epub</a></dd>
+        
+      </dl>
+      
+      
+      <hr/>
+      <a href="https://tech.michaelaltfield.net/2020/07/18/sphinx-rtd-github-pages-1/">Continuous Documentation</a> hosting provided by <a href="https://pages.github.com/">GitHub Pages</a>.
+ 
+    </div>
+  </div>
+
+ 
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

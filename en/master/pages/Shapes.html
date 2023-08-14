@@ -1,0 +1,350 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Shapes - Bounding Boxes &mdash; hector_math 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Robot" href="Robot.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> hector_math
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                master
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Containers.html">Containers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="EigenHelpers.html">Eigen Helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Iterators.html">Iterators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MapOperations.html">Map Operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QuaternionBinning.html">Quaternion Binning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Robot.html">Robot</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Shapes - Bounding Boxes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#sphere">Sphere</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#box">Box</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cylinder">Cylinder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#transform">Transform</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">hector_math</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Shapes - Bounding Boxes</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/tu-darmstadt-ros-pkg/hector_math/blob/master/docs/pages/Shapes.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="shapes-bounding-boxes">
+<h1>Shapes - Bounding Boxes<a class="headerlink" href="#shapes-bounding-boxes" title="Permalink to this heading">¶</a></h1>
+<p>For given shapes, these functions compute axis-aligned bounding boxes.
+Shapes include spheres, cylinders, and cuboids.
+Furthermore, they can have any orientation.
+The functions find the smallest box in which the specified shape fits completely.</p>
+<div class="section" id="sphere">
+<h2>Sphere<a class="headerlink" href="#sphere" title="Permalink to this heading">¶</a></h2>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN11hector_math27computeBoundingBoxForSphereEN5Eigen10AlignedBoxI6ScalarXL3EEEE6ScalarRK9Isometry3I6ScalarE">
+<span id="_CPPv3I0EN11hector_math27computeBoundingBoxForSphereE6ScalarRK9Isometry3I6ScalarE"></span><span id="_CPPv2I0EN11hector_math27computeBoundingBoxForSphereE6ScalarRK9Isometry3I6ScalarE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Scalar</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="bounding__box_8h_1a66c17ff5cf54474eaf0317985cba1bda"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">AlignedBox</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math27computeBoundingBoxForSphereEN5Eigen10AlignedBoxI6ScalarXL3EEEE6ScalarRK9Isometry3I6ScalarE" title="hector_math::computeBoundingBoxForSphere::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">hector_math</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">computeBoundingBoxForSphere</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0EN11hector_math27computeBoundingBoxForSphereEN5Eigen10AlignedBoxI6ScalarXL3EEEE6ScalarRK9Isometry3I6ScalarE" title="hector_math::computeBoundingBoxForSphere::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">radius</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Isometry3</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math27computeBoundingBoxForSphereEN5Eigen10AlignedBoxI6ScalarXL3EEEE6ScalarRK9Isometry3I6ScalarE" title="hector_math::computeBoundingBoxForSphere::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">transform</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN11hector_math27computeBoundingBoxForSphereEN5Eigen10AlignedBoxI6ScalarXL3EEEE6ScalarRK9Isometry3I6ScalarE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Computes the axis-aligned bounding box for a sphere with the given radius centered at the location of the given transform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>radius</strong> – The radius of the sphere. </p></li>
+<li><p><strong>transform</strong> – The transform to the center of the sphere (only the translation is relevant). </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An axis-aligned bounding box for the given sphere. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="box">
+<h2>Box<a class="headerlink" href="#box" title="Permalink to this heading">¶</a></h2>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN11hector_math24computeBoundingBoxForBoxEN5Eigen10AlignedBoxI6ScalarXL3EEEERK7Vector3I6ScalarERK9Isometry3I6ScalarE">
+<span id="_CPPv3I0EN11hector_math24computeBoundingBoxForBoxERK7Vector3I6ScalarERK9Isometry3I6ScalarE"></span><span id="_CPPv2I0EN11hector_math24computeBoundingBoxForBoxERK7Vector3I6ScalarERK9Isometry3I6ScalarE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Scalar</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="bounding__box_8h_1ac8adea6a37058d109a2b2f6b3dd14bd4"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">AlignedBox</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math24computeBoundingBoxForBoxEN5Eigen10AlignedBoxI6ScalarXL3EEEERK7Vector3I6ScalarERK9Isometry3I6ScalarE" title="hector_math::computeBoundingBoxForBox::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">hector_math</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">computeBoundingBoxForBox</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Vector3</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math24computeBoundingBoxForBoxEN5Eigen10AlignedBoxI6ScalarXL3EEEERK7Vector3I6ScalarERK9Isometry3I6ScalarE" title="hector_math::computeBoundingBoxForBox::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dim</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Isometry3</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math24computeBoundingBoxForBoxEN5Eigen10AlignedBoxI6ScalarXL3EEEERK7Vector3I6ScalarERK9Isometry3I6ScalarE" title="hector_math::computeBoundingBoxForBox::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">transform</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN11hector_math24computeBoundingBoxForBoxEN5Eigen10AlignedBoxI6ScalarXL3EEEERK7Vector3I6ScalarERK9Isometry3I6ScalarE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Computes the axis-aligned bounding box for a box with the given dimensions centered at the location of the given transform with the in the transform included rotation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dim</strong> – The dimensions of the box. </p></li>
+<li><p><strong>transform</strong> – The transform to the center of the box. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An axis-aligned bounding box for the given box. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="cylinder">
+<h2>Cylinder<a class="headerlink" href="#cylinder" title="Permalink to this heading">¶</a></h2>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN11hector_math29computeBoundingBoxForCylinderEN5Eigen10AlignedBoxI6ScalarXL3EEEE6Scalar6ScalarRK9Isometry3I6ScalarE">
+<span id="_CPPv3I0EN11hector_math29computeBoundingBoxForCylinderE6Scalar6ScalarRK9Isometry3I6ScalarE"></span><span id="_CPPv2I0EN11hector_math29computeBoundingBoxForCylinderE6Scalar6ScalarRK9Isometry3I6ScalarE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Scalar</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="bounding__box_8h_1acacff7ab319590e80077e4ba4c92d82b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">AlignedBox</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math29computeBoundingBoxForCylinderEN5Eigen10AlignedBoxI6ScalarXL3EEEE6Scalar6ScalarRK9Isometry3I6ScalarE" title="hector_math::computeBoundingBoxForCylinder::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">hector_math</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">computeBoundingBoxForCylinder</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0EN11hector_math29computeBoundingBoxForCylinderEN5Eigen10AlignedBoxI6ScalarXL3EEEE6Scalar6ScalarRK9Isometry3I6ScalarE" title="hector_math::computeBoundingBoxForCylinder::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">radius</span></span>, <a class="reference internal" href="#_CPPv4I0EN11hector_math29computeBoundingBoxForCylinderEN5Eigen10AlignedBoxI6ScalarXL3EEEE6Scalar6ScalarRK9Isometry3I6ScalarE" title="hector_math::computeBoundingBoxForCylinder::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">length</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Isometry3</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math29computeBoundingBoxForCylinderEN5Eigen10AlignedBoxI6ScalarXL3EEEE6Scalar6ScalarRK9Isometry3I6ScalarE" title="hector_math::computeBoundingBoxForCylinder::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">transform</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN11hector_math29computeBoundingBoxForCylinderEN5Eigen10AlignedBoxI6ScalarXL3EEEE6Scalar6ScalarRK9Isometry3I6ScalarE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Computes the axis-aligned bounding box for a cylinder with the given length in z-direction and radius in x-/y-direction centered at the location of the given transform with the rotation included in the transform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>radius</strong> – The radius of the cylinder in x-/y-direction. </p></li>
+<li><p><strong>length</strong> – The length of the cylinder in z-direction (this is the total length not half!). </p></li>
+<li><p><strong>transform</strong> – The transform to the center of the cylinder. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An axis-aligned bounding box for the given cylinder. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="transform">
+<h2>Transform<a class="headerlink" href="#transform" title="Permalink to this heading">¶</a></h2>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN11hector_math20transformBoundingBoxEN5Eigen10AlignedBoxI6ScalarXL3EEEERKN5Eigen10AlignedBoxI6ScalarXL3EEEERK9Isometry3I6ScalarE">
+<span id="_CPPv3I0EN11hector_math20transformBoundingBoxERKN5Eigen10AlignedBoxI6ScalarXL3EEEERK9Isometry3I6ScalarE"></span><span id="_CPPv2I0EN11hector_math20transformBoundingBoxERKN5Eigen10AlignedBoxI6ScalarX3EEERK9Isometry3I6ScalarE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Scalar</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="bounding__box_8h_1a5ce9326c3fbfd65194ec676bf8bfc43b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">AlignedBox</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math20transformBoundingBoxEN5Eigen10AlignedBoxI6ScalarXL3EEEERKN5Eigen10AlignedBoxI6ScalarXL3EEEERK9Isometry3I6ScalarE" title="hector_math::transformBoundingBox::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">hector_math</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">transformBoundingBox</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">AlignedBox</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math20transformBoundingBoxEN5Eigen10AlignedBoxI6ScalarXL3EEEERKN5Eigen10AlignedBoxI6ScalarXL3EEEERK9Isometry3I6ScalarE" title="hector_math::transformBoundingBox::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">box</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Isometry3</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math20transformBoundingBoxEN5Eigen10AlignedBoxI6ScalarXL3EEEERKN5Eigen10AlignedBoxI6ScalarXL3EEEERK9Isometry3I6ScalarE" title="hector_math::transformBoundingBox::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">transform</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN11hector_math20transformBoundingBoxEN5Eigen10AlignedBoxI6ScalarXL3EEEERKN5Eigen10AlignedBoxI6ScalarXL3EEEERK9Isometry3I6ScalarE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Transforms the given bounding box with the given transform (rotation + translation) and returns the minimal axis aligned bounding box that contains the transformed input box. The resulting bounding box may have a larger volume than the input box.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>box</strong> – The box that is transformed. </p></li>
+<li><p><strong>transform</strong> – The transform that is applied to the box. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The minimal axis aligned bounding box that contains the transformed input box. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="Robot.html" class="btn btn-neutral float-left" title="Robot" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019-2023, Stefan Fabian
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: master
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+      
+      <dl>
+        <dt>Languages</dt>
+        
+           <strong> 
+          <dd><a href="/hector_math/en/master/">en</a></dd>
+           </strong> 
+        
+      </dl>
+      
+      
+      <dl>
+        <dt>Versions</dt>
+        
+           <strong> 
+          <dd><a href="/hector_math/en/master/">master</a></dd>
+           </strong> 
+        
+      </dl>
+      
+      
+      <dl>
+        <dt>Downloads</dt>
+        
+          <dd><a href="/hector_math/en/master/hector_math-docs_en_master.epub">epub</a></dd>
+        
+      </dl>
+      
+      
+      <hr/>
+      <a href="https://tech.michaelaltfield.net/2020/07/18/sphinx-rtd-github-pages-1/">Continuous Documentation</a> hosting provided by <a href="https://pages.github.com/">GitHub Pages</a>.
+ 
+    </div>
+  </div>
+
+ 
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

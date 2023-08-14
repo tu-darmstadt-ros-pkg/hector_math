@@ -1,0 +1,1022 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Containers &mdash; hector_math 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Eigen Helpers" href="EigenHelpers.html" />
+    <link rel="prev" title="Welcome to the hector_math documentation!" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> hector_math
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                master
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Containers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#bounded-vector">Bounded Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quaternion-cache">Quaternion Cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ring-buffer">Ring Buffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#api">API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Bounded Vector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Quaternion Cache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Ring Buffer</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="EigenHelpers.html">Eigen Helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Iterators.html">Iterators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MapOperations.html">Map Operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="QuaternionBinning.html">Quaternion Binning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Robot.html">Robot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Shapes.html">Shapes - Bounding Boxes</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">hector_math</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Containers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/tu-darmstadt-ros-pkg/hector_math/blob/master/docs/pages/Containers.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="containers">
+<h1>Containers<a class="headerlink" href="#containers" title="Permalink to this heading">¶</a></h1>
+<div class="section" id="bounded-vector">
+<h2>Bounded Vector<a class="headerlink" href="#bounded-vector" title="Permalink to this heading">¶</a></h2>
+<p>The bounded vector is a container structure that tries to combine the advantages of arrays and vectors.
+It can be used if the maximum size is known at compile time.
+It combines the efficiency of arrays (e.g. locality) with the syntax of vectors (e.g. push_back).</p>
+</div>
+<div class="section" id="quaternion-cache">
+<h2>Quaternion Cache<a class="headerlink" href="#quaternion-cache" title="Permalink to this heading">¶</a></h2>
+<p>This container can be used to store direction-dependent data. To store the data efficiently, the directions are discretized.
+Hector_math implements three modes: <cite>Spherical</cite>, <cite>Largest dim</cite> and <cite>Spherical Fibonacci</cite>.
+The level of discretization, how many bins there, are can selected as well as the discretization mode.
+The modes have different advantages and disadvantages:</p>
+<table class="colwidths-given docutils align-center" id="id4">
+<caption><span class="caption-text">Discretization Mode Comparison</span><a class="headerlink" href="#id4" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Mode</p></th>
+<th class="head"><p>Speed</p></th>
+<th class="head"><p>Evenly Discretization</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Spherical</p></td>
+<td><p>🟡</p></td>
+<td><p>❌</p></td>
+</tr>
+<tr class="row-odd"><td><p>Largest Dimension</p></td>
+<td><p>✅</p></td>
+<td><p>🟡</p></td>
+</tr>
+<tr class="row-even"><td><p>Spherical Fibonacci</p></td>
+<td><p>❌</p></td>
+<td><p>✅</p></td>
+</tr>
+</tbody>
+</table>
+<p>It is impossible to achieve perfect evenly discretization for arbitrary many bins.
+The spherical fibonacci mode achieves the best discretization. The spherical mode
+is differently distributed near the poles and the equator while the largest dim
+mode doesn’t have a reduced resolution at the poles but at the cost of overlapping
+regions with increased bin resolution.</p>
+<p>For more details, see <a class="reference internal" href="QuaternionBinning.html"><span class="doc">Quaternion Binning</span></a>.</p>
+</div>
+<div class="section" id="ring-buffer">
+<h2>Ring Buffer<a class="headerlink" href="#ring-buffer" title="Permalink to this heading">¶</a></h2>
+<p>The Ring Buffer is a container with a limited size which is controlled with the template argument MaxSize.
+If the Ring Buffer is full, adding new elements will overwrite the oldest elements! It can be used as
+a FIFO data structure. The oldest element can be easily retrieved while adding new elements will
+append them to the container. The container keeps track of which element is the oldest and the newest
+without ever moving any elements. Additionally, the container support any algorithm that work with
+forward iterators, like std::for_each() and of course range loops.</p>
+</div>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="id1">
+<h3>Bounded Vector<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I0_iEN11hector_math13BoundedVectorE">
+<span id="_CPPv3I0_iEN11hector_math13BoundedVectorE"></span><span id="_CPPv2I0_iEN11hector_math13BoundedVectorE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MaxSize</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classhector__math_1_1_bounded_vector"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">BoundedVector</span></span></span><a class="headerlink" href="#_CPPv4I0_iEN11hector_math13BoundedVectorE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-types">Public Types</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math13BoundedVector8iteratorE">
+<span id="_CPPv3N11hector_math13BoundedVector8iteratorE"></span><span id="_CPPv2N11hector_math13BoundedVector8iteratorE"></span><span class="target" id="classhector__math_1_1_bounded_vector_1a89cde9ed850aa1837531b4c8455a09b6"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">iterator</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0_iEN11hector_math13BoundedVectorE" title="hector_math::BoundedVector::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_iEN11hector_math13BoundedVectorE" title="hector_math::BoundedVector::MaxSize"><span class="n"><span class="pre">MaxSize</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">iterator</span></span><a class="headerlink" href="#_CPPv4N11hector_math13BoundedVector8iteratorE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math13BoundedVector14const_iteratorE">
+<span id="_CPPv3N11hector_math13BoundedVector14const_iteratorE"></span><span id="_CPPv2N11hector_math13BoundedVector14const_iteratorE"></span><span class="target" id="classhector__math_1_1_bounded_vector_1ac471a67249dca8eeb47b9861c41968b0"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">const_iterator</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0_iEN11hector_math13BoundedVectorE" title="hector_math::BoundedVector::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_iEN11hector_math13BoundedVectorE" title="hector_math::BoundedVector::MaxSize"><span class="n"><span class="pre">MaxSize</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">const_iterator</span></span><a class="headerlink" href="#_CPPv4N11hector_math13BoundedVector14const_iteratorE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math13BoundedVector4sizeEv">
+<span id="_CPPv3NK11hector_math13BoundedVector4sizeEv"></span><span id="_CPPv2NK11hector_math13BoundedVector4sizeEv"></span><span id="hector_math::BoundedVector::sizeC"></span><span class="target" id="classhector__math_1_1_bounded_vector_1a259cb5a711406a8c3e5d937eb9350cca"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">size</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math13BoundedVector4sizeEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math13BoundedVector9push_backE1T">
+<span id="_CPPv3N11hector_math13BoundedVector9push_backE1T"></span><span id="_CPPv2N11hector_math13BoundedVector9push_backE1T"></span><span id="hector_math::BoundedVector::push_back__T"></span><span class="target" id="classhector__math_1_1_bounded_vector_1a355b0690fb37f02fb6cba5a974ae4c39"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">push_back</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0_iEN11hector_math13BoundedVectorE" title="hector_math::BoundedVector::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">val</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math13BoundedVector9push_backE1T" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4IDpEN11hector_math13BoundedVector12emplace_backEvDp4Args">
+<span id="_CPPv3IDpEN11hector_math13BoundedVector12emplace_backEDp4Args"></span><span id="_CPPv2IDpEN11hector_math13BoundedVector12emplace_backEDp4Args"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="sig-name descname"><span class="n"><span class="pre">Args</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classhector__math_1_1_bounded_vector_1a137404f0fc5bcb235c533f6d0d10ec11"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">emplace_back</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4IDpEN11hector_math13BoundedVector12emplace_backEvDp4Args" title="hector_math::BoundedVector::emplace_back::Args"><span class="n"><span class="pre">Args</span></span></a><span class="p"><span class="pre">...</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">args</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4IDpEN11hector_math13BoundedVector12emplace_backEvDp4Args" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math13BoundedVector8pop_backEv">
+<span id="_CPPv3N11hector_math13BoundedVector8pop_backEv"></span><span id="_CPPv2N11hector_math13BoundedVector8pop_backEv"></span><span id="hector_math::BoundedVector::pop_back"></span><span class="target" id="classhector__math_1_1_bounded_vector_1a058bda4957df6a97b1ea6c9fd783f672"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pop_back</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math13BoundedVector8pop_backEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math13BoundedVector5eraseE14const_iterator">
+<span id="_CPPv3N11hector_math13BoundedVector5eraseE14const_iterator"></span><span id="_CPPv2N11hector_math13BoundedVector5eraseE14const_iterator"></span><span id="hector_math::BoundedVector::erase__const_iterator"></span><span class="target" id="classhector__math_1_1_bounded_vector_1a1d1ebfe90d3c757899a8fe7c1851a082"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">erase</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N11hector_math13BoundedVector14const_iteratorE" title="hector_math::BoundedVector::const_iterator"><span class="n"><span class="pre">const_iterator</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">position</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math13BoundedVector5eraseE14const_iterator" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math13BoundedVector5eraseE14const_iterator14const_iterator">
+<span id="_CPPv3N11hector_math13BoundedVector5eraseE14const_iterator14const_iterator"></span><span id="_CPPv2N11hector_math13BoundedVector5eraseE14const_iterator14const_iterator"></span><span id="hector_math::BoundedVector::erase__const_iterator.const_iterator"></span><span class="target" id="classhector__math_1_1_bounded_vector_1aa976d06faa51fef1b6bdc440aa31507e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">erase</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N11hector_math13BoundedVector14const_iteratorE" title="hector_math::BoundedVector::const_iterator"><span class="n"><span class="pre">const_iterator</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">first</span></span>, <a class="reference internal" href="#_CPPv4N11hector_math13BoundedVector14const_iteratorE" title="hector_math::BoundedVector::const_iterator"><span class="n"><span class="pre">const_iterator</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">last</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math13BoundedVector5eraseE14const_iterator14const_iterator" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math13BoundedVector5clearEv">
+<span id="_CPPv3N11hector_math13BoundedVector5clearEv"></span><span id="_CPPv2N11hector_math13BoundedVector5clearEv"></span><span id="hector_math::BoundedVector::clear"></span><span class="target" id="classhector__math_1_1_bounded_vector_1ac8bb3912a3ce86b15842e79d0b421204"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clear</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math13BoundedVector5clearEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math13BoundedVector5frontEv">
+<span id="_CPPv3N11hector_math13BoundedVector5frontEv"></span><span id="_CPPv2N11hector_math13BoundedVector5frontEv"></span><span id="hector_math::BoundedVector::front"></span><span class="target" id="classhector__math_1_1_bounded_vector_1a55d9a449187445866021859f0cf708d0"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_iEN11hector_math13BoundedVectorE" title="hector_math::BoundedVector::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">front</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math13BoundedVector5frontEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math13BoundedVector5frontEv">
+<span id="_CPPv3NK11hector_math13BoundedVector5frontEv"></span><span id="_CPPv2NK11hector_math13BoundedVector5frontEv"></span><span id="hector_math::BoundedVector::frontC"></span><span class="target" id="classhector__math_1_1_bounded_vector_1aaaf5b079244f03b54d16063ddb010a8f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_iEN11hector_math13BoundedVectorE" title="hector_math::BoundedVector::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">front</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math13BoundedVector5frontEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math13BoundedVector4backEv">
+<span id="_CPPv3N11hector_math13BoundedVector4backEv"></span><span id="_CPPv2N11hector_math13BoundedVector4backEv"></span><span id="hector_math::BoundedVector::back"></span><span class="target" id="classhector__math_1_1_bounded_vector_1a94c484819f66b605343298653d4b1d07"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_iEN11hector_math13BoundedVectorE" title="hector_math::BoundedVector::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">back</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math13BoundedVector4backEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math13BoundedVector4backEv">
+<span id="_CPPv3NK11hector_math13BoundedVector4backEv"></span><span id="_CPPv2NK11hector_math13BoundedVector4backEv"></span><span id="hector_math::BoundedVector::backC"></span><span class="target" id="classhector__math_1_1_bounded_vector_1a3b64d468ac7adcedf648ff16ba766b71"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_iEN11hector_math13BoundedVectorE" title="hector_math::BoundedVector::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">back</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math13BoundedVector4backEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math13BoundedVector5beginEv">
+<span id="_CPPv3N11hector_math13BoundedVector5beginEv"></span><span id="_CPPv2N11hector_math13BoundedVector5beginEv"></span><span id="hector_math::BoundedVector::begin"></span><span class="target" id="classhector__math_1_1_bounded_vector_1ad69bd11391be1a1dba5c8202259664f8"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math13BoundedVector8iteratorE" title="hector_math::BoundedVector::iterator"><span class="n"><span class="pre">iterator</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">begin</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math13BoundedVector5beginEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math13BoundedVector5beginEv">
+<span id="_CPPv3NK11hector_math13BoundedVector5beginEv"></span><span id="_CPPv2NK11hector_math13BoundedVector5beginEv"></span><span id="hector_math::BoundedVector::beginC"></span><span class="target" id="classhector__math_1_1_bounded_vector_1a29305669b60ca1680752e2fc3592ba99"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math13BoundedVector14const_iteratorE" title="hector_math::BoundedVector::const_iterator"><span class="n"><span class="pre">const_iterator</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">begin</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math13BoundedVector5beginEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math13BoundedVector3endEv">
+<span id="_CPPv3N11hector_math13BoundedVector3endEv"></span><span id="_CPPv2N11hector_math13BoundedVector3endEv"></span><span id="hector_math::BoundedVector::end"></span><span class="target" id="classhector__math_1_1_bounded_vector_1acad38d52497a975bfb6f2f6acd76631f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math13BoundedVector8iteratorE" title="hector_math::BoundedVector::iterator"><span class="n"><span class="pre">iterator</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">end</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math13BoundedVector3endEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math13BoundedVector3endEv">
+<span id="_CPPv3NK11hector_math13BoundedVector3endEv"></span><span id="_CPPv2NK11hector_math13BoundedVector3endEv"></span><span id="hector_math::BoundedVector::endC"></span><span class="target" id="classhector__math_1_1_bounded_vector_1accf9a4bd0c34d4a5f6a7dab66ea10cdc"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math13BoundedVector14const_iteratorE" title="hector_math::BoundedVector::const_iterator"><span class="n"><span class="pre">const_iterator</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">end</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math13BoundedVector3endEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math13BoundedVectorixE6size_t">
+<span id="_CPPv3N11hector_math13BoundedVectorixE6size_t"></span><span id="_CPPv2N11hector_math13BoundedVectorixE6size_t"></span><span id="hector_math::BoundedVector::subscript-operator__s"></span><span class="target" id="classhector__math_1_1_bounded_vector_1a0decfd96492a17ed60a8a7af5145425f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_iEN11hector_math13BoundedVectorE" title="hector_math::BoundedVector::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">[]</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">index</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math13BoundedVectorixE6size_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math13BoundedVectorixE6size_t">
+<span id="_CPPv3NK11hector_math13BoundedVectorixE6size_t"></span><span id="_CPPv2NK11hector_math13BoundedVectorixE6size_t"></span><span id="hector_math::BoundedVector::subscript-operator__sC"></span><span class="target" id="classhector__math_1_1_bounded_vector_1a92afcec6ef2744a6362256565ca6055e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_iEN11hector_math13BoundedVectorE" title="hector_math::BoundedVector::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">[]</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">index</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math13BoundedVectorixE6size_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math13BoundedVector4dataEv">
+<span id="_CPPv3N11hector_math13BoundedVector4dataEv"></span><span id="_CPPv2N11hector_math13BoundedVector4dataEv"></span><span id="hector_math::BoundedVector::data"></span><span class="target" id="classhector__math_1_1_bounded_vector_1a1699472936b80a88d3fc8096975d21b2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_iEN11hector_math13BoundedVectorE" title="hector_math::BoundedVector::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">data</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math13BoundedVector4dataEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math13BoundedVector4dataEv">
+<span id="_CPPv3NK11hector_math13BoundedVector4dataEv"></span><span id="_CPPv2NK11hector_math13BoundedVector4dataEv"></span><span id="hector_math::BoundedVector::dataC"></span><span class="target" id="classhector__math_1_1_bounded_vector_1a6ce7ecceadabf1ae43d7fe0a016bb84b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_iEN11hector_math13BoundedVectorE" title="hector_math::BoundedVector::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">data</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math13BoundedVector4dataEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math13BoundedVector7reserveE6size_t">
+<span id="_CPPv3N11hector_math13BoundedVector7reserveE6size_t"></span><span id="_CPPv2N11hector_math13BoundedVector7reserveE6size_t"></span><span id="hector_math::BoundedVector::reserve__s"></span><span class="target" id="classhector__math_1_1_bounded_vector_1aecb4bd77fc3ff806ef4339e76c66bbf6"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">reserve</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math13BoundedVector7reserveE6size_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math13BoundedVector6items_E">
+<span id="_CPPv3N11hector_math13BoundedVector6items_E"></span><span id="_CPPv2N11hector_math13BoundedVector6items_E"></span><span id="hector_math::BoundedVector::items___std::array:T.MaxSize:"></span><span class="target" id="classhector__math_1_1_bounded_vector_1a66c01b76548e781a9af9900f6003c43f"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0_iEN11hector_math13BoundedVectorE" title="hector_math::BoundedVector::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_iEN11hector_math13BoundedVectorE" title="hector_math::BoundedVector::MaxSize"><span class="n"><span class="pre">MaxSize</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">items_</span></span></span><a class="headerlink" href="#_CPPv4N11hector_math13BoundedVector6items_E" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math13BoundedVector5size_E">
+<span id="_CPPv3N11hector_math13BoundedVector5size_E"></span><span id="_CPPv2N11hector_math13BoundedVector5size_E"></span><span id="hector_math::BoundedVector::size___s"></span><span class="target" id="classhector__math_1_1_bounded_vector_1a5f31775800bbb46b35b5791def1f3acc"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">size_</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N11hector_math13BoundedVector5size_E" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="id2">
+<h3>Quaternion Cache<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I00_21QuaternionBinningMode_i_iEN11hector_math15QuaternionCacheE">
+<span id="_CPPv3I00_21QuaternionBinningMode_i_iEN11hector_math15QuaternionCacheE"></span><span id="_CPPv2I00_21QuaternionBinningMode_i_iEN11hector_math15QuaternionCacheE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Scalar</span></span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">QuaternionBinningMode</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MODE</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">quaternion_binning_modes</span></span><span class="p"><span class="pre">::</span></span><a class="reference internal" href="QuaternionBinning.html#_CPPv4N11hector_math24quaternion_binning_modes21QuaternionBinningMode10LargestDimE" title="hector_math::quaternion_binning_modes::LargestDim"><span class="n"><span class="pre">LargestDim</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AXIS_BINS</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">128</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ANGLE_COUNT</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">512</span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classhector__math_1_1_quaternion_cache"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">QuaternionCache</span></span></span><a class="headerlink" href="#_CPPv4I00_21QuaternionBinningMode_i_iEN11hector_math15QuaternionCacheE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-types">Public Types</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math15QuaternionCache8iteratorE">
+<span id="_CPPv3N11hector_math15QuaternionCache8iteratorE"></span><span id="_CPPv2N11hector_math15QuaternionCache8iteratorE"></span><span class="target" id="classhector__math_1_1_quaternion_cache_1a723cd6eb01dd2dae7232a7fa1cf6fb20"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">iterator</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unordered_map</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N11hector_math15QuaternionCache7BinTypeE" title="hector_math::QuaternionCache::BinType"><span class="n"><span class="pre">BinType</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00_21QuaternionBinningMode_i_iEN11hector_math15QuaternionCacheE" title="hector_math::QuaternionCache::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">iterator</span></span><a class="headerlink" href="#_CPPv4N11hector_math15QuaternionCache8iteratorE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math15QuaternionCache14const_iteratorE">
+<span id="_CPPv3N11hector_math15QuaternionCache14const_iteratorE"></span><span id="_CPPv2N11hector_math15QuaternionCache14const_iteratorE"></span><span class="target" id="classhector__math_1_1_quaternion_cache_1a11d63f3410154a770e3129f4c2725ef8"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">const_iterator</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unordered_map</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N11hector_math15QuaternionCache7BinTypeE" title="hector_math::QuaternionCache::BinType"><span class="n"><span class="pre">BinType</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00_21QuaternionBinningMode_i_iEN11hector_math15QuaternionCacheE" title="hector_math::QuaternionCache::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">const_iterator</span></span><a class="headerlink" href="#_CPPv4N11hector_math15QuaternionCache14const_iteratorE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math15QuaternionCache6insertERKN5Eigen10QuaternionI6ScalarEERK1T">
+<span id="_CPPv3N11hector_math15QuaternionCache6insertERKN5Eigen10QuaternionI6ScalarEERK1T"></span><span id="_CPPv2N11hector_math15QuaternionCache6insertERKN5Eigen10QuaternionI6ScalarEERK1T"></span><span id="hector_math::QuaternionCache::insert__Eigen::Quaternion:Scalar:CR.TCR"></span><span class="target" id="classhector__math_1_1_quaternion_cache_1a00190e6d1a85d29f8038094b844a2ea5"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">pair</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N11hector_math15QuaternionCache8iteratorE" title="hector_math::QuaternionCache::iterator"><span class="n"><span class="pre">iterator</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">insert</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Quaternion</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00_21QuaternionBinningMode_i_iEN11hector_math15QuaternionCacheE" title="hector_math::QuaternionCache::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">q</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00_21QuaternionBinningMode_i_iEN11hector_math15QuaternionCacheE" title="hector_math::QuaternionCache::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">val</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N11hector_math15QuaternionCache6insertERKN5Eigen10QuaternionI6ScalarEERK1T" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math15QuaternionCache4findERKN5Eigen10QuaternionI6ScalarEE">
+<span id="_CPPv3N11hector_math15QuaternionCache4findERKN5Eigen10QuaternionI6ScalarEE"></span><span id="_CPPv2N11hector_math15QuaternionCache4findERKN5Eigen10QuaternionI6ScalarEE"></span><span id="hector_math::QuaternionCache::find__Eigen::Quaternion:Scalar:CR"></span><span class="target" id="classhector__math_1_1_quaternion_cache_1a46ed2396192987882836cc6461d1dc84"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math15QuaternionCache8iteratorE" title="hector_math::QuaternionCache::iterator"><span class="n"><span class="pre">iterator</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">find</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Quaternion</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00_21QuaternionBinningMode_i_iEN11hector_math15QuaternionCacheE" title="hector_math::QuaternionCache::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">q</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N11hector_math15QuaternionCache4findERKN5Eigen10QuaternionI6ScalarEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math15QuaternionCache4findERKN5Eigen10QuaternionI6ScalarEE">
+<span id="_CPPv3NK11hector_math15QuaternionCache4findERKN5Eigen10QuaternionI6ScalarEE"></span><span id="_CPPv2NK11hector_math15QuaternionCache4findERKN5Eigen10QuaternionI6ScalarEE"></span><span id="hector_math::QuaternionCache::find__Eigen::Quaternion:Scalar:CRC"></span><span class="target" id="classhector__math_1_1_quaternion_cache_1afbaa84f0a0501838a7c6a7ce3046e61d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math15QuaternionCache14const_iteratorE" title="hector_math::QuaternionCache::const_iterator"><span class="n"><span class="pre">const_iterator</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">find</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Quaternion</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00_21QuaternionBinningMode_i_iEN11hector_math15QuaternionCacheE" title="hector_math::QuaternionCache::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">q</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK11hector_math15QuaternionCache4findERKN5Eigen10QuaternionI6ScalarEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math15QuaternionCache5beginEv">
+<span id="_CPPv3N11hector_math15QuaternionCache5beginEv"></span><span id="_CPPv2N11hector_math15QuaternionCache5beginEv"></span><span id="hector_math::QuaternionCache::begin"></span><span class="target" id="classhector__math_1_1_quaternion_cache_1a979556eb331ec35eb33472a90a160f99"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math15QuaternionCache8iteratorE" title="hector_math::QuaternionCache::iterator"><span class="n"><span class="pre">iterator</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">begin</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N11hector_math15QuaternionCache5beginEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math15QuaternionCache5beginEv">
+<span id="_CPPv3NK11hector_math15QuaternionCache5beginEv"></span><span id="_CPPv2NK11hector_math15QuaternionCache5beginEv"></span><span id="hector_math::QuaternionCache::beginC"></span><span class="target" id="classhector__math_1_1_quaternion_cache_1a1ca1fc2c9fc3e169d5d0decfd1e54221"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math15QuaternionCache14const_iteratorE" title="hector_math::QuaternionCache::const_iterator"><span class="n"><span class="pre">const_iterator</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">begin</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK11hector_math15QuaternionCache5beginEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math15QuaternionCache6cbeginEv">
+<span id="_CPPv3NK11hector_math15QuaternionCache6cbeginEv"></span><span id="_CPPv2NK11hector_math15QuaternionCache6cbeginEv"></span><span id="hector_math::QuaternionCache::cbeginC"></span><span class="target" id="classhector__math_1_1_quaternion_cache_1abeb76f7f3414f270020e6f467586bd93"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math15QuaternionCache14const_iteratorE" title="hector_math::QuaternionCache::const_iterator"><span class="n"><span class="pre">const_iterator</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cbegin</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK11hector_math15QuaternionCache6cbeginEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math15QuaternionCache3endEv">
+<span id="_CPPv3N11hector_math15QuaternionCache3endEv"></span><span id="_CPPv2N11hector_math15QuaternionCache3endEv"></span><span id="hector_math::QuaternionCache::end"></span><span class="target" id="classhector__math_1_1_quaternion_cache_1afc5380afa64b233d0df01a147616974b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math15QuaternionCache8iteratorE" title="hector_math::QuaternionCache::iterator"><span class="n"><span class="pre">iterator</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">end</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N11hector_math15QuaternionCache3endEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math15QuaternionCache3endEv">
+<span id="_CPPv3NK11hector_math15QuaternionCache3endEv"></span><span id="_CPPv2NK11hector_math15QuaternionCache3endEv"></span><span id="hector_math::QuaternionCache::endC"></span><span class="target" id="classhector__math_1_1_quaternion_cache_1a5b9b57293fae9b18b26349ac0b3fdcd3"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math15QuaternionCache14const_iteratorE" title="hector_math::QuaternionCache::const_iterator"><span class="n"><span class="pre">const_iterator</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">end</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK11hector_math15QuaternionCache3endEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math15QuaternionCache4cendEv">
+<span id="_CPPv3NK11hector_math15QuaternionCache4cendEv"></span><span id="_CPPv2NK11hector_math15QuaternionCache4cendEv"></span><span id="hector_math::QuaternionCache::cendC"></span><span class="target" id="classhector__math_1_1_quaternion_cache_1a9859a454bb6f50c654e280274d6a9d13"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math15QuaternionCache14const_iteratorE" title="hector_math::QuaternionCache::const_iterator"><span class="n"><span class="pre">const_iterator</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cend</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK11hector_math15QuaternionCache4cendEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math15QuaternionCache5clearEv">
+<span id="_CPPv3N11hector_math15QuaternionCache5clearEv"></span><span id="_CPPv2N11hector_math15QuaternionCache5clearEv"></span><span id="hector_math::QuaternionCache::clear"></span><span class="target" id="classhector__math_1_1_quaternion_cache_1a03bfacfaaba9195e4498375659f43531"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clear</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N11hector_math15QuaternionCache5clearEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-static-functions">Public Static Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math15QuaternionCache10computeBinERKN5Eigen10QuaternionI6ScalarEE">
+<span id="_CPPv3N11hector_math15QuaternionCache10computeBinERKN5Eigen10QuaternionI6ScalarEE"></span><span id="_CPPv2N11hector_math15QuaternionCache10computeBinERKN5Eigen10QuaternionI6ScalarEE"></span><span id="hector_math::QuaternionCache::computeBin__Eigen::Quaternion:Scalar:CR"></span><span class="target" id="classhector__math_1_1_quaternion_cache_1a0cd5992ed1464fdfd561ea93527d5e14"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math15QuaternionCache7BinTypeE" title="hector_math::QuaternionCache::BinType"><span class="n"><span class="pre">BinType</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">computeBin</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Quaternion</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00_21QuaternionBinningMode_i_iEN11hector_math15QuaternionCacheE" title="hector_math::QuaternionCache::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">q</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N11hector_math15QuaternionCache10computeBinERKN5Eigen10QuaternionI6ScalarEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-types">Private Types</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math15QuaternionCache7BinTypeE">
+<span id="_CPPv3N11hector_math15QuaternionCache7BinTypeE"></span><span id="_CPPv2N11hector_math15QuaternionCache7BinTypeE"></span><span class="target" id="classhector__math_1_1_quaternion_cache_1a1713019476f87f984164d4d104c71a2a"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">BinType</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="n"><span class="pre">detail</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">QuaternionBinType</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00_21QuaternionBinningMode_i_iEN11hector_math15QuaternionCacheE" title="hector_math::QuaternionCache::AXIS_BINS"><span class="n"><span class="pre">AXIS_BINS</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00_21QuaternionBinningMode_i_iEN11hector_math15QuaternionCacheE" title="hector_math::QuaternionCache::ANGLE_COUNT"><span class="n"><span class="pre">ANGLE_COUNT</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">BinType</span></span><a class="headerlink" href="#_CPPv4N11hector_math15QuaternionCache7BinTypeE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math15QuaternionCache6cache_E">
+<span id="_CPPv3N11hector_math15QuaternionCache6cache_E"></span><span id="_CPPv2N11hector_math15QuaternionCache6cache_E"></span><span id="hector_math::QuaternionCache::cache___std::unordered_map:BinType.T:"></span><span class="target" id="classhector__math_1_1_quaternion_cache_1acb0c3aa1c7094380df21907fb9b4c200"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">unordered_map</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N11hector_math15QuaternionCache7BinTypeE" title="hector_math::QuaternionCache::BinType"><span class="n"><span class="pre">BinType</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00_21QuaternionBinningMode_i_iEN11hector_math15QuaternionCacheE" title="hector_math::QuaternionCache::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cache_</span></span></span><a class="headerlink" href="#_CPPv4N11hector_math15QuaternionCache6cache_E" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="id3">
+<h3>Ring Buffer<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I0_6size_tEN11hector_math10RingBufferE">
+<span id="_CPPv3I0_6size_tEN11hector_math10RingBufferE"></span><span id="_CPPv2I0_6size_tEN11hector_math10RingBufferE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">N</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classhector__math_1_1_ring_buffer"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RingBuffer</span></span></span><a class="headerlink" href="#_CPPv4I0_6size_tEN11hector_math10RingBufferE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A <a class="reference internal" href="#classhector__math_1_1_ring_buffer"><span class="std std-ref">RingBuffer</span></a> is a limited size storage container that once full will overwrite the oldest elements when a new element is added. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> – The type of the elements stored in this <a class="reference internal" href="#classhector__math_1_1_ring_buffer"><span class="std std-ref">RingBuffer</span></a>. </p></li>
+<li><p><strong>Nm</strong> – The maximum number of elements stored in the <a class="reference internal" href="#classhector__math_1_1_ring_buffer"><span class="std std-ref">RingBuffer</span></a> at any time. </p></li>
+</ul>
+</dd>
+</dl>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-types">Public Types</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer10value_typeE">
+<span id="_CPPv3N11hector_math10RingBuffer10value_typeE"></span><span id="_CPPv2N11hector_math10RingBuffer10value_typeE"></span><span class="target" id="classhector__math_1_1_ring_buffer_1afb9ded5f49336ae503bb9f2035ea902b"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">value_type</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_6size_tEN11hector_math10RingBufferE" title="hector_math::RingBuffer::T"><span class="n"><span class="pre">T</span></span></a><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer10value_typeE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer7pointerE">
+<span id="_CPPv3N11hector_math10RingBuffer7pointerE"></span><span id="_CPPv2N11hector_math10RingBuffer7pointerE"></span><span class="target" id="classhector__math_1_1_ring_buffer_1a6fc03915d7633dfe3c2b7a160f410549"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pointer</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer10value_typeE" title="hector_math::RingBuffer::value_type"><span class="n"><span class="pre">value_type</span></span></a><span class="p"><span class="pre">*</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer7pointerE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer13const_pointerE">
+<span id="_CPPv3N11hector_math10RingBuffer13const_pointerE"></span><span id="_CPPv2N11hector_math10RingBuffer13const_pointerE"></span><span class="target" id="classhector__math_1_1_ring_buffer_1a1ce9d8c8e35f6c6ffb564c2e733ea05e"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">const_pointer</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer10value_typeE" title="hector_math::RingBuffer::value_type"><span class="n"><span class="pre">value_type</span></span></a><span class="p"><span class="pre">*</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer13const_pointerE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer9referenceE">
+<span id="_CPPv3N11hector_math10RingBuffer9referenceE"></span><span id="_CPPv2N11hector_math10RingBuffer9referenceE"></span><span class="target" id="classhector__math_1_1_ring_buffer_1aaa3f89aae50054d0bb5c9f266819815b"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">reference</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer10value_typeE" title="hector_math::RingBuffer::value_type"><span class="n"><span class="pre">value_type</span></span></a><span class="p"><span class="pre">&amp;</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer9referenceE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer15const_referenceE">
+<span id="_CPPv3N11hector_math10RingBuffer15const_referenceE"></span><span id="_CPPv2N11hector_math10RingBuffer15const_referenceE"></span><span class="target" id="classhector__math_1_1_ring_buffer_1a5547e634a8602ad47bdbec65167d7fce"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">const_reference</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer10value_typeE" title="hector_math::RingBuffer::value_type"><span class="n"><span class="pre">value_type</span></span></a><span class="p"><span class="pre">&amp;</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer15const_referenceE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer9size_typeE">
+<span id="_CPPv3N11hector_math10RingBuffer9size_typeE"></span><span id="_CPPv2N11hector_math10RingBuffer9size_typeE"></span><span class="target" id="classhector__math_1_1_ring_buffer_1af38ce1af42d538f410180c265518d4f0"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">size_type</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer9size_typeE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer15difference_typeE">
+<span id="_CPPv3N11hector_math10RingBuffer15difference_typeE"></span><span id="_CPPv2N11hector_math10RingBuffer15difference_typeE"></span><span class="target" id="classhector__math_1_1_ring_buffer_1ace405568d0b2f3fad4990044252c7732"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">difference_type</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ptrdiff_t</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer15difference_typeE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer8iteratorE">
+<span id="_CPPv3N11hector_math10RingBuffer8iteratorE"></span><span id="_CPPv2N11hector_math10RingBuffer8iteratorE"></span><span class="target" id="classhector__math_1_1_ring_buffer_1ad43438ee411a1630cdc8f525a43fcbd8"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">iterator</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator"><span class="n"><span class="pre">ring_iterator</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer7pointerE" title="hector_math::RingBuffer::pointer"><span class="n"><span class="pre">pointer</span></span></a><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer8iteratorE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer14const_iteratorE">
+<span id="_CPPv3N11hector_math10RingBuffer14const_iteratorE"></span><span id="_CPPv2N11hector_math10RingBuffer14const_iteratorE"></span><span class="target" id="classhector__math_1_1_ring_buffer_1a0e4e051fa7fa506fe939b677e408c7f5"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">const_iterator</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator"><span class="n"><span class="pre">ring_iterator</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer13const_pointerE" title="hector_math::RingBuffer::const_pointer"><span class="n"><span class="pre">const_pointer</span></span></a><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer14const_iteratorE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RingBuffer5emptyEv">
+<span id="_CPPv3NK11hector_math10RingBuffer5emptyEv"></span><span id="_CPPv2NK11hector_math10RingBuffer5emptyEv"></span><span id="hector_math::RingBuffer::emptyCCE"></span><span class="target" id="classhector__math_1_1_ring_buffer_1afaafdfc441c2433c70959e3dfe46fd97"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">empty</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RingBuffer5emptyEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>true if the container is empty, false otherwise </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RingBuffer4fullEv">
+<span id="_CPPv3NK11hector_math10RingBuffer4fullEv"></span><span id="_CPPv2NK11hector_math10RingBuffer4fullEv"></span><span id="hector_math::RingBuffer::fullC"></span><span class="target" id="classhector__math_1_1_ring_buffer_1a8abf3cf65268916fe1f1660fd9efd90a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">full</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RingBuffer4fullEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>true if the container is full, false otherwise. Appending to a full container will overwrite old elements. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RingBuffer4sizeEv">
+<span id="_CPPv3NK11hector_math10RingBuffer4sizeEv"></span><span id="_CPPv2NK11hector_math10RingBuffer4sizeEv"></span><span id="hector_math::RingBuffer::sizeCCE"></span><span class="target" id="classhector__math_1_1_ring_buffer_1aae4c3867dcd57153f1148c9f097bbc9b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">size</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RingBuffer4sizeEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the number of elements </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RingBuffer8capacityEv">
+<span id="_CPPv3NK11hector_math10RingBuffer8capacityEv"></span><span id="_CPPv2NK11hector_math10RingBuffer8capacityEv"></span><span id="hector_math::RingBuffer::capacityCCE"></span><span class="target" id="classhector__math_1_1_ring_buffer_1aa31b67454949edf857c3dd3d9ef9994b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">capacity</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RingBuffer8capacityEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the maximum number of elements which is equal to the template parameter TSize. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RingBuffer8max_sizeEv">
+<span id="_CPPv3NK11hector_math10RingBuffer8max_sizeEv"></span><span id="_CPPv2NK11hector_math10RingBuffer8max_sizeEv"></span><span id="hector_math::RingBuffer::max_sizeCCE"></span><span class="target" id="classhector__math_1_1_ring_buffer_1a3407699345c5de0bb98eb92ed03e2f72"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">max_size</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RingBuffer8max_sizeEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the maximum number of elements which is equal to the template parameter TSize. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer9push_backE15const_reference">
+<span id="_CPPv3N11hector_math10RingBuffer9push_backE15const_reference"></span><span id="_CPPv2N11hector_math10RingBuffer9push_backE15const_reference"></span><span id="hector_math::RingBuffer::push_back__const_reference"></span><span class="target" id="classhector__math_1_1_ring_buffer_1a6bd8872edd014726d90483c11eda5267"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">push_back</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer15const_referenceE" title="hector_math::RingBuffer::const_reference"><span class="n"><span class="pre">const_reference</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer9push_backE15const_reference" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Adds an element to the end of the <a class="reference internal" href="#classhector__math_1_1_ring_buffer"><span class="std std-ref">RingBuffer</span></a>. If the <a class="reference internal" href="#classhector__math_1_1_ring_buffer"><span class="std std-ref">RingBuffer</span></a> is full the oldest element will be overwritten. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> – element to be appended. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer9pop_frontEv">
+<span id="_CPPv3N11hector_math10RingBuffer9pop_frontEv"></span><span id="_CPPv2N11hector_math10RingBuffer9pop_frontEv"></span><span id="hector_math::RingBuffer::pop_front"></span><span class="target" id="classhector__math_1_1_ring_buffer_1a56f4ffbc6fd414b3c02a6c368e99594f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pop_front</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer9pop_frontEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Deletes the oldest element in the <a class="reference internal" href="#classhector__math_1_1_ring_buffer"><span class="std std-ref">RingBuffer</span></a>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer18read_and_pop_frontEv">
+<span id="_CPPv3N11hector_math10RingBuffer18read_and_pop_frontEv"></span><span id="_CPPv2N11hector_math10RingBuffer18read_and_pop_frontEv"></span><span id="hector_math::RingBuffer::read_and_pop_front"></span><span class="target" id="classhector__math_1_1_ring_buffer_1acd3f2bc5af346aa75ed88c6a8ede9d1a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer10value_typeE" title="hector_math::RingBuffer::value_type"><span class="n"><span class="pre">value_type</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">read_and_pop_front</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer18read_and_pop_frontEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Reads and deletes the oldest element of the <a class="reference internal" href="#classhector__math_1_1_ring_buffer"><span class="std std-ref">RingBuffer</span></a>. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the oldest not yet overwritten element from The <a class="reference internal" href="#classhector__math_1_1_ring_buffer"><span class="std std-ref">RingBuffer</span></a>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4IDpEN11hector_math10RingBuffer12emplace_backEvDpRR4Args">
+<span id="_CPPv3IDpEN11hector_math10RingBuffer12emplace_backEDpRR4Args"></span><span id="_CPPv2IDpEN11hector_math10RingBuffer12emplace_backEDpRR4Args"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="sig-name descname"><span class="n"><span class="pre">Args</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classhector__math_1_1_ring_buffer_1ab5b725de047e6b4434ba01741744e457"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">emplace_back</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4IDpEN11hector_math10RingBuffer12emplace_backEvDpRR4Args" title="hector_math::RingBuffer::emplace_back::Args"><span class="n"><span class="pre">Args</span></span></a><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">...</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">args</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4IDpEN11hector_math10RingBuffer12emplace_backEvDpRR4Args" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Constructs an element and appends it to the <a class="reference internal" href="#classhector__math_1_1_ring_buffer"><span class="std std-ref">RingBuffer</span></a>. If the <a class="reference internal" href="#classhector__math_1_1_ring_buffer"><span class="std std-ref">RingBuffer</span></a> is already full, the oldest element is overwritten. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>args</strong> – The arguments that are passed to the constructor of the element. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer5beginEv">
+<span id="_CPPv3N11hector_math10RingBuffer5beginEv"></span><span id="_CPPv2N11hector_math10RingBuffer5beginEv"></span><span id="hector_math::RingBuffer::begin"></span><span class="target" id="classhector__math_1_1_ring_buffer_1a979556eb331ec35eb33472a90a160f99"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer8iteratorE" title="hector_math::RingBuffer::iterator"><span class="n"><span class="pre">iterator</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">begin</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer5beginEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>an iterator pointing to the oldest element in the ringbuffer. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer3endEv">
+<span id="_CPPv3N11hector_math10RingBuffer3endEv"></span><span id="_CPPv2N11hector_math10RingBuffer3endEv"></span><span id="hector_math::RingBuffer::end"></span><span class="target" id="classhector__math_1_1_ring_buffer_1afc5380afa64b233d0df01a147616974b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer8iteratorE" title="hector_math::RingBuffer::iterator"><span class="n"><span class="pre">iterator</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">end</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer3endEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>an iterator pointing to the position after the newest element in the ringbuffer. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer6cbeginEv">
+<span id="_CPPv3N11hector_math10RingBuffer6cbeginEv"></span><span id="_CPPv2N11hector_math10RingBuffer6cbeginEv"></span><span id="hector_math::RingBuffer::cbegin"></span><span class="target" id="classhector__math_1_1_ring_buffer_1ada33db7122fcd1476b7840e6abcc7682"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer14const_iteratorE" title="hector_math::RingBuffer::const_iterator"><span class="n"><span class="pre">const_iterator</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cbegin</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer6cbeginEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a const iterator pointing to the oldest element in the ringbuffer. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer4cendEv">
+<span id="_CPPv3N11hector_math10RingBuffer4cendEv"></span><span id="_CPPv2N11hector_math10RingBuffer4cendEv"></span><span id="hector_math::RingBuffer::cend"></span><span class="target" id="classhector__math_1_1_ring_buffer_1a491b08a708a7a9cd3824c5936626c4bb"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer14const_iteratorE" title="hector_math::RingBuffer::const_iterator"><span class="n"><span class="pre">const_iterator</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cend</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer4cendEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a const iterator pointing to the position after the newest element in the ringbuffer. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer5frontEv">
+<span id="_CPPv3N11hector_math10RingBuffer5frontEv"></span><span id="_CPPv2N11hector_math10RingBuffer5frontEv"></span><span id="hector_math::RingBuffer::front"></span><span class="target" id="classhector__math_1_1_ring_buffer_1a6a48363b4355f6f5b441637774f79a59"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer9referenceE" title="hector_math::RingBuffer::reference"><span class="n"><span class="pre">reference</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">front</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer5frontEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a reference to the oldest element in the buffer. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RingBuffer5frontEv">
+<span id="_CPPv3NK11hector_math10RingBuffer5frontEv"></span><span id="_CPPv2NK11hector_math10RingBuffer5frontEv"></span><span id="hector_math::RingBuffer::frontC"></span><span class="target" id="classhector__math_1_1_ring_buffer_1a0ae6b4f9719202f7ddb334c16fb03d80"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer15const_referenceE" title="hector_math::RingBuffer::const_reference"><span class="n"><span class="pre">const_reference</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">front</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RingBuffer5frontEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a const reference to the oldest element in the buffer. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer4backEv">
+<span id="_CPPv3N11hector_math10RingBuffer4backEv"></span><span id="_CPPv2N11hector_math10RingBuffer4backEv"></span><span id="hector_math::RingBuffer::back"></span><span class="target" id="classhector__math_1_1_ring_buffer_1af71e6c1eccbc12e9339c00a86a981a43"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer9referenceE" title="hector_math::RingBuffer::reference"><span class="n"><span class="pre">reference</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">back</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer4backEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a reference to the newest element in the buffer. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RingBuffer4backEv">
+<span id="_CPPv3NK11hector_math10RingBuffer4backEv"></span><span id="_CPPv2NK11hector_math10RingBuffer4backEv"></span><span id="hector_math::RingBuffer::backC"></span><span class="target" id="classhector__math_1_1_ring_buffer_1a61772c77ad2abfbb296912e7281e154c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer15const_referenceE" title="hector_math::RingBuffer::const_reference"><span class="n"><span class="pre">const_reference</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">back</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RingBuffer4backEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a const reference to the newest element in the buffer. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer5clearEv">
+<span id="_CPPv3N11hector_math10RingBuffer5clearEv"></span><span id="_CPPv2N11hector_math10RingBuffer5clearEv"></span><span id="hector_math::RingBuffer::clear"></span><span class="target" id="classhector__math_1_1_ring_buffer_1ac8bb3912a3ce86b15842e79d0b421204"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clear</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer5clearEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Clears the contents of the <a class="reference internal" href="#classhector__math_1_1_ring_buffer"><span class="std std-ref">RingBuffer</span></a>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RingBufferixE6size_t">
+<span id="_CPPv3NK11hector_math10RingBufferixE6size_t"></span><span id="_CPPv2NK11hector_math10RingBufferixE6size_t"></span><span id="hector_math::RingBuffer::subscript-operator__sC"></span><span class="target" id="classhector__math_1_1_ring_buffer_1ad5f0b98431ee8774b824655e5ff456d5"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer15const_referenceE" title="hector_math::RingBuffer::const_reference"><span class="n"><span class="pre">const_reference</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">[]</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">index</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RingBufferixE6size_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBufferixE6size_t">
+<span id="_CPPv3N11hector_math10RingBufferixE6size_t"></span><span id="_CPPv2N11hector_math10RingBufferixE6size_t"></span><span id="hector_math::RingBuffer::subscript-operator__s"></span><span class="target" id="classhector__math_1_1_ring_buffer_1af3f54b09e736326fb4f4f61027833bc5"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer9referenceE" title="hector_math::RingBuffer::reference"><span class="n"><span class="pre">reference</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">[]</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">index</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math10RingBufferixE6size_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-static-attributes">Public Static Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer4SizeE">
+<span id="_CPPv3N11hector_math10RingBuffer4SizeE"></span><span id="_CPPv2N11hector_math10RingBuffer4SizeE"></span><span id="hector_math::RingBuffer::Size__s"></span><span class="target" id="classhector__math_1_1_ring_buffer_1a879ad9933a419e4e04c8a59cc19a34fe"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Size</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_6size_tEN11hector_math10RingBufferE" title="hector_math::RingBuffer::N"><span class="n"><span class="pre">N</span></span></a><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer4SizeE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RingBuffer20get_normalised_indexE6size_t">
+<span id="_CPPv3NK11hector_math10RingBuffer20get_normalised_indexE6size_t"></span><span id="_CPPv2NK11hector_math10RingBuffer20get_normalised_indexE6size_t"></span><span id="hector_math::RingBuffer::get_normalised_index__sC"></span><span class="target" id="classhector__math_1_1_ring_buffer_1a6a451fa5dc30fe69b17a21f4533ee5d9"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">get_normalised_index</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">index</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RingBuffer20get_normalised_indexE6size_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer32added_element_tail_adapt_indicesEv">
+<span id="_CPPv3N11hector_math10RingBuffer32added_element_tail_adapt_indicesEv"></span><span id="_CPPv2N11hector_math10RingBuffer32added_element_tail_adapt_indicesEv"></span><span id="hector_math::RingBuffer::added_element_tail_adapt_indices"></span><span class="target" id="classhector__math_1_1_ring_buffer_1a38b90f2c5910bf50ecd539fc84ba0953"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">added_element_tail_adapt_indices</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer32added_element_tail_adapt_indicesEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer37removed_element_at_head_adapt_indicesEv">
+<span id="_CPPv3N11hector_math10RingBuffer37removed_element_at_head_adapt_indicesEv"></span><span id="_CPPv2N11hector_math10RingBuffer37removed_element_at_head_adapt_indicesEv"></span><span id="hector_math::RingBuffer::removed_element_at_head_adapt_indices"></span><span class="target" id="classhector__math_1_1_ring_buffer_1a0127d260f4627be68aceef59ffff5a3c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">removed_element_at_head_adapt_indices</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer37removed_element_at_head_adapt_indicesEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RingBuffer14get_head_indexEv">
+<span id="_CPPv3NK11hector_math10RingBuffer14get_head_indexEv"></span><span id="_CPPv2NK11hector_math10RingBuffer14get_head_indexEv"></span><span id="hector_math::RingBuffer::get_head_indexC"></span><span class="target" id="classhector__math_1_1_ring_buffer_1a73741a8fb80056dcfa4eb243ca66aa99"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">get_head_index</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RingBuffer14get_head_indexEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The index of the oldest element. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RingBuffer14get_last_indexEv">
+<span id="_CPPv3NK11hector_math10RingBuffer14get_last_indexEv"></span><span id="_CPPv2NK11hector_math10RingBuffer14get_last_indexEv"></span><span id="hector_math::RingBuffer::get_last_indexC"></span><span class="target" id="classhector__math_1_1_ring_buffer_1a498cd244779b352ad2797e4800d57bbe"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">get_last_index</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RingBuffer14get_last_indexEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer6items_E">
+<span id="_CPPv3N11hector_math10RingBuffer6items_E"></span><span id="_CPPv2N11hector_math10RingBuffer6items_E"></span><span id="hector_math::RingBuffer::items___std::array:value_type.Size:"></span><span class="target" id="classhector__math_1_1_ring_buffer_1ac0aa62e69e68154f5be41b103b462f67"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer10value_typeE" title="hector_math::RingBuffer::value_type"><span class="n"><span class="pre">value_type</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer4SizeE" title="hector_math::RingBuffer::Size"><span class="n"><span class="pre">Size</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">items_</span></span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer6items_E" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer5size_E">
+<span id="_CPPv3N11hector_math10RingBuffer5size_E"></span><span id="_CPPv2N11hector_math10RingBuffer5size_E"></span><span id="hector_math::RingBuffer::size___s"></span><span class="target" id="classhector__math_1_1_ring_buffer_1a5f31775800bbb46b35b5791def1f3acc"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">size_</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer5size_E" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer11tail_index_E">
+<span id="_CPPv3N11hector_math10RingBuffer11tail_index_E"></span><span id="_CPPv2N11hector_math10RingBuffer11tail_index_E"></span><span id="hector_math::RingBuffer::tail_index___s"></span><span class="target" id="classhector__math_1_1_ring_buffer_1a438474ba0b9eed253287542624646fbc"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tail_index_</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer11tail_index_E" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE">
+<span id="_CPPv3I0EN11hector_math10RingBuffer13ring_iteratorE"></span><span id="_CPPv2I0EN11hector_math10RingBuffer13ring_iteratorE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Iterator</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ring_iterator</span></span></span><a class="headerlink" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-types">Public Types</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer13ring_iterator13iterator_typeE">
+<span id="_CPPv3N11hector_math10RingBuffer13ring_iterator13iterator_typeE"></span><span id="_CPPv2N11hector_math10RingBuffer13ring_iterator13iterator_typeE"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1adb91189ec34385c816dbe37d35dcbe4a"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">iterator_type</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator::Iterator"><span class="n"><span class="pre">Iterator</span></span></a><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer13ring_iterator13iterator_typeE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer13ring_iterator17iterator_categoryE">
+<span id="_CPPv3N11hector_math10RingBuffer13ring_iterator17iterator_categoryE"></span><span id="_CPPv2N11hector_math10RingBuffer13ring_iterator17iterator_categoryE"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1a8806ca091813ced0b0658fedaa448357"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">iterator_category</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">random_access_iterator_tag</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer13ring_iterator17iterator_categoryE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer13ring_iterator10value_typeE">
+<span id="_CPPv3N11hector_math10RingBuffer13ring_iterator10value_typeE"></span><span id="_CPPv2N11hector_math10RingBuffer13ring_iterator10value_typeE"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1af92257d74addb1d90485abc440a13b9b"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">value_type</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer13ring_iterator7_traitsE" title="hector_math::RingBuffer::ring_iterator::_traits"><span class="n"><span class="pre">_traits</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">value_type</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer13ring_iterator10value_typeE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer13ring_iterator15difference_typeE">
+<span id="_CPPv3N11hector_math10RingBuffer13ring_iterator15difference_typeE"></span><span id="_CPPv2N11hector_math10RingBuffer13ring_iterator15difference_typeE"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1aa6a82954f5a4d3264e696c299f363bb0"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">difference_type</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer13ring_iterator7_traitsE" title="hector_math::RingBuffer::ring_iterator::_traits"><span class="n"><span class="pre">_traits</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">difference_type</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer13ring_iterator15difference_typeE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer13ring_iterator9referenceE">
+<span id="_CPPv3N11hector_math10RingBuffer13ring_iterator9referenceE"></span><span id="_CPPv2N11hector_math10RingBuffer13ring_iterator9referenceE"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1a8715912721646b055d6b3f6380a31abc"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">reference</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer13ring_iterator7_traitsE" title="hector_math::RingBuffer::ring_iterator::_traits"><span class="n"><span class="pre">_traits</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">reference</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer13ring_iterator9referenceE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer13ring_iterator7pointerE">
+<span id="_CPPv3N11hector_math10RingBuffer13ring_iterator7pointerE"></span><span id="_CPPv2N11hector_math10RingBuffer13ring_iterator7pointerE"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1ada05c2f4b512951db7c80d0e5873f2f4"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pointer</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer13ring_iterator7_traitsE" title="hector_math::RingBuffer::ring_iterator::_traits"><span class="n"><span class="pre">_traits</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">pointer</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer13ring_iterator7pointerE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer13ring_iterator13ring_iteratorEP10RingBufferI1T1NEii">
+<span id="_CPPv3N11hector_math10RingBuffer13ring_iterator13ring_iteratorEP10RingBufferI1T1NEii"></span><span id="_CPPv2N11hector_math10RingBuffer13ring_iterator13ring_iteratorEP10RingBufferI1T1NEii"></span><span id="hector_math::RingBuffer::ring_iterator::ring_iterator__RingBuffer:T.N:P.i.i"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1a3a520adb56c75c99add911ccc28b1da4"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ring_iterator</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0_6size_tEN11hector_math10RingBufferE" title="hector_math::RingBuffer"><span class="n"><span class="pre">RingBuffer</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0_6size_tEN11hector_math10RingBufferE" title="hector_math::RingBuffer::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_6size_tEN11hector_math10RingBufferE" title="hector_math::RingBuffer::N"><span class="n"><span class="pre">N</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">buffer</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">offset</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">index</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer13ring_iterator13ring_iteratorEP10RingBufferI1T1NEii" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RingBuffer13ring_iteratormlEv">
+<span id="_CPPv3NK11hector_math10RingBuffer13ring_iteratormlEv"></span><span id="_CPPv2NK11hector_math10RingBuffer13ring_iteratormlEv"></span><span id="hector_math::RingBuffer::ring_iterator::mul-operatorC"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1a764dacf8fe4e9efd148881a35d787bb8"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer13ring_iterator9referenceE" title="hector_math::RingBuffer::ring_iterator::reference"><span class="n"><span class="pre">reference</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">*</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RingBuffer13ring_iteratormlEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RingBuffer13ring_iteratorptEv">
+<span id="_CPPv3NK11hector_math10RingBuffer13ring_iteratorptEv"></span><span id="_CPPv2NK11hector_math10RingBuffer13ring_iteratorptEv"></span><span id="hector_math::RingBuffer::ring_iterator::pointer-operatorC"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1aba807cee99af94c249fe450a6b7c5bbb"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer13ring_iterator7pointerE" title="hector_math::RingBuffer::ring_iterator::pointer"><span class="n"><span class="pre">pointer</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">-&gt;</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RingBuffer13ring_iteratorptEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer13ring_iteratorppEv">
+<span id="_CPPv3N11hector_math10RingBuffer13ring_iteratorppEv"></span><span id="_CPPv2N11hector_math10RingBuffer13ring_iteratorppEv"></span><span id="hector_math::RingBuffer::ring_iterator::inc-operator"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1a9a452b49aafddb8a859abc1952d35aa6"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator"><span class="n"><span class="pre">ring_iterator</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator::Iterator"><span class="n"><span class="pre">Iterator</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">++</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer13ring_iteratorppEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NR11hector_math10RingBuffer13ring_iteratorppEi">
+<span id="_CPPv3NR11hector_math10RingBuffer13ring_iteratorppEi"></span><span id="_CPPv2NR11hector_math10RingBuffer13ring_iteratorppEi"></span><span id="hector_math::RingBuffer::ring_iterator::inc-operator__iR"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1a8a40267f117b763a953f0dbe11fbcb47"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator"><span class="n"><span class="pre">ring_iterator</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator::Iterator"><span class="n"><span class="pre">Iterator</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">++</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NR11hector_math10RingBuffer13ring_iteratorppEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer13ring_iteratorpLEi">
+<span id="_CPPv3N11hector_math10RingBuffer13ring_iteratorpLEi"></span><span id="_CPPv2N11hector_math10RingBuffer13ring_iteratorpLEi"></span><span id="hector_math::RingBuffer::ring_iterator::add-assign-operator__i"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1a55347818b7a950e6d2081a19ec995604"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator"><span class="n"><span class="pre">ring_iterator</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator::Iterator"><span class="n"><span class="pre">Iterator</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">+=</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nums</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer13ring_iteratorpLEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer13ring_iteratormmEv">
+<span id="_CPPv3N11hector_math10RingBuffer13ring_iteratormmEv"></span><span id="_CPPv2N11hector_math10RingBuffer13ring_iteratormmEv"></span><span id="hector_math::RingBuffer::ring_iterator::dec-operator"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1a0e9e9925a3dc2c7c6b1d35df4a616cbe"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator"><span class="n"><span class="pre">ring_iterator</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator::Iterator"><span class="n"><span class="pre">Iterator</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">--</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer13ring_iteratormmEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NR11hector_math10RingBuffer13ring_iteratormmEi">
+<span id="_CPPv3NR11hector_math10RingBuffer13ring_iteratormmEi"></span><span id="_CPPv2NR11hector_math10RingBuffer13ring_iteratormmEi"></span><span id="hector_math::RingBuffer::ring_iterator::dec-operator__iR"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1aea3cca61bca1cf25f1ec1290f3c27fd4"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator"><span class="n"><span class="pre">ring_iterator</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator::Iterator"><span class="n"><span class="pre">Iterator</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">--</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NR11hector_math10RingBuffer13ring_iteratormmEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer13ring_iteratormIEi">
+<span id="_CPPv3N11hector_math10RingBuffer13ring_iteratormIEi"></span><span id="_CPPv2N11hector_math10RingBuffer13ring_iteratormIEi"></span><span id="hector_math::RingBuffer::ring_iterator::sub-assign-operator__i"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1ae686471d857a64ef95eb35f21f1055f8"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator"><span class="n"><span class="pre">ring_iterator</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator::Iterator"><span class="n"><span class="pre">Iterator</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">-=</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">nums</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer13ring_iteratormIEi" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RingBuffer13ring_iteratormiERK13ring_iteratorI8IteratorE">
+<span id="_CPPv3NK11hector_math10RingBuffer13ring_iteratormiERK13ring_iteratorI8IteratorE"></span><span id="_CPPv2NK11hector_math10RingBuffer13ring_iteratormiERK13ring_iteratorI8IteratorE"></span><span id="hector_math::RingBuffer::ring_iterator::sub-operator__ring_iterator:Iterator:CRC"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1aa5d8b77196770601ced7f1a0801f9537"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer13ring_iterator15difference_typeE" title="hector_math::RingBuffer::ring_iterator::difference_type"><span class="n"><span class="pre">difference_type</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">-</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator"><span class="n"><span class="pre">ring_iterator</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator::Iterator"><span class="n"><span class="pre">Iterator</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RingBuffer13ring_iteratormiERK13ring_iteratorI8IteratorE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RingBuffer13ring_iteratorplE15difference_type">
+<span id="_CPPv3NK11hector_math10RingBuffer13ring_iteratorplE15difference_type"></span><span id="_CPPv2NK11hector_math10RingBuffer13ring_iteratorplE15difference_type"></span><span id="hector_math::RingBuffer::ring_iterator::add-operator__difference_typeC"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1a02f11eba5036aec54f02e062bd29443d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator"><span class="n"><span class="pre">ring_iterator</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator::Iterator"><span class="n"><span class="pre">Iterator</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">+</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer13ring_iterator15difference_typeE" title="hector_math::RingBuffer::ring_iterator::difference_type"><span class="n"><span class="pre">difference_type</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">nums</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RingBuffer13ring_iteratorplE15difference_type" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RingBuffer13ring_iteratormiE15difference_type">
+<span id="_CPPv3NK11hector_math10RingBuffer13ring_iteratormiE15difference_type"></span><span id="_CPPv2NK11hector_math10RingBuffer13ring_iteratormiE15difference_type"></span><span id="hector_math::RingBuffer::ring_iterator::sub-operator__difference_typeC"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1ac47b360089aba550c223eafd4fe60a2f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator"><span class="n"><span class="pre">ring_iterator</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator::Iterator"><span class="n"><span class="pre">Iterator</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">-</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N11hector_math10RingBuffer13ring_iterator15difference_typeE" title="hector_math::RingBuffer::ring_iterator::difference_type"><span class="n"><span class="pre">difference_type</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">nums</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RingBuffer13ring_iteratormiE15difference_type" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK11hector_math10RingBuffer13ring_iteratorcvN10RingBufferI1T1NE14const_iteratorEEv">
+<span id="_CPPv3NK11hector_math10RingBuffer13ring_iteratorcvN10RingBufferI1T1NE14const_iteratorEEv"></span><span id="_CPPv2NK11hector_math10RingBuffer13ring_iteratorcvN10RingBufferI1T1NE14const_iteratorEEv"></span><span id="hector_math::RingBuffer::ring_iterator::castto-RingBuffer:T.N:::const_iterator-operatorC"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1ab7ffcb3696b101a984d18032a50757b3"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_6size_tEN11hector_math10RingBufferE" title="hector_math::RingBuffer"><span class="n"><span class="pre">RingBuffer</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0_6size_tEN11hector_math10RingBufferE" title="hector_math::RingBuffer::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_6size_tEN11hector_math10RingBufferE" title="hector_math::RingBuffer::N"><span class="n"><span class="pre">N</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">const_iterator</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK11hector_math10RingBuffer13ring_iteratorcvN10RingBufferI1T1NE14const_iteratorEEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0ENK11hector_math10RingBuffer13ring_iteratoreqEbRK13ring_iteratorI9IteratorRE">
+<span id="_CPPv3I0ENK11hector_math10RingBuffer13ring_iteratoreqERK13ring_iteratorI9IteratorRE"></span><span id="_CPPv2I0ENK11hector_math10RingBuffer13ring_iteratoreqERK13ring_iteratorI9IteratorRE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IteratorR</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1a4f6006c9b641e65d08d027408715c1c2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">==</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator"><span class="n"><span class="pre">ring_iterator</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0ENK11hector_math10RingBuffer13ring_iteratoreqEbRK13ring_iteratorI9IteratorRE" title="hector_math::RingBuffer::ring_iterator::operator==::IteratorR"><span class="n"><span class="pre">IteratorR</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4I0ENK11hector_math10RingBuffer13ring_iteratoreqEbRK13ring_iteratorI9IteratorRE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0ENK11hector_math10RingBuffer13ring_iteratorneEbRK13ring_iteratorI9IteratorRE">
+<span id="_CPPv3I0ENK11hector_math10RingBuffer13ring_iteratorneERK13ring_iteratorI9IteratorRE"></span><span id="_CPPv2I0ENK11hector_math10RingBuffer13ring_iteratorneERK13ring_iteratorI9IteratorRE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">IteratorR</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1a785d568aa7cccfaf9f412c1f483a7cdd"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">!=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator"><span class="n"><span class="pre">ring_iterator</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0ENK11hector_math10RingBuffer13ring_iteratorneEbRK13ring_iteratorI9IteratorRE" title="hector_math::RingBuffer::ring_iterator::operator!=::IteratorR"><span class="n"><span class="pre">IteratorR</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4I0ENK11hector_math10RingBuffer13ring_iteratorneEbRK13ring_iteratorI9IteratorRE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-types">Private Types</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer13ring_iterator7_traitsE">
+<span id="_CPPv3N11hector_math10RingBuffer13ring_iterator7_traitsE"></span><span id="_CPPv2N11hector_math10RingBuffer13ring_iterator7_traitsE"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1af15a2932bebc26704e7ff328c596e470"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_traits</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">iterator_traits</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math10RingBuffer13ring_iteratorE" title="hector_math::RingBuffer::ring_iterator::Iterator"><span class="n"><span class="pre">Iterator</span></span></a><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer13ring_iterator7_traitsE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer13ring_iterator7buffer_E">
+<span id="_CPPv3N11hector_math10RingBuffer13ring_iterator7buffer_E"></span><span id="_CPPv2N11hector_math10RingBuffer13ring_iterator7buffer_E"></span><span id="hector_math::RingBuffer::ring_iterator::buffer___RingBuffer:T.N:P"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1a06c7c27e16c24d2765343c76098ca421"></span><a class="reference internal" href="#_CPPv4I0_6size_tEN11hector_math10RingBufferE" title="hector_math::RingBuffer"><span class="n"><span class="pre">RingBuffer</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0_6size_tEN11hector_math10RingBufferE" title="hector_math::RingBuffer::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_6size_tEN11hector_math10RingBufferE" title="hector_math::RingBuffer::N"><span class="n"><span class="pre">N</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">buffer_</span></span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer13ring_iterator7buffer_E" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer13ring_iterator7offset_E">
+<span id="_CPPv3N11hector_math10RingBuffer13ring_iterator7offset_E"></span><span id="_CPPv2N11hector_math10RingBuffer13ring_iterator7offset_E"></span><span id="hector_math::RingBuffer::ring_iterator::offset___i"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1a09206911190ce91fe5bece5535717837"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">offset_</span></span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer13ring_iterator7offset_E" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer13ring_iterator15iterator_index_E">
+<span id="_CPPv3N11hector_math10RingBuffer13ring_iterator15iterator_index_E"></span><span id="_CPPv2N11hector_math10RingBuffer13ring_iterator15iterator_index_E"></span><span id="hector_math::RingBuffer::ring_iterator::iterator_index___i"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1a04db89e2331ffced690589fe6f8f7037"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">iterator_index_</span></span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer13ring_iterator15iterator_index_E" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N11hector_math10RingBuffer13ring_iterator13buffer_index_E">
+<span id="_CPPv3N11hector_math10RingBuffer13ring_iterator13buffer_index_E"></span><span id="_CPPv2N11hector_math10RingBuffer13ring_iterator13buffer_index_E"></span><span id="hector_math::RingBuffer::ring_iterator::buffer_index___i"></span><span class="target" id="structhector__math_1_1_ring_buffer_1_1ring__iterator_1a384e2ef96b8d0871f2d48a19a1ea8a3e"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">buffer_index_</span></span></span><a class="headerlink" href="#_CPPv4N11hector_math10RingBuffer13ring_iterator13buffer_index_E" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="EigenHelpers.html" class="btn btn-neutral float-right" title="Eigen Helpers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to the hector_math documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019-2023, Stefan Fabian
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: master
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+      
+      <dl>
+        <dt>Languages</dt>
+        
+           <strong> 
+          <dd><a href="/hector_math/en/master/">en</a></dd>
+           </strong> 
+        
+      </dl>
+      
+      
+      <dl>
+        <dt>Versions</dt>
+        
+           <strong> 
+          <dd><a href="/hector_math/en/master/">master</a></dd>
+           </strong> 
+        
+      </dl>
+      
+      
+      <dl>
+        <dt>Downloads</dt>
+        
+          <dd><a href="/hector_math/en/master/hector_math-docs_en_master.epub">epub</a></dd>
+        
+      </dl>
+      
+      
+      <hr/>
+      <a href="https://tech.michaelaltfield.net/2020/07/18/sphinx-rtd-github-pages-1/">Continuous Documentation</a> hosting provided by <a href="https://pages.github.com/">GitHub Pages</a>.
+ 
+    </div>
+  </div>
+
+ 
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

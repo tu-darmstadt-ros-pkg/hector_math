@@ -1,0 +1,366 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Map Operations &mdash; hector_math 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Quaternion Binning" href="QuaternionBinning.html" />
+    <link rel="prev" title="Iterators" href="Iterators.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> hector_math
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                master
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Containers.html">Containers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="EigenHelpers.html">Eigen Helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Iterators.html">Iterators</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Map Operations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#find-minimum">Find Minimum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#find-maximum">Find Maximum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#find-minimum-and-index">Find Minimum and Index</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#find-maximum-and-index">Find Maximum and Index</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="QuaternionBinning.html">Quaternion Binning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Robot.html">Robot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Shapes.html">Shapes - Bounding Boxes</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">hector_math</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Map Operations</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/tu-darmstadt-ros-pkg/hector_math/blob/master/docs/pages/MapOperations.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="map-operations">
+<h1>Map Operations<a class="headerlink" href="#map-operations" title="Permalink to this heading">¶</a></h1>
+<p>These functions can be used to find extreme values which lie in a polygon on a GridMap .
+After comparing the values of each cell in a polygon, the maximum or minimum value is returned.
+Furthermore, one can look for extreme values and their indices.
+There are three different implementations available</p>
+<div class="section" id="find-minimum">
+<h2>Find Minimum<a class="headerlink" href="#find-minimum" title="Permalink to this heading">¶</a></h2>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN11hector_math11findMinimumE6ScalarRKN5Eigen3RefIK7GridMapI6ScalarEEERK7PolygonI6ScalarE">
+<span id="_CPPv3I0EN11hector_math11findMinimumERKN5Eigen3RefIK7GridMapI6ScalarEEERK7PolygonI6ScalarE"></span><span id="_CPPv2I0EN11hector_math11findMinimumERKN5Eigen3RefIK7GridMapI6ScalarEEERK7PolygonI6ScalarE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Scalar</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="find__minmax_8h_1a5702865230d24fefc94f77571589ab42"></span><a class="reference internal" href="#_CPPv4I0EN11hector_math11findMinimumE6ScalarRKN5Eigen3RefIK7GridMapI6ScalarEEERK7PolygonI6ScalarE" title="hector_math::findMinimum::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">hector_math</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">findMinimum</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Ref</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">GridMap</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math11findMinimumE6ScalarRKN5Eigen3RefIK7GridMapI6ScalarEEERK7PolygonI6ScalarE" title="hector_math::findMinimum::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">map</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Polygon</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math11findMinimumE6ScalarRKN5Eigen3RefIK7GridMapI6ScalarEEERK7PolygonI6ScalarE" title="hector_math::findMinimum::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">polygon</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN11hector_math11findMinimumE6ScalarRKN5Eigen3RefIK7GridMapI6ScalarEEERK7PolygonI6ScalarE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Finds the minimum value in the map inside the given polygon. This method is robust against NaN values in the map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters</dt>
+<dd class="field-odd"><p><strong>Scalar</strong> – The floating point type that is used. </p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>map</strong> – The GridMap in which we are looking for the minimum value. </p></li>
+<li><p><strong>polygon</strong> – The region in which we are looking for the minimum map value. Needs to be in map coordinates. </p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The minimum value or NaN if the entire polygon is outside of the map or the map has no non-NaN value inside the polygon. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="find-maximum">
+<h2>Find Maximum<a class="headerlink" href="#find-maximum" title="Permalink to this heading">¶</a></h2>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN11hector_math11findMaximumE6ScalarRKN5Eigen3RefIK7GridMapI6ScalarEEERK7PolygonI6ScalarE">
+<span id="_CPPv3I0EN11hector_math11findMaximumERKN5Eigen3RefIK7GridMapI6ScalarEEERK7PolygonI6ScalarE"></span><span id="_CPPv2I0EN11hector_math11findMaximumERKN5Eigen3RefIK7GridMapI6ScalarEEERK7PolygonI6ScalarE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Scalar</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="find__minmax_8h_1a61354042c4931fec35275cf3136af59c"></span><a class="reference internal" href="#_CPPv4I0EN11hector_math11findMaximumE6ScalarRKN5Eigen3RefIK7GridMapI6ScalarEEERK7PolygonI6ScalarE" title="hector_math::findMaximum::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">hector_math</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">findMaximum</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Ref</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">GridMap</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math11findMaximumE6ScalarRKN5Eigen3RefIK7GridMapI6ScalarEEERK7PolygonI6ScalarE" title="hector_math::findMaximum::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">map</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Polygon</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN11hector_math11findMaximumE6ScalarRKN5Eigen3RefIK7GridMapI6ScalarEEERK7PolygonI6ScalarE" title="hector_math::findMaximum::Scalar"><span class="n"><span class="pre">Scalar</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">polygon</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN11hector_math11findMaximumE6ScalarRKN5Eigen3RefIK7GridMapI6ScalarEEERK7PolygonI6ScalarE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Finds the maximum value in the map inside the given polygon. This method is robust against NaN values in the map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters</dt>
+<dd class="field-odd"><p><strong>Scalar</strong> – The floating point type that is used. </p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>map</strong> – The GridMap in which we are looking for the maximum value. </p></li>
+<li><p><strong>polygon</strong> – The region in which we are looking for the maximum map value. Needs to be in map coordinates. </p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The maximum value or NaN if the entire polygon is outside of the map or the map has no non-NaN value inside the polygon. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="find-minimum-and-index">
+<h2>Find Minimum and Index<a class="headerlink" href="#find-minimum-and-index" title="Permalink to this heading">¶</a></h2>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN11hector_math19findMinimumAndIndexEN9EigenType6ScalarERK9EigenTypeRN5Eigen5IndexERN5Eigen5IndexE">
+<span id="_CPPv3I0EN11hector_math19findMinimumAndIndexERK9EigenTypeRN5Eigen5IndexERN5Eigen5IndexE"></span><span id="_CPPv2I0EN11hector_math19findMinimumAndIndexERK9EigenTypeRN5Eigen5IndexERN5Eigen5IndexE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">EigenType</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="find__minmax_8h_1ab05a15957a7ce25cd81256f8df55527a"></span><a class="reference internal" href="#_CPPv4I0EN11hector_math19findMinimumAndIndexEN9EigenType6ScalarERK9EigenTypeRN5Eigen5IndexERN5Eigen5IndexE" title="hector_math::findMinimumAndIndex::EigenType"><span class="n"><span class="pre">EigenType</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Scalar</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">hector_math</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">findMinimumAndIndex</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math19findMinimumAndIndexEN9EigenType6ScalarERK9EigenTypeRN5Eigen5IndexERN5Eigen5IndexE" title="hector_math::findMinimumAndIndex::EigenType"><span class="n"><span class="pre">EigenType</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">map</span></span>, <span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Index</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">row</span></span>, <span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Index</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">col</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN11hector_math19findMinimumAndIndexEN9EigenType6ScalarERK9EigenTypeRN5Eigen5IndexERN5Eigen5IndexE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Finds the minimum value in the map and the location in the form of row and col index. This method is robust against NaN values in the map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters</dt>
+<dd class="field-odd"><p><strong>Scalar</strong> – The floating point type that is used. </p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>map</strong> – The GridMap in which we are looking for the minimum value. </p></li>
+<li><p><strong>row</strong> – The row index of the minimum. </p></li>
+<li><p><strong>col</strong> – The column index of the minimum. </p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The minimum value inside the map. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="find-maximum-and-index">
+<h2>Find Maximum and Index<a class="headerlink" href="#find-maximum-and-index" title="Permalink to this heading">¶</a></h2>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN11hector_math19findMaximumAndIndexEN9EigenType6ScalarERK9EigenTypeRN5Eigen5IndexERN5Eigen5IndexE">
+<span id="_CPPv3I0EN11hector_math19findMaximumAndIndexERK9EigenTypeRN5Eigen5IndexERN5Eigen5IndexE"></span><span id="_CPPv2I0EN11hector_math19findMaximumAndIndexERK9EigenTypeRN5Eigen5IndexERN5Eigen5IndexE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">EigenType</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="find__minmax_8h_1a411efda26989c9ce4346a538007717a6"></span><a class="reference internal" href="#_CPPv4I0EN11hector_math19findMaximumAndIndexEN9EigenType6ScalarERK9EigenTypeRN5Eigen5IndexERN5Eigen5IndexE" title="hector_math::findMaximumAndIndex::EigenType"><span class="n"><span class="pre">EigenType</span></span></a><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Scalar</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">hector_math</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">findMaximumAndIndex</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN11hector_math19findMaximumAndIndexEN9EigenType6ScalarERK9EigenTypeRN5Eigen5IndexERN5Eigen5IndexE" title="hector_math::findMaximumAndIndex::EigenType"><span class="n"><span class="pre">EigenType</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">map</span></span>, <span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Index</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">row</span></span>, <span class="n"><span class="pre">Eigen</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Index</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">col</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN11hector_math19findMaximumAndIndexEN9EigenType6ScalarERK9EigenTypeRN5Eigen5IndexERN5Eigen5IndexE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Finds the maximum value in the map and the location in the form of row and col index. This method is robust against NaN values in the map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters</dt>
+<dd class="field-odd"><p><strong>Scalar</strong> – The floating point type that is used. </p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>map</strong> – The GridMap in which we are looking for the maximum value. </p></li>
+<li><p><strong>row</strong> – The row index of the maximum. </p></li>
+<li><p><strong>col</strong> – The column index of the maximum. </p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The maximum value inside the map. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="QuaternionBinning.html" class="btn btn-neutral float-right" title="Quaternion Binning" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Iterators.html" class="btn btn-neutral float-left" title="Iterators" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019-2023, Stefan Fabian
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: master
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+      
+      <dl>
+        <dt>Languages</dt>
+        
+           <strong> 
+          <dd><a href="/hector_math/en/master/">en</a></dd>
+           </strong> 
+        
+      </dl>
+      
+      
+      <dl>
+        <dt>Versions</dt>
+        
+           <strong> 
+          <dd><a href="/hector_math/en/master/">master</a></dd>
+           </strong> 
+        
+      </dl>
+      
+      
+      <dl>
+        <dt>Downloads</dt>
+        
+          <dd><a href="/hector_math/en/master/hector_math-docs_en_master.epub">epub</a></dd>
+        
+      </dl>
+      
+      
+      <hr/>
+      <a href="https://tech.michaelaltfield.net/2020/07/18/sphinx-rtd-github-pages-1/">Continuous Documentation</a> hosting provided by <a href="https://pages.github.com/">GitHub Pages</a>.
+ 
+    </div>
+  </div>
+
+ 
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
