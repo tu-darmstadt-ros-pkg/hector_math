@@ -87,6 +87,13 @@ struct BlockIndices {
   Eigen::Index y0;
   Eigen::Index rows;
   Eigen::Index cols;
+
+  bool operator==( const BlockIndices &other ) const
+  {
+    return x0 == other.x0 && y0 == other.y0 && rows == other.rows && cols == other.cols;
+  }
+
+  bool operator!=( const BlockIndices &other ) const { return !( *this == other ); }
 };
 } // namespace hector_math
 
