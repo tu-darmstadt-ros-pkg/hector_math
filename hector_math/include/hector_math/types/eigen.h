@@ -90,10 +90,12 @@ struct BlockIndices {
 
   static BlockIndices Empty() { return { 0, 0, 0, 0 }; }
 
-  bool empty() const { return rows == 0 || cols == 0; }
+  [[nodiscard]] bool empty() const { return rows == 0 || cols == 0; }
 
   bool operator==( const BlockIndices &other ) const
   {
+    if ( empty() )
+      return other.empty();
     return x0 == other.x0 && y0 == other.y0 && rows == other.rows && cols == other.cols;
   }
 
@@ -104,7 +106,7 @@ struct BlockIndices {
     return row >= x0 && row < x0 + rows && col >= y0 && col < y0 + cols;
   }
 
-  BlockIndices include( const BlockIndices &other ) const
+  [[nodiscard]] BlockIndices include( const BlockIndices &other ) const
   {
     if ( empty() )
       return other;
@@ -124,7 +126,7 @@ struct BlockIndices {
     return *this;
   }
 
-  BlockIndices include( Eigen::Index row, Eigen::Index col ) const
+  [[nodiscard]] BlockIndices include( Eigen::Index row, Eigen::Index col ) const
   {
     if ( empty() )
       return { row, col, 1, 1 };
@@ -142,7 +144,7 @@ struct BlockIndices {
     return *this;
   }
 
-  BlockIndices scale( double scale )
+  [[nodiscard]] BlockIndices scale( double scale )
   {
     BlockIndices result = *this;
     result.x0 = static_cast<Eigen::Index>( std::floor( x0 * scale ) );
