@@ -83,10 +83,10 @@ using GridMapf = GridMap<float>;
 using GridMapd = GridMap<double>;
 
 struct BlockIndices {
-  Eigen::Index x0;
-  Eigen::Index y0;
-  Eigen::Index rows;
-  Eigen::Index cols;
+  Eigen::Index x0 = 0;
+  Eigen::Index y0 = 0;
+  Eigen::Index rows = 0;
+  Eigen::Index cols = 0;
 
   static BlockIndices Empty() { return { 0, 0, 0, 0 }; }
 
