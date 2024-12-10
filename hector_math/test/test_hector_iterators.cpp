@@ -121,6 +121,13 @@ TYPED_TEST( IteratorTest, rectangleTest )
       [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Rectangle with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4).";
+  // using b as a (a->b, d->c) -> should result in same expected map
+  actual_map.setZero();
+  iterateRectangle<Scalar>(
+      Vector2S( 1.6, 3.4 ), Vector2S( 0.4, 0.4 ), Vector2S( 4.6, 4.6 ),
+      [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+      << "Rectangle with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4).";
   // no points in rectangle
   expected_map.setZero();
   actual_map.setZero();
