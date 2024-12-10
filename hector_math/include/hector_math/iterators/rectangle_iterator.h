@@ -57,7 +57,7 @@ void iterateRectangle( const Vector2<T> &a, const Vector2<T> &b, const Vector2<T
                        Eigen::Index row_min, Eigen::Index row_max, Eigen::Index col_min,
                        Eigen::Index col_max, Functor functor )
 {
-  const auto &d = b + c - a;
+  const auto &d = ( b + c - a ).eval();
 
   std::array<Vector2<T>, 4> points = { a, b, d, c };
   // Find the corner with the lowest y value
@@ -106,7 +106,8 @@ void iterateRectangle( const Vector2<T> &a, const Vector2<T> &b, const Vector2<T
   const Eigen::Index max_y = std::min<Eigen::Index>( col_max, std::round( highest.y() ) );
   const Eigen::Index left_switch = std::round( left.y() );
   const Eigen::Index right_switch = std::round( right.y() );
-  Line left_line( lowest, left, y, true ), right_line( lowest, right, y, false );
+  Line left_line( lowest, left, y, true );
+  Line right_line( lowest, right, y, false );
   Eigen::Index next_y = std::min( left_switch, right_switch );
   // Loop until next corner
   for ( ; y < next_y; ++y ) {
