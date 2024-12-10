@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #include "hector_math/iterators/circle_iterator.h"
+#include "hector_math/iterators/eigen_iterator.h"
 #include "hector_math/iterators/polygon_iterator.h"
 #include "hector_math/iterators/rectangle_iterator.h"
 #include "iterators_input.h"
@@ -20,12 +21,12 @@ using namespace hector_math;
 template<typename Scalar>
 static void rectangleIterator( benchmark::State &state )
 {
-  GridMap<Scalar> map( 20, 20 );
+  GridMap<Scalar> map( 200, 200 );
 
   for ( auto _ : state ) {
     // See test_hector_iterators for what this will iterate
-    iterateRectangle<Scalar>( Vector2<Scalar>( 0, 1 ), Vector2<Scalar>( 1, 19 ),
-                              Vector2<Scalar>( 18, 0 ),
+    iterateRectangle<Scalar>( Vector2<Scalar>( 0, 1 ), Vector2<Scalar>( 1, 190 ),
+                              Vector2<Scalar>( 180, 0 ),
                               [&map]( Eigen::Index x, Eigen::Index y ) { ++map( x, y ); } );
   }
 }
@@ -36,10 +37,10 @@ template<typename Scalar>
 static void polygonIterator( benchmark::State &state )
 {
   Polygon<Scalar> polygon = createPolygon<Scalar>();
-  GridMap<Scalar> map( 20, 20 );
+  GridMap<Scalar> map( 200, 200 );
 
   for ( auto _ : state ) {
-    iteratePolygon<Scalar>( polygon / Scalar( 0.05 ),
+    iteratePolygon<Scalar>( polygon / Scalar( 0.005 ),
                             [&map]( Eigen::Index x, Eigen::Index y ) { ++map( x, y ); } );
   }
 }
@@ -71,10 +72,10 @@ BENCHMARK( comparisonGridmapPolygonIterator )->Unit( benchmark::kMicrosecond );
 template<typename Scalar>
 static void circleIterator( benchmark::State &state )
 {
-  GridMap<Scalar> map( 20, 20 );
+  GridMap<Scalar> map( 200, 200 );
 
   for ( auto _ : state ) {
-    iterateCircle<Scalar>( Vector2<Scalar>( 10, 10 ), 10,
+    iterateCircle<Scalar>( Vector2<Scalar>( 100, 100 ), 100,
                            [&map]( Eigen::Index x, Eigen::Index y ) { ++map( x, y ); } );
   }
 }
@@ -99,5 +100,56 @@ static void comparisonGridmapCircleIterator( benchmark::State &state )
 
 BENCHMARK( comparisonGridmapCircleIterator )->Unit( benchmark::kMicrosecond );
 #endif
+
+static void eigenIteratorRowMajor( benchmark::State &state )
+{
+  Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> map( state.range( 0 ),
+                                                                             state.range( 0 ) );
+  map.setRandom();
+
+  for ( auto _ : state ) {
+    float sum = 0;
+    iterateDenseBase( map, [&map, &sum]( Eigen::Index x, Eigen::Index y ) { sum += map( x, y ); } );
+    benchmark::DoNotOptimize( sum );
+  }
+}
+
+static void eigenIteratorColMajor( benchmark::State &state )
+{
+  Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor> map( state.range( 0 ),
+                                                                             state.range( 0 ) );
+  map.setRandom();
+
+  for ( auto _ : state ) {
+    float sum = 0;
+    iterateDenseBase( map, [&map, &sum]( Eigen::Index x, Eigen::Index y ) { sum += map( x, y ); } );
+    benchmark::DoNotOptimize( sum );
+  }
+}
+
+template<int Option>
+static void eigenBaseRowCol( benchmark::State &state )
+{
+  Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Option> map( state.range( 0 ),
+                                                                    state.range( 0 ) );
+  map.setRandom();
+
+  for ( auto _ : state ) {
+    float sum = 0;
+    for ( Eigen::Index row = 0; row < map.rows(); ++row ) {
+      for ( Eigen::Index col = 0; col < map.cols(); ++col ) { sum += map( row, col ); }
+    }
+    benchmark::DoNotOptimize( sum );
+  }
+}
+
+BENCHMARK( eigenIteratorRowMajor )->Unit( benchmark::kMicrosecond )->Arg( 100 );
+BENCHMARK( eigenIteratorColMajor )->Unit( benchmark::kMicrosecond )->Arg( 100 );
+BENCHMARK_TEMPLATE( eigenBaseRowCol, Eigen::RowMajor )->Unit( benchmark::kMicrosecond )->Arg( 100 );
+BENCHMARK_TEMPLATE( eigenBaseRowCol, Eigen::ColMajor )->Unit( benchmark::kMicrosecond )->Arg( 100 );
+BENCHMARK( eigenIteratorRowMajor )->Unit( benchmark::kMicrosecond )->Arg( 10000 );
+BENCHMARK( eigenIteratorColMajor )->Unit( benchmark::kMicrosecond )->Arg( 10000 );
+BENCHMARK_TEMPLATE( eigenBaseRowCol, Eigen::RowMajor )->Unit( benchmark::kMicrosecond )->Arg( 10000 );
+BENCHMARK_TEMPLATE( eigenBaseRowCol, Eigen::ColMajor )->Unit( benchmark::kMicrosecond )->Arg( 10000 );
 
 BENCHMARK_MAIN();
