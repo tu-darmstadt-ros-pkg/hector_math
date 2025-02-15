@@ -1,5 +1,5 @@
 
-[![workflow](https://github.com/tu-darmstadt-ros-pkg/hector_math/actions/workflows/ci.yml/badge.svg)](https://github.com/tu-darmstadt-ros-pkg/hector_math/actions/workflows/ci.yml)
+[![workflow](https://github.com/tu-darmstadt-ros-pkg/hector_math/actions/workflows/ci-ros2.yml/badge.svg)](https://github.com/tu-darmstadt-ros-pkg/hector_math/actions/workflows/ci-ros2.yml)
 [![workflow](https://github.com/tu-darmstadt-ros-pkg/hector_math/actions/workflows/documentation.yml/badge.svg)](https://tu-darmstadt-ros-pkg.github.io/hector_math/en/master/)
 
 # Hector Math
