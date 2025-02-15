@@ -13,7 +13,7 @@ static void fitPlane( benchmark::State &state )
 {
   GridMap<float> map = GridMapf::Random( state.range(), state.range() );
   for ( auto _ : state ) {
-    PlaneEstimationResult result = hector_math::fitPlane( map );
+    PlaneEstimationResult result = hector_math::fitPlaneXY( map );
     benchmark::DoNotOptimize( result );
   }
 }
@@ -31,7 +31,7 @@ static void fitPlaneHalfUnknown( benchmark::State &state )
     }
   }
   for ( auto _ : state ) {
-    PlaneEstimationResult result = hector_math::fitPlane( map );
+    PlaneEstimationResult result = hector_math::fitPlaneXY( map );
     benchmark::DoNotOptimize( result );
   }
 }

@@ -111,54 +111,91 @@ TYPED_TEST( MapOperations, fitPlane )
   PlaneEstimationResult result;
 
   map = createMap<Scalar>( 10, 10, 0, 0 );
-  result = fitPlane( map );
+  result = fitPlaneXY( map );
   EXPECT_NEAR( result.gradient_x, 0, 1e-4 );
   EXPECT_NEAR( result.gradient_y, 0, 1e-4 );
   EXPECT_NEAR( result.center_plane_z, 0, 1e-4 );
-  EXPECT_NEAR( result.quality_x, 1, 1e-4 );
-  EXPECT_NEAR( result.quality_y, 1, 1e-4 );
+  EXPECT_NEAR( result.percentage_known, 1, 1e-4 );
+  if ( this->HasFailure() )
+    FAIL();
 
   map = createMap<Scalar>( 6, 6, 1, 1 );
-  result = fitPlane( map );
+  result = fitPlaneXY( map );
   EXPECT_NEAR( result.gradient_x, 1, 1e-4 );
   EXPECT_NEAR( result.gradient_y, 1, 1e-4 );
   EXPECT_NEAR( result.center_plane_z, 5, 1e-4 );
-  EXPECT_NEAR( result.quality_x, 1, 1e-4 );
-  EXPECT_NEAR( result.quality_y, 1, 1e-4 );
+  EXPECT_NEAR( result.percentage_known, 1, 1e-4 );
+  if ( this->HasFailure() )
+    FAIL();
 
+  // NaN in the center are not as bad
   map.block( 2, 2, 2, 2 ) = NaN;
-  result = fitPlane( map );
+  result = fitPlaneXY( map );
   EXPECT_NEAR( result.gradient_x, 1, 1e-4 );
   EXPECT_NEAR( result.gradient_y, 1, 1e-4 );
   EXPECT_NEAR( result.center_plane_z, 5, 1e-4 );
-  EXPECT_LT( result.quality_x, 0.99 );
-  EXPECT_LT( result.quality_y, 0.99 );
+  EXPECT_LT( result.percentage_known, 0.99 );
+  if ( this->HasFailure() )
+    FAIL();
+
+  // NaN at the edge should reduce quality
+  map = createMap<Scalar>( 6, 6, 1, 1 );
+  map.block( 4, 2, 2, 2 ) = NaN;
+  result = fitPlaneXY( map );
+  EXPECT_NEAR( result.gradient_x, 1, 1e-4 );
+  EXPECT_NEAR( result.gradient_y, 1, 1e-4 );
+  EXPECT_NEAR( result.center_plane_z, 5, 1e-4 );
+  EXPECT_LT( result.percentage_known, 0.99 );
+  if ( this->HasFailure() )
+    FAIL();
+
+  // If half the map is NaN, quality should be lower but center z should still be correct
+  map = createMap<Scalar>( 6, 6, 1, 1 );
+  map.block( 3, 0, 3, 6 ) = NaN;
+  result = fitPlaneXY( map );
+  EXPECT_NEAR( result.gradient_x, 1, 1e-4 );
+  EXPECT_NEAR( result.gradient_y, 1, 1e-4 );
+  EXPECT_NEAR( result.center_plane_z, 5, 1e-4 );
+  EXPECT_NEAR( result.percentage_known, 0.5, 1e-4 );
+  if ( this->HasFailure() )
+    FAIL();
+
   map = createMap<Scalar>( 10, 10, 20, -21.5 );
   map( 2, 2 ) = map( 4, 3 ) = map( 8, 1 ) = map( 9, 0 ) = map( 0, 0 ) = NaN;
-  result = fitPlane( map );
+  result = fitPlaneXY( map );
   EXPECT_NEAR( result.gradient_x, 20, 1e-4 );
   EXPECT_NEAR( result.gradient_y, -21.5, 1e-4 );
   EXPECT_NEAR( result.center_plane_z, 4.5 * 20 - 4.5 * 21.5, 1e-4 );
-  EXPECT_LT( result.quality_x, 1 );
-  EXPECT_GT( result.quality_x, 0.5 );
-  EXPECT_LT( result.quality_y, 1 );
-  EXPECT_GT( result.quality_y, 0.5 );
+  EXPECT_LT( result.percentage_known, 1 );
+  if ( this->HasFailure() )
+    FAIL();
 
   map = GridMap<Scalar>::Constant( 10, 10, NaN );
   map.block( 0, 0, 5, 5 ) = createMap<Scalar>( 5, 5, 1, -1 );
-  result = fitPlane( map );
+  result = fitPlaneXY( map );
   EXPECT_NEAR( result.gradient_x, 1, 1e-4 );
   EXPECT_NEAR( result.gradient_y, -1, 1e-4 );
   EXPECT_NEAR( result.center_plane_z, 0, 1e-4 );
-  EXPECT_LT( result.quality_x, 0.9 );
-  EXPECT_LT( result.quality_y, 0.9 );
+  EXPECT_LT( result.percentage_known, 0.9 );
+  if ( this->HasFailure() )
+    FAIL();
 
   map = createMap<Scalar>( 10, 10, 3, -1 );
   map += GridMap<Scalar>::Random( 10, 10 ) * 0.1;
-  result = fitPlane( map );
+  result = fitPlaneXY( map );
   EXPECT_NEAR( result.gradient_x, 3, 0.1 );
   EXPECT_NEAR( result.gradient_y, -1, 0.1 );
   EXPECT_NEAR( result.center_plane_z, 4.5 * 3 - 4.5, 0.1 );
+
+  // Different resolution
+  map = createMap<Scalar>( 6, 6, 1, 1 );
+  result = fitPlaneXY( map, 0.25 );
+  EXPECT_NEAR( result.gradient_x, 4, 1e-4 );
+  EXPECT_NEAR( result.gradient_y, 4, 1e-4 );
+  EXPECT_NEAR( result.center_plane_z, 5, 1e-4 );
+  EXPECT_NEAR( result.percentage_known, 1, 1e-4 );
+  if ( this->HasFailure() )
+    FAIL();
 }
 
 int main( int argc, char **argv )

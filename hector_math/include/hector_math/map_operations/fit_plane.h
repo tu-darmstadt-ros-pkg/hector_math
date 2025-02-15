@@ -4,6 +4,7 @@
 #ifndef HECTOR_MATH_FIT_PLANE_H
 #define HECTOR_MATH_FIT_PLANE_H
 
+#include "hector_math/iterators/eigen_iterator.h"
 #include "hector_math/types/aggregators.h"
 #include <Eigen/Core>
 
@@ -15,9 +16,8 @@ struct PlaneEstimationResult {
   float center_plane_z;
   float gradient_x;
   float gradient_y;
-  //! The quality of the estimation in x and y direction from 0 (no data) to 1 (complete data).
-  float quality_x;
-  float quality_y;
+  //! The percentage of known values during estimation.
+  float percentage_known;
 };
 
 /*!
@@ -25,56 +25,53 @@ struct PlaneEstimationResult {
  * @param map The 2D array of height values this plane is fitted to.
  * @param resolution The resolution of the map. Used to scale the gradient.
  */
-template<typename Derived>
-PlaneEstimationResult fitPlane( const Eigen::DenseBase<Derived> &map, const double resolution = 1.0 )
+template<typename Derived, bool ( *is_valid_fn )( typename Eigen::DenseBase<Derived>::Scalar ) = std::isfinite>
+PlaneEstimationResult fitPlaneXY( const Eigen::DenseBase<Derived> &map, const double resolution = 1.0 )
 {
-  MeanAggregator<double> mean_x, mean_y, mean_z;
-  MeanAggregator<double> central_row, central_col;
-  for ( Eigen::Index row = 1; row < map.rows(); ++row ) {
-    const double dx = map( row, 0 ) - map( row - 1, 0 );
-    if ( !std::isfinite( dx ) )
-      continue;
-    mean_x.add( dx );
-    mean_z.add( map( row, 0 ) );
-    // This should be -0.5 as we compute the gradient between cells but we compensate later
-    central_row.add( row );
-    central_col.add( 0 );
-  }
-  for ( Eigen::Index col = 1; col < map.cols(); ++col ) {
-    const double dy = map( 0, col ) - map( 0, col - 1 );
-    if ( std::isfinite( dy ) ) {
-      mean_y.add( dy );
-      mean_z.add( map( 0, col ) );
-      central_row.add( 0 );
-      central_col.add( col );
-    }
-    for ( Eigen::Index row = 1; row < map.rows(); ++row ) {
-      const double value = map( row, col );
-      if ( !std::isfinite( value ) )
+  using Scalar = typename Eigen::DenseBase<Derived>::Scalar;
+  Scalar row_squared_sum = 0;
+  Scalar row_sum = 0;
+  Scalar col_squared_sum = 0;
+  Scalar row_col_sum = 0;
+  Scalar col_sum = 0;
+  long count = 0;
+  Vector3d z = Vector3d::Zero();
+  for ( Eigen::Index col = 0; col < map.cols(); ++col ) {
+    for ( Eigen::Index row = 0; row < map.rows(); ++row ) {
+      const auto &value = map( row, col );
+      if ( !is_valid_fn( value ) )
         continue;
-      central_col.add( col );
-      central_row.add( row );
-      mean_z.add( value );
-
-      const double dx = value - map( row - 1, col );
-      const double dy = value - map( row, col - 1 );
-      if ( std::isfinite( dx ) ) {
-        mean_x.add( dx );
-      }
-      if ( std::isfinite( dy ) ) {
-        mean_y.add( dy );
-      }
+      row_squared_sum += row * row;
+      row_sum += row;
+      col_squared_sum += col * col;
+      col_sum += col;
+      row_col_sum += row * col;
+      ++count;
+      z += Vector3d( row * value, col * value, value );
     }
   }
+  Eigen::Matrix3d X;
+  // clang-format off
+  X << row_squared_sum, row_col_sum,     row_sum,
+       row_col_sum,     col_squared_sum, col_sum,
+       row_sum,         col_sum,         count;
+  // clang-format on
+  Vector3d abc = X.inverse() * z;
   PlaneEstimationResult result;
-  result.gradient_x = static_cast<float>( mean_x.mean() / resolution );
-  result.gradient_y = static_cast<float>( mean_y.mean() / resolution );
-  result.center_plane_z = mean_z.mean() -
-                          ( central_row.mean() - ( map.rows() - 1 ) / 2.0 ) * result.gradient_x -
-                          ( central_col.mean() - ( map.cols() - 1 ) / 2.0 ) * result.gradient_y;
-  result.quality_x = static_cast<float>( mean_x.count() ) / ( map.rows() - 1 ) / map.cols();
-  result.quality_y = static_cast<float>( mean_y.count() ) / ( map.cols() - 1 ) / map.rows();
+  result.gradient_x = static_cast<float>( abc( 0 ) / resolution );
+  result.gradient_y = static_cast<float>( abc( 1 ) / resolution );
+  result.center_plane_z = static_cast<float>( abc( 2 ) ) +
+                          result.gradient_x * ( map.rows() - 1 ) * resolution / 2 +
+                          result.gradient_y * ( map.cols() - 1 ) * resolution / 2;
+  result.percentage_known = static_cast<float>( count ) / ( map.rows() * map.cols() );
   return result;
+}
+
+template<typename Derived>
+__attribute_deprecated_msg__( "Use fitPlaneXY instead." ) PlaneEstimationResult
+    fitPlane( const Eigen::DenseBase<Derived> &map, const double resolution = 1.0 )
+{
+  return fitPlaneXY( map, resolution );
 }
 
 } // namespace hector_math
