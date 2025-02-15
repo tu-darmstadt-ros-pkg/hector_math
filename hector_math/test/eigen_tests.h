@@ -28,9 +28,8 @@ DenseBaseEqual( const Eigen::DenseBase<DerivedA> &lh, const std::string &lh_name
 {
   if ( lh.rows() != rh.rows() || lh.cols() != rh.cols() ) {
     return ::testing::AssertionFailure()
-           << "Matrix sizes do not match!"
-           << " (" << lh_name << ") " << lh.rows() << "x" << lh.cols() << " vs " << rh.rows() << "x"
-           << rh.cols() << " (" << rh_name << ").";
+           << "Matrix sizes do not match!" << " (" << lh_name << ") " << lh.rows() << "x"
+           << lh.cols() << " vs " << rh.rows() << "x" << rh.cols() << " (" << rh_name << ").";
   }
   for ( Eigen::Index col = 0; col < lh.cols(); ++col ) {
     for ( Eigen::Index row = 0; row < lh.rows(); ++row ) {
@@ -59,9 +58,8 @@ DenseBaseSameFinite( const Eigen::DenseBase<DerivedA> &lh, const std::string &lh
 {
   if ( lh.rows() != rh.rows() || lh.cols() != rh.cols() ) {
     return ::testing::AssertionFailure()
-           << "Matrix sizes do not match!"
-           << " (" << lh_name << ") " << lh.rows() << "x" << lh.cols() << " vs " << rh.rows() << "x"
-           << rh.cols() << " (" << rh_name << ").";
+           << "Matrix sizes do not match!" << " (" << lh_name << ") " << lh.rows() << "x"
+           << lh.cols() << " vs " << rh.rows() << "x" << rh.cols() << " (" << rh_name << ").";
   }
   for ( Eigen::Index col = 0; col < lh.cols(); ++col ) {
     for ( Eigen::Index row = 0; row < lh.rows(); ++row ) {
@@ -90,9 +88,8 @@ DenseBaseNear( const Eigen::DenseBase<DerivedA> &lh, const std::string &lh_name,
 {
   if ( lh.rows() != rh.rows() || lh.cols() != rh.cols() ) {
     return ::testing::AssertionFailure()
-           << "Matrix sizes do not match!"
-           << " (" << lh_name << ") " << lh.rows() << "x" << lh.cols() << " vs " << rh.rows() << "x"
-           << rh.cols() << " (" << rh_name << ").";
+           << "Matrix sizes do not match!" << " (" << lh_name << ") " << lh.rows() << "x"
+           << lh.cols() << " vs " << rh.rows() << "x" << rh.cols() << " (" << rh_name << ").";
   }
   for ( Eigen::Index col = 0; col < lh.cols(); ++col ) {
     for ( Eigen::Index row = 0; row < lh.rows(); ++row ) {
