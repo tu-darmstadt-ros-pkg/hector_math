@@ -4,6 +4,8 @@
 #ifndef HECTOR_MATH_AGGREGATORS_H
 #define HECTOR_MATH_AGGREGATORS_H
 
+#include <cmath>
+
 namespace hector_math
 {
 
@@ -38,7 +40,7 @@ public:
 
 private:
   Scalar sum_ = 0;
-  long count_ = 0;
+  Scalar count_ = 0;
 };
 
 //! Similar to MeanAggregator except that it is robust to non-finite values.

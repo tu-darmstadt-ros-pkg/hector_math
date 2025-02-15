@@ -45,6 +45,9 @@ if (${benchmark_FOUND})
   add_executable(quaternion_binning_modes benchmark/quaternion_binning_modes.cpp)
   target_link_libraries(quaternion_binning_modes PRIVATE hector_math benchmark benchmark_main pthread)
 
+  add_executable(benchmark_fit_plane benchmark/fit_plane.cpp)
+  target_link_libraries(benchmark_fit_plane PRIVATE hector_math benchmark benchmark_main pthread)
+
   # Show iterators
   add_executable(show_iterators scripts/show_iterators.cpp)
   target_link_libraries(show_iterators PRIVATE hector_math)
@@ -59,7 +62,7 @@ if (${benchmark_FOUND})
   endif()
   target_link_libraries(benchmark_iterators PRIVATE hector_math benchmark benchmark_main pthread)
 
-  install(TARGETS benchmark_caches quaternion_binning_modes show_iterators benchmark_iterators
+  install(TARGETS benchmark_caches benchmark_fit_plane quaternion_binning_modes show_iterators benchmark_iterators
     RUNTIME DESTINATION lib/${PROJECT_NAME}
   )
 else()
