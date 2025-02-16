@@ -36,7 +36,7 @@ jobs:
       ASAN_OPTIONS: new_delete_type_mismatch=0
     strategy:
       matrix:
-        ros_distro: [humble, jazzy]
+        ros_distro: [jazzy]
     container:
       image: ros:${{matrix.ros_distro}}-ros-base
     steps:
