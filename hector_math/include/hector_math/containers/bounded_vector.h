@@ -66,10 +66,11 @@ public:
 
   void clear()
   {
-    if ( std::is_trivially_destructible<T>::value )
+    if constexpr ( std::is_trivially_destructible_v<T> ) {
       size_ = 0;
-    else
+    } else {
       while ( size_ > 0 ) pop_back();
+    }
   }
 
   // front
@@ -106,6 +107,24 @@ public:
   {
     assert( size <= MaxSize && "Bounded vector can not reserve more than max size!" );
     (void)size;
+  }
+
+  void resize( std::size_t size )
+  {
+    if ( size > MaxSize )
+      throw std::length_error( std::to_string( size ) +
+                               " is greater than maximum size: " + std::to_string( MaxSize ) );
+    if constexpr ( !std::is_trivially_constructible_v<T> ) {
+      if ( size > size_ ) {
+        for ( std::size_t i = size_; i < size; ++i ) { items_[i] = T(); }
+      }
+    }
+    if constexpr ( !std::is_trivially_destructible_v<T> ) {
+      if ( size < size_ ) {
+        for ( std::size_t i = size; i < size_; ++i ) { pop_back(); }
+      }
+    }
+    size_ = size;
   }
 
 private:
