@@ -82,6 +82,20 @@ using GridMap = Eigen::Array<Scalar, Eigen::Dynamic, Eigen::Dynamic>;
 using GridMapf = GridMap<float>;
 using GridMapd = GridMap<double>;
 
+struct Index2D {
+  explicit Index2D( Eigen::Index row = 0, Eigen::Index col = 0 ) : row( row ), col( col ) { }
+
+  Eigen::Index row;
+  Eigen::Index col;
+
+  friend bool operator==( const Index2D &lhs, const Index2D &rhs )
+  {
+    return lhs.row == rhs.row && lhs.col == rhs.col;
+  }
+
+  friend bool operator!=( const Index2D &lhs, const Index2D &rhs ) { return !( lhs == rhs ); }
+};
+
 struct BlockIndices {
   Eigen::Index x0 = 0;
   Eigen::Index y0 = 0;
@@ -92,14 +106,14 @@ struct BlockIndices {
 
   [[nodiscard]] bool empty() const { return rows == 0 || cols == 0; }
 
-  bool operator==( const BlockIndices &other ) const
+  friend bool operator==( const BlockIndices &a, const BlockIndices &b )
   {
-    if ( empty() )
-      return other.empty();
-    return x0 == other.x0 && y0 == other.y0 && rows == other.rows && cols == other.cols;
+    if ( a.empty() )
+      return b.empty();
+    return a.x0 == b.x0 && a.y0 == b.y0 && a.rows == b.rows && a.cols == b.cols;
   }
 
-  bool operator!=( const BlockIndices &other ) const { return !( *this == other ); }
+  friend bool operator!=( const BlockIndices &a, const BlockIndices &b ) { return !( a == b ); }
 
   bool contains( Eigen::Index row, Eigen::Index col ) const
   {
