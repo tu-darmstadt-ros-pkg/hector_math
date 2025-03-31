@@ -116,7 +116,7 @@ public:
                                " is greater than maximum size: " + std::to_string( MaxSize ) );
     if constexpr ( !std::is_trivially_constructible_v<T> ) {
       if ( size > size_ ) {
-        for ( std::size_t i = size_; i < size; ++i ) { items_[i] = T(); }
+        for ( std::size_t i = size_; i < size; ++i ) { ::new ( items_.data() + i ) T(); }
       }
     }
     if constexpr ( !std::is_trivially_destructible_v<T> ) {
