@@ -170,4 +170,16 @@ struct BlockIndices {
 };
 } // namespace hector_math
 
+template<>
+struct std::hash<hector_math::Index2D> {
+  std::size_t operator()( const hector_math::Index2D &index ) const noexcept
+  {
+    // Yes, technically this does not cover the whole range of Eigen::Index but in practice
+    // an index will not exceed 2^32-1 in either dimension, so this is sufficient.
+    assert( std::abs( index.row ) < ( 1L << 32 ) && std::abs( index.col ) < ( 1L << 32 ) &&
+            "Index2D values are assumed to be within the range of a 32-bit signed integer." );
+    return std::hash<long>()( ( index.row << 32L ) + index.col );
+  }
+};
+
 #endif // HECTOR_MATH_TYPES_EIGEN_H
