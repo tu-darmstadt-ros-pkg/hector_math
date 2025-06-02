@@ -18,7 +18,12 @@ public:
   using iterator = typename std::array<T, MaxSize>::iterator;
   using const_iterator = typename std::array<T, MaxSize>::const_iterator;
 
-  std::size_t size() const { return size_; }
+  //! @returns the number of elements in the container.
+  [[nodiscard]] std::size_t size() const { return size_; }
+  //! @returns true if the container is empty, false otherwise.
+  [[nodiscard]] bool empty() const { return size_ == 0; }
+  //! @returns true if the container is full, false otherwise. Appending to a full container will throw.
+  [[nodiscard]] bool full() const { return size_ == MaxSize; }
 
   // push and pop
   void push_back( T val )

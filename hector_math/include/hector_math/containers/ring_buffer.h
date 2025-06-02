@@ -37,15 +37,15 @@ public:
   using const_iterator = ring_iterator<const_pointer>;
 
   //! @returns true if the container is empty, false otherwise
-  constexpr bool empty() const { return size_ == 0; }
+  [[nodiscard]] bool empty() const { return size_ == 0; }
   //! @returns true if the container is full, false otherwise. Appending to a full container will overwrite old elements.
-  bool full() const { return size_ == Size; }
+  [[nodiscard]] bool full() const { return size_ == Size; }
   //! @returns the number of elements
-  constexpr std::size_t size() const { return size_; }
+  [[nodiscard]] std::size_t size() const { return size_; }
   //! @returns the maximum number of elements which is equal to the template parameter TSize.
-  constexpr std::size_t capacity() const { return Size; }
+  [[nodiscard]] constexpr std::size_t capacity() const { return Size; }
   //! @returns the maximum number of elements which is equal to the template parameter TSize.
-  constexpr std::size_t max_size() const { return Size; }
+  [[nodiscard]] constexpr std::size_t max_size() const { return Size; }
 
   /*!
    * Adds an element to the end of the RingBuffer.
