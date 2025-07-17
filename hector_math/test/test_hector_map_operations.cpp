@@ -1,6 +1,7 @@
-// Copyright (c) 2022 Aljoscha Schmidt. All rights reserved.
+// Copyright (c) 2022, 2024 Aljoscha Schmidt, Stefan Fabian. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 #include <hector_math/map_operations/find_minmax.h>
+#include <hector_math/map_operations/fit_plane.h>
 
 #include <gtest/gtest.h>
 #include <ros/ros.h>
@@ -39,15 +40,15 @@ hector_math::Polygon<Scalar> createPolygon( PolygonTyp polygonTyp )
 }
 
 template<typename Scalar>
-class IteratorTest : public testing::Test
+class MapOperations : public testing::Test
 {
 };
 
 typedef testing::Types<float, double> Implementations;
 
-TYPED_TEST_CASE( IteratorTest, Implementations );
+TYPED_TEST_CASE( MapOperations, Implementations );
 
-TYPED_TEST( IteratorTest, find_minmax )
+TYPED_TEST( MapOperations, find_minmax )
 {
   using Scalar = TypeParam;
   const Scalar NaN = std::numeric_limits<Scalar>::quiet_NaN();
@@ -89,6 +90,76 @@ TYPED_TEST( IteratorTest, find_minmax )
   // clang-format on
   EXPECT_EQ( findMinimum<Scalar>( map, polygon ), -std::numeric_limits<Scalar>::infinity() );
   EXPECT_EQ( findMaximum<Scalar>( map, polygon ), std::numeric_limits<Scalar>::infinity() );
+}
+
+template<typename Scalar>
+GridMap<Scalar> createMap( Eigen::Index rows, Eigen::Index cols, Scalar gradient_x, Scalar gradient_y )
+{
+  GridMap<Scalar> map( rows, cols );
+  for ( Eigen::Index col = 0; col < map.cols(); ++col ) {
+    for ( Eigen::Index row = 0; row < map.rows(); ++row ) {
+      map( row, col ) = gradient_x * row + gradient_y * col;
+    }
+  }
+  return map;
+}
+
+TYPED_TEST( MapOperations, fitPlane )
+{
+  using Scalar = TypeParam;
+  constexpr Scalar NaN = std::numeric_limits<Scalar>::quiet_NaN();
+  GridMap<Scalar> map;
+  PlaneEstimationResult result;
+
+  map = createMap<Scalar>( 10, 10, 0, 0 );
+  result = fitPlane( map );
+  EXPECT_NEAR( result.gradient_x, 0, 1e-4 );
+  EXPECT_NEAR( result.gradient_y, 0, 1e-4 );
+  EXPECT_NEAR( result.center_plane_z, 0, 1e-4 );
+  EXPECT_NEAR( result.quality_x, 1, 1e-4 );
+  EXPECT_NEAR( result.quality_y, 1, 1e-4 );
+
+  map = createMap<Scalar>( 6, 6, 1, 1 );
+  result = fitPlane( map );
+  EXPECT_NEAR( result.gradient_x, 1, 1e-4 );
+  EXPECT_NEAR( result.gradient_y, 1, 1e-4 );
+  EXPECT_NEAR( result.center_plane_z, 5, 1e-4 );
+  EXPECT_NEAR( result.quality_x, 1, 1e-4 );
+  EXPECT_NEAR( result.quality_y, 1, 1e-4 );
+
+  map.block( 2, 2, 2, 2 ) = NaN;
+  result = fitPlane( map );
+  EXPECT_NEAR( result.gradient_x, 1, 1e-4 );
+  EXPECT_NEAR( result.gradient_y, 1, 1e-4 );
+  EXPECT_NEAR( result.center_plane_z, 5, 1e-4 );
+  EXPECT_LT( result.quality_x, 0.99 );
+  EXPECT_LT( result.quality_y, 0.99 );
+  map = createMap<Scalar>( 10, 10, 20, -21.5 );
+  map( 2, 2 ) = map( 4, 3 ) = map( 8, 1 ) = map( 9, 0 ) = map( 0, 0 ) = NaN;
+  result = fitPlane( map );
+  EXPECT_NEAR( result.gradient_x, 20, 1e-4 );
+  EXPECT_NEAR( result.gradient_y, -21.5, 1e-4 );
+  EXPECT_NEAR( result.center_plane_z, 4.5 * 20 - 4.5 * 21.5, 1e-4 );
+  EXPECT_LT( result.quality_x, 1 );
+  EXPECT_GT( result.quality_x, 0.5 );
+  EXPECT_LT( result.quality_y, 1 );
+  EXPECT_GT( result.quality_y, 0.5 );
+
+  map = GridMap<Scalar>::Constant( 10, 10, NaN );
+  map.block( 0, 0, 5, 5 ) = createMap<Scalar>( 5, 5, 1, -1 );
+  result = fitPlane( map );
+  EXPECT_NEAR( result.gradient_x, 1, 1e-4 );
+  EXPECT_NEAR( result.gradient_y, -1, 1e-4 );
+  EXPECT_NEAR( result.center_plane_z, 0, 1e-4 );
+  EXPECT_LT( result.quality_x, 0.9 );
+  EXPECT_LT( result.quality_y, 0.9 );
+
+  map = createMap<Scalar>( 10, 10, 3, -1 );
+  map += GridMap<Scalar>::Random( 10, 10 ) * 0.1;
+  result = fitPlane( map );
+  EXPECT_NEAR( result.gradient_x, 3, 0.1 );
+  EXPECT_NEAR( result.gradient_y, -1, 0.1 );
+  EXPECT_NEAR( result.center_plane_z, 4.5 * 3 - 4.5, 0.1 );
 }
 
 int main( int argc, char **argv )

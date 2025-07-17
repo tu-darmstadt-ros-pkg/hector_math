@@ -3,6 +3,7 @@
 
 #include "iterator_test_input.h"
 #include <hector_math/iterators/circle_iterator.h>
+#include <hector_math/iterators/eigen_iterator.h>
 #include <hector_math/iterators/polygon_iterator.h>
 #include <hector_math/iterators/rectangle_iterator.h>
 
@@ -71,11 +72,54 @@ typedef testing::Types<float, double> Implementations;
 
 TYPED_TEST_SUITE( IteratorTest, Implementations );
 
+TYPED_TEST( IteratorTest, eigenIterator )
+{
+  using Scalar = TypeParam;
+  GridMap<Scalar> map( 3, 3 );
+  // clang-format off
+        map << 1, 2, 3,
+                 4, 5, 6,
+                 7, 8, 9;
+  // clang-format on
+  GridMap<Scalar> expected_map( 3, 3 );
+  // clang-format off
+        expected_map << 1, 2, 3,
+                        4, 5, 6,
+                        7, 8, 9;
+  // clang-format on
+  GridMap<Scalar> actual_map( 3, 3 );
+
+  actual_map.fill( 0 );
+  iterateDenseBase( map, [&actual_map, &map]( Eigen::Index x, Eigen::Index y ) {
+    actual_map( x, y ) = map( x, y );
+  } );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) );
+
+  actual_map.fill( 0 );
+  for ( auto it = EigenValueIterator( map ).begin(); it != EigenValueIterator( map ).end(); ++it ) {
+    actual_map( it.row, it.col ) = it.value();
+  }
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) );
+
+  double sum = 0;
+  for ( const auto &value : EigenValueIterator( map ) ) { sum += value; }
+  EXPECT_EQ( sum, 45 );
+
+  expected_map.fill( 1 );
+  actual_map.fill( 0 );
+  for ( const auto &[row, col] : EigenIndexIterator( map ) ) { actual_map( row, col )++; }
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) );
+}
+
 TYPED_TEST( IteratorTest, rectangleTest )
 {
   using Scalar = TypeParam;
   using Vector2S = Vector2<Scalar>;
+  using Vector2STuple = std::tuple<Vector2S, Vector2S, Vector2S>;
   using Vector2I = Vector2<Eigen::Index>;
+  Vector2S a;
+  Vector2S b;
+  Vector2S c;
   GridMap<Eigen::Index> expected_map( 5, 5 );
   // @formatter:off
   // clang-format off
@@ -88,13 +132,55 @@ TYPED_TEST( IteratorTest, rectangleTest )
   // clang-format on
   GridMap<Eigen::Index> actual_map( 5, 5 );
   actual_map.setZero();
+  std::tie( a, b, c ) = Vector2STuple{ Vector2S( 1, 0 ), Vector2S( 1, 4 ), Vector2S( 4, 0 ) };
   iterateRectangle<Scalar>(
-      Vector2S( 1, 0 ), Vector2S( 1, 4 ), Vector2S( 4, 0 ),
-      [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
+      a, b, c, [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Rectangle with a (0, 1), b (4, 1) and c (0, 3).";
+  if constexpr ( std::is_same_v<Scalar, double> ) {
+    actual_map.setZero();
+    for ( const auto &[x, y] : RectangleIndexIterator<true>( a, b, c ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "RectangleIndexIterator<true> with a (0, 1), b (4, 1) and c (0, 3).";
+    actual_map.setZero();
+    for ( const auto &[x, y] : RectangleIndexIterator<false>( a, b, c ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "RectangleIndexIterator<false> with a (0, 1), b (4, 1) and c (0, 3).";
+  }
+  // Verify order
+  if constexpr ( std::is_same_v<Scalar, double> ) {
+    expected_map.block<3, 4>( 1, 0 ) << 1, 4, 7, 10, 2, 5, 8, 11, 3, 6, 9, 12;
+    actual_map.setZero();
+    int i = 0;
+    for ( const auto &[x, y] : RectangleIndexIterator<true>( a, b, c ) ) {
+      actual_map( x, y ) += ++i;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "RectangleIndexIterator<true> with a (0, 1), b (4, 1) and c (0, 3). Order check.";
+    expected_map.block<3, 4>( 1, 0 ) << 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12;
+    actual_map.setZero();
+    i = 0;
+    for ( const auto &[x, y] : RectangleIndexIterator<false>( a, b, c ) ) {
+      actual_map( x, y ) += ++i;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "RectangleIndexIterator<false> with a (0, 1), b (4, 1) and c (0, 3). Order check.";
+  }
 
   // Try also with non-floating point rectangle
+  // @formatter:off
+  // clang-format off
+  expected_map << 0, 0, 0, 0, 0,
+                  1, 1, 1, 1, 0,
+                  1, 1, 1, 1, 0,
+                  1, 1, 1, 1, 0,
+                  0, 0, 0, 0, 0;
+  // @formatter:on
+  // clang-format on
   actual_map.setZero();
   iterateRectangle<Eigen::Index>(
       Vector2I( 1, 0 ), Vector2I( 1, 4 ), Vector2I( 4, 0 ),
@@ -112,26 +198,96 @@ TYPED_TEST( IteratorTest, rectangleTest )
   // @formatter:on
   // clang-format on
   actual_map.setZero();
+  std::tie( a, b, c ) =
+      Vector2STuple{ Vector2S( 0.4, 0.4 ), Vector2S( 3.4, 1.6 ), Vector2S( 1.6, 3.4 ) };
   iterateRectangle<Scalar>(
-      Vector2S( 0.4, 0.4 ), Vector2S( 3.4, 1.6 ), Vector2S( 1.6, 3.4 ),
-      [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
+      a, b, c, [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Rectangle with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4).";
+  if constexpr ( std::is_same_v<Scalar, double> ) {
+    actual_map.setZero();
+    for ( const auto &[x, y] : RectangleIndexIterator<true>( a, b, c ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "RectangleIndexIterator<true> with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4).";
+    actual_map.setZero();
+    for ( const auto &[x, y] : RectangleIndexIterator<false>( a, b, c ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "RectangleIndexIterator<false> with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4).";
+  }
   // swapped corners b and c -> should result in same expected map
   actual_map.setZero();
   iterateRectangle<Scalar>(
-      Vector2S( 0.4, 0.4 ), Vector2S( 1.6, 3.4 ), Vector2S( 3.4, 1.6 ),
-      [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
+      a, c, b, [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
-      << "Rectangle with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4).";
+      << "Rectangle with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4) with b and c swapped.";
+  if constexpr ( std::is_same_v<Scalar, double> ) {
+    actual_map.setZero();
+    for ( const auto &[x, y] : RectangleIndexIterator<true>( a, c, b ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "RectangleIndexIterator<true> with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4) with b "
+           "and c "
+           "swapped.";
+    actual_map.setZero();
+    for ( const auto &[x, y] : RectangleIndexIterator<false>( a, c, b ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "RectangleIndexIterator<false> with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4) with b "
+           "and c "
+           "swapped.";
+  }
+  // using b as a (a->b, d->c) -> should result in same expected map
+  actual_map.setZero();
+  c = b + c - a; // set c to d
+  std::swap( a, b );
+  iterateRectangle<Scalar>(
+      a, b, c, [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+      << "Rectangle with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4) with b as a.";
+  if constexpr ( std::is_same_v<Scalar, double> ) {
+    actual_map.setZero();
+    for ( const auto &[x, y] : RectangleIndexIterator<true>( a, b, c ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "RectangleIndexIterator<true> with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4) with b "
+           "as a.";
+    actual_map.setZero();
+    for ( const auto &[x, y] : RectangleIndexIterator<false>( a, b, c ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "RectangleIndexIterator<false> with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4) with b "
+           "as a.";
+  }
   // no points in rectangle
   expected_map.setZero();
   actual_map.setZero();
+  std::tie( a, b, c ) = Vector2STuple{ Vector2S( 1.6, 0 ), Vector2S( 2.4, 0 ), Vector2S( 1.6, 4.4 ) };
   iterateRectangle<Scalar>(
-      Vector2S( 1.6, 0 ), Vector2S( 2.4, 0 ), Vector2S( 1.6, 4.4 ),
-      [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
+      a, b, c, [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Rectangle with a (1.6, 0), b (2.4, 0) and c (1.6, 4.4).";
+  if constexpr ( std::is_same_v<Scalar, double> ) {
+    actual_map.setZero();
+    for ( const auto &[x, y] : RectangleIndexIterator<true>( a, b, c ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "RectangleIndexIterator<true> with a (1.6, 0), b (2.4, 0) and c (1.6, 4.4).";
+    actual_map.setZero();
+    for ( const auto &[x, y] : RectangleIndexIterator<false>( a, b, c ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "RectangleIndexIterator<false> with a (1.6, 0), b (2.4, 0) and c (1.6, 4.4).";
+  }
   // test max rows and max cols argument
   // @formatter:off
   // clang-format off
@@ -143,11 +299,28 @@ TYPED_TEST( IteratorTest, rectangleTest )
   // @formatter:on
   // clang-format on
   actual_map.setZero();
+  std::tie( a, b, c ) =
+      Vector2STuple{ Vector2S( 0.4, 0.4 ), Vector2S( 3.4, 1.6 ), Vector2S( 1.6, 3.4 ) };
   iterateRectangle<Scalar>(
-      Vector2S( 0.4, 0.4 ), Vector2S( 3.4, 1.6 ), Vector2S( 1.6, 3.4 ), 3, 4,
-      [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
+      a, b, c, 3, 4, [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
-      << "Rectangle with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4).";
+      << "Rectangle with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4) and max row/col (3, 4).";
+  if constexpr ( std::is_same_v<Scalar, double> ) {
+    actual_map.setZero();
+    for ( const auto &[x, y] : RectangleIndexIterator<true>( a, b, c, 3, 4 ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "RectangleIndexIterator<true> with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4) and max "
+           "row/col (3, 4).";
+    actual_map.setZero();
+    for ( const auto &[x, y] : RectangleIndexIterator<false>( a, b, c, 3, 4 ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "RectangleIndexIterator<false> with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4) and max "
+           "row/col (3, 4).";
+  }
 
   // test min/max rows and min/max cols argument
   // @formatter:off
@@ -160,11 +333,29 @@ TYPED_TEST( IteratorTest, rectangleTest )
   // @formatter:on
   // clang-format on
   actual_map.setZero();
-  iterateRectangle<Scalar>(
-      Vector2S( 0.4, 0.4 ), Vector2S( 3.4, 1.6 ), Vector2S( 1.6, 3.4 ), 1, 3, 2, 4,
-      [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x, y ) += 1; } );
+  std::tie( a, b, c ) =
+      Vector2STuple{ Vector2S( 0.4, 0.4 ), Vector2S( 3.4, 1.6 ), Vector2S( 1.6, 3.4 ) };
+  iterateRectangle<Scalar>( a, b, c, 1, 3, 2, 4, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+    actual_map( x, y ) += 1;
+  } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Rectangle with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4).";
+  if constexpr ( std::is_same_v<Scalar, double> ) {
+    actual_map.setZero();
+    for ( const auto &[x, y] : RectangleIndexIterator<true>( a, b, c, 1, 3, 2, 4 ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "RectangleIndexIterator<true> with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4) and min, "
+           "max row/col (1, 2) / (3, 4).";
+    actual_map.setZero();
+    for ( const auto &[x, y] : RectangleIndexIterator<false>( a, b, c, 1, 3, 2, 4 ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "RectangleIndexIterator<true> with a (0.4, 0.4), b (3.4, 1.6) and c (1.6, 3.4) and min, "
+           "max row/col (1, 2) / (3, 4).";
+  }
 
   expected_map = GridMap<Eigen::Index>( 20, 20 );
   // @formatter:off
@@ -192,11 +383,25 @@ TYPED_TEST( IteratorTest, rectangleTest )
   // @formatter:on
   // clang-format on
   actual_map = GridMap<Eigen::Index>::Zero( 20, 20 );
+  std::tie( a, b, c ) = Vector2STuple{ Vector2S( 0, 1 ), Vector2S( 1, 19 ), Vector2S( 18, 0 ) };
   iterateRectangle<Scalar>(
-      Vector2S( 0, 1 ), Vector2S( 1, 19 ), Vector2S( 18, 0 ),
-      [&actual_map]( Eigen::Index x, Eigen::Index y ) { ++actual_map( x, y ); } );
+      a, b, c, [&actual_map]( Eigen::Index x, Eigen::Index y ) { ++actual_map( x, y ); } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
-      << "Rectangle with a (1, 2), b (0, 5) and c (9, 4).";
+      << "Rectangle with a (0, 1), b (1, 19) and c (18, 0).";
+  if constexpr ( std::is_same_v<Scalar, double> ) {
+    actual_map.setZero();
+    for ( const auto &[x, y] : RectangleIndexIterator<true>( a, b, c ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "RectangleIndexIterator<true> with a (0, 1), b (1, 19) and c (18, 0).";
+    actual_map.setZero();
+    for ( const auto &[x, y] : RectangleIndexIterator<false>( a, b, c ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "RectangleIndexIterator<false> with a (0, 1), b (1, 19) and c (18, 0).";
+  }
 }
 
 TYPED_TEST( IteratorTest, circleTest )
@@ -204,6 +409,8 @@ TYPED_TEST( IteratorTest, circleTest )
   using Scalar = TypeParam;
   using Vector2S = Vector2<Scalar>;
   using Vector2I = Vector2<Eigen::Index>;
+  Vector2S center;
+  double radius;
   // normal case in area x: -4 bis 4 and y: -4 bis 4, center (0,0) and radius 2,
   GridMap<Eigen::Index> expected_map( 5, 5 );
   // @formatter:off
@@ -217,11 +424,28 @@ TYPED_TEST( IteratorTest, circleTest )
   // clang-format on
   GridMap<Eigen::Index> actual_map( 5, 5 );
   actual_map.setZero();
+  center = Vector2S( 0.49, 0.49 );
+  radius = 2;
   iterateCircle<Scalar>(
-      Vector2S( 0.49, 0.49 ), 2, -4, 4, -4, 4,
+      center, radius, -4, 4, -4, 4,
       [&actual_map]( Eigen::Index x, Eigen::Index y ) { actual_map( x + 2, y + 2 ) += 1; } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Circle with radius 2 at (0.49, 0.49) with negative x- and y- indices.";
+  if constexpr ( std::is_same_v<Scalar, double> ) {
+    actual_map.setZero();
+    for ( const auto &[x, y] : CircleIndexIterator<true>( center, radius, -4, 4, -4, 4 ) ) {
+      actual_map( x + 2, y + 2 ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "CircleIndexIterator<true> with radius 2 at (0.49, 0.49) with negative x and y indices.";
+    actual_map.setZero();
+    for ( const auto &[x, y] : CircleIndexIterator<false>( center, radius, -4, 4, -4, 4 ) ) {
+      actual_map( x + 2, y + 2 ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "CircleIndexIterator<false> with radius 2 at (0.49, 0.49) with negative x and y "
+           "indices.";
+  }
 
   // case 2, equal to one but center at (2,2)
   // @formatter:off
@@ -234,13 +458,28 @@ TYPED_TEST( IteratorTest, circleTest )
   // @formatter:on
   // clang-format on
   actual_map.setZero();
-  iterateCircle<Scalar>(
-      Vector2S( 2, 2 ), 2, 0, 6, 0, 6, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
-        EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
-        actual_map( x, y ) += 1;
-      } );
+  center = Vector2S( 2, 2 );
+  radius = 2;
+  iterateCircle<Scalar>( center, radius, 0, 6, 0, 6, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+    EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
+    actual_map( x, y ) += 1;
+  } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Circle with radius 2 at (2, 2).";
+  if constexpr ( std::is_same_v<Scalar, double> ) {
+    actual_map.setZero();
+    for ( const auto &[x, y] : CircleIndexIterator<true>( center, radius, 0, 6, 0, 6 ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "CircleIndexIterator<true> with radius 2 at (2, 2) with negative x and y indices.";
+    actual_map.setZero();
+    for ( const auto &[x, y] : CircleIndexIterator<false>( center, radius, 0, 6, 0, 6 ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "CircleIndexIterator<false> with radius 2 at (2, 2) with negative x and y indices.";
+  }
 
   // Try with non-floating point values
   actual_map.setZero();
@@ -263,68 +502,133 @@ TYPED_TEST( IteratorTest, circleTest )
                   0, 0, 0, 0, 0;
   // @formatter:on
   // clang-format on
-  iterateCircle<Scalar>(
-      Vector2S( 2, 2 ), 2, 0, 3, 0, 6, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
-        EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
-        actual_map( x, y ) += 1;
-      } );
+  center = Vector2S( 2, 2 );
+  radius = 2;
+  iterateCircle<Scalar>( center, radius, 0, 3, 0, 6, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+    EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
+    actual_map( x, y ) += 1;
+  } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Circle with radius 2 at (2, 2) with limited row max.";
+  if constexpr ( std::is_same_v<Scalar, double> ) {
+    actual_map.setZero();
+    for ( const auto &[x, y] : CircleIndexIterator<true>( center, radius, 3, 6 ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "CircleIndexIterator<true> with radius 2 at (2, 2) with limited row max.";
+    actual_map.setZero();
+    for ( const auto &[x, y] : CircleIndexIterator<false>( center, radius, 3, 6 ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "CircleIndexIterator<false> with radius 2 at (2, 2) with limited row max.";
+  }
 
   // case 4 restrict min_row to be 1
   actual_map.setZero();
   // @formatter:off
   // clang-format off
   expected_map << 0, 0, 0, 0, 0,
-                1, 1, 1, 1, 0,
-                1, 1, 1, 1, 0,
-                0, 1, 1, 0, 0,
-                0, 0, 0, 0, 0;
+                  1, 1, 1, 1, 0,
+                  1, 1, 1, 1, 0,
+                  0, 1, 1, 0, 0,
+                  0, 0, 0, 0, 0;
   // @formatter:on
   // clang-format on
-  iterateCircle<Scalar>(
-      Vector2S( 2, 2 ), 2, 1, 6, 0, 6, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
-        EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
-        actual_map( x, y ) += 1;
-      } );
+  center = Vector2S( 2, 2 );
+  radius = 2;
+  iterateCircle<Scalar>( center, radius, 1, 6, 0, 6, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+    EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
+    actual_map( x, y ) += 1;
+  } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Circle with radius 2 at (2, 2) with limited row min.";
+  if constexpr ( std::is_same_v<Scalar, double> ) {
+    actual_map.setZero();
+    for ( const auto &[x, y] : CircleIndexIterator<true>( center, radius, 1, 6, 0, 6 ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "CircleIndexIterator<true> with radius 2 at (2, 2) with limited row min.";
+    actual_map.setZero();
+    for ( const auto &[x, y] : CircleIndexIterator<false>( center, radius, 1, 6, 0, 6 ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "CircleIndexIterator<false> with radius 2 at (2, 2) with limited row min.";
+  }
   // case 5 restrict min_column to be 1 and max_column to be 3
   actual_map.setZero();
   // @formatter:off
   // clang-format off
   expected_map << 0, 1, 1, 0, 0,
-                0, 1, 1, 0, 0,
-                0, 1, 1, 0, 0,
-                0, 1, 1, 0, 0,
-                0, 0, 0, 0, 0;
+                  0, 1, 1, 0, 0,
+                  0, 1, 1, 0, 0,
+                  0, 1, 1, 0, 0,
+                  0, 0, 0, 0, 0;
   // @formatter:on
   // clang-format on
-  iterateCircle<Scalar>(
-      Vector2S( 2, 2 ), 2, 0, 6, 1, 3, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
-        EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
-        actual_map( x, y ) += 1;
-      } );
+  center = Vector2S( 2, 2 );
+  radius = 2;
+  iterateCircle<Scalar>( center, radius, 0, 6, 1, 3, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+    EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
+    actual_map( x, y ) += 1;
+  } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Circle with radius 2 at (2, 2) with limited col min and max.";
+  if constexpr ( std::is_same_v<Scalar, double> ) {
+    actual_map.setZero();
+    for ( const auto &[x, y] : CircleIndexIterator<true>( center, radius, 0, 6, 1, 3 ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "CircleIndexIterator<true> with radius 2 at (2, 2) with limited col min and max.";
+    actual_map.setZero();
+    for ( const auto &[x, y] : CircleIndexIterator<false>( center, radius, 0, 6, 1, 3 ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "CircleIndexIterator<false> with radius 2 at (2, 2) with limited col min and max.";
+  }
 
-  // case 6 no points due to column/index restrictions
+  // case 6 no points due to column/index_ restrictions
   expected_map = GridMap<Eigen::Index>( 6, 4 );
   actual_map = GridMap<Eigen::Index>( 6, 4 );
   actual_map.setZero();
   expected_map.setZero();
-  iterateCircle<Scalar>(
-      Vector2S( 2, 2 ), 2, 5, 8, -8, 8, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
-        EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
-        actual_map( x + 3, y + 3 ) += 1;
-      } );
-  iterateCircle<Scalar>(
-      Vector2S( 2, 2 ), 2, -8, 8, 5, 8, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
-        EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
-        actual_map( x + 3, y + 3 ) += 1;
-      } );
+  center = Vector2S( 2, 2 );
+  radius = 2;
+  iterateCircle<Scalar>( center, radius, 5, 8, -8, 8, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+    EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
+    actual_map( x + 3, y + 3 ) += 1;
+  } );
+  iterateCircle<Scalar>( center, radius, -8, 8, 5, 8, [&actual_map]( Eigen::Index x, Eigen::Index y ) {
+    EXPECT_TRUE( x >= 0 and x < actual_map.rows() and y >= 0 and y < actual_map.cols() );
+    actual_map( x + 3, y + 3 ) += 1;
+  } );
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
       << "Circle with radius 2 at (2, 2) entirely outside of iterated area.";
+  if constexpr ( std::is_same_v<Scalar, double> ) {
+    actual_map.setZero();
+    for ( const auto &[x, y] : CircleIndexIterator<true>( center, radius, 5, 8, -8, 8 ) ) {
+      actual_map( x, y ) += 1;
+    }
+    for ( const auto &[x, y] : CircleIndexIterator<true>( center, radius, -8, 8, 5, 8 ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "CircleIndexIterator<true> with radius 2 at (2, 2) entirely outside of iterated area.";
+    actual_map.setZero();
+    for ( const auto &[x, y] : CircleIndexIterator<false>( center, radius, 5, 8, -8, 8 ) ) {
+      actual_map( x, y ) += 1;
+    }
+    for ( const auto &[x, y] : CircleIndexIterator<false>( center, radius, -8, 8, 5, 8 ) ) {
+      actual_map( x, y ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "CircleIndexIterator<false> with radius 2 at (2, 2) entirely outside of iterated area.";
+  }
   // case 7, using different function overload
   expected_map = GridMap<Eigen::Index>( 4, 4 );
   actual_map = GridMap<Eigen::Index>( 4, 4 );
@@ -347,7 +651,7 @@ TYPED_TEST( IteratorTest, circleTest )
 TYPED_TEST( IteratorTest, polygonTest )
 {
   using Scalar = TypeParam;
-  const bool FORCE_TEST_OUTPUT = true;
+  const bool FORCE_TEST_OUTPUT = false;
   int offset = 5;
   Polygon<Scalar> polygon = createPolygon<Scalar>( PolygonTyp::RandomStructureNegativeIndices );
   // RandomStructure case in area x: -6 bis 6 and y: -6 bis 6,
@@ -374,7 +678,7 @@ TYPED_TEST( IteratorTest, polygonTest )
   // clang-format on
   iteratePolygon<Scalar>( polygon, row_min, row_max, col_min, col_max,
                           [&actual_map, offset]( Eigen::Index x, Eigen::Index y ) {
-                            EXPECT_TRUE( x + offset >= 0 and x + offset < actual_map.rows() and
+                            ASSERT_TRUE( x + offset >= 0 and x + offset < actual_map.rows() and
                                          y + offset >= 0 and y + offset < actual_map.cols() );
                             actual_map( x + offset, y + offset ) += 1;
                           } );
@@ -383,6 +687,26 @@ TYPED_TEST( IteratorTest, polygonTest )
   if ( FORCE_TEST_OUTPUT || !EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
     writeReportToFile( actual_map, expected_map, polygon, row_min, row_max, col_min, col_max,
                        offset, "TestCasePolygonRandom_NegativeIndices.txt" );
+  if constexpr ( std::is_same_v<Scalar, double> ) {
+    actual_map.setZero();
+    for ( const auto &[x, y] :
+          PolygonIndexIterator<true>( polygon, row_min, row_max, col_min, col_max ) ) {
+      EXPECT_TRUE( x + offset >= 0 and x + offset < actual_map.rows() and y + offset >= 0 and
+                   y + offset < actual_map.cols() );
+      actual_map( x + offset, y + offset ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "PolygonIndexIterator<true> with corner with negative indices";
+    actual_map.setZero();
+    for ( const auto &[x, y] :
+          PolygonIndexIterator<false>( polygon, row_min, row_max, col_min, col_max ) ) {
+      EXPECT_TRUE( x + offset >= 0 and x + offset < actual_map.rows() and y + offset >= 0 and
+                   y + offset < actual_map.cols() );
+      actual_map( x + offset, y + offset ) += 1;
+    }
+    EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) )
+        << "PolygonIndexIterator<false> with corner with negative indices";
+  }
 
   // RandomStructure case in area x: 0 bis 10 and y: 0 bis 10,
   polygon = createPolygon<Scalar>( PolygonTyp::RandomStructure );
@@ -544,7 +868,7 @@ TYPED_TEST( IteratorTest, polygonTest )
     writeReportToFile( actual_map, expected_map, polygon, row_min, row_max, col_min, col_max,
                        offset, "TestCaseCircleShapeLimitedIndexes.txt" );
 
-  // u - shape limited index
+  // u - shape limited index_
   polygon = createPolygon<Scalar>( PolygonTyp::U_Shape );
   actual_map.setZero();
   // @formatter:off
