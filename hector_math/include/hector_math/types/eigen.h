@@ -173,6 +173,28 @@ struct BlockIndices {
     result.cols = static_cast<Eigen::Index>( std::ceil( ( y0 + cols ) * scale ) - result.y0 );
     return result;
   }
+
+  [[nodiscard]] BlockIndices intersect( const BlockIndices &other ) const
+  {
+    if ( empty() || other.empty() )
+      return Empty();
+    BlockIndices result;
+    result.x0 = std::max( x0, other.x0 );
+    result.y0 = std::max( y0, other.y0 );
+    const Eigen::Index x1 = std::min( x0 + rows, other.x0 + other.rows );
+    const Eigen::Index y1 = std::min( y0 + cols, other.y0 + other.cols );
+    if ( x1 <= result.x0 || y1 <= result.y0 )
+      return Empty();
+    result.rows = x1 - result.x0;
+    result.cols = y1 - result.y0;
+    return result;
+  }
+
+  [[nodiscard]] BlockIndices intersect( Eigen::Index x0, Eigen::Index y0, Eigen::Index rows,
+                                        Eigen::Index cols ) const
+  {
+    return intersect( { x0, y0, rows, cols } );
+  }
 };
 } // namespace hector_math
 
