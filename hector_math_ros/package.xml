@@ -21,4 +21,8 @@
   <build_export_depend>rclcpp</build_export_depend>
   <build_export_depend>sensor_msgs</build_export_depend>
   <build_export_depend>urdf</build_export_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
 </package>
