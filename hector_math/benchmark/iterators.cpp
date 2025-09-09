@@ -148,7 +148,7 @@ BENCHMARK( comparisonGridmapCircleIterator )->Unit( benchmark::kMicrosecond );
 #endif
 
 template<int Option>
-static void eigenIterator( benchmark::State &state )
+static void eigenIteratorFunction( benchmark::State &state )
 {
   Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Option> map( state.range( 0 ),
                                                                     state.range( 0 ) );
@@ -205,16 +205,16 @@ static void eigenRowColLoopBaseline( benchmark::State &state )
   }
 }
 
-BENCHMARK_TEMPLATE( eigenIterator, Eigen::RowMajor )->Unit( benchmark::kMicrosecond )->Arg( 100 );
-BENCHMARK_TEMPLATE( eigenIterator, Eigen::ColMajor )->Unit( benchmark::kMicrosecond )->Arg( 100 );
+BENCHMARK_TEMPLATE( eigenIteratorFunction, Eigen::RowMajor )->Unit( benchmark::kMicrosecond )->Arg( 100 );
+BENCHMARK_TEMPLATE( eigenIteratorFunction, Eigen::ColMajor )->Unit( benchmark::kMicrosecond )->Arg( 100 );
 BENCHMARK_TEMPLATE( eigenValueIteratorClass, Eigen::RowMajor )->Unit( benchmark::kMicrosecond )->Arg( 100 );
 BENCHMARK_TEMPLATE( eigenValueIteratorClass, Eigen::ColMajor )->Unit( benchmark::kMicrosecond )->Arg( 100 );
 BENCHMARK_TEMPLATE( eigenIndexIteratorClass, Eigen::RowMajor )->Unit( benchmark::kMicrosecond )->Arg( 100 );
 BENCHMARK_TEMPLATE( eigenIndexIteratorClass, Eigen::ColMajor )->Unit( benchmark::kMicrosecond )->Arg( 100 );
 BENCHMARK_TEMPLATE( eigenRowColLoopBaseline, Eigen::RowMajor )->Unit( benchmark::kMicrosecond )->Arg( 100 );
 BENCHMARK_TEMPLATE( eigenRowColLoopBaseline, Eigen::ColMajor )->Unit( benchmark::kMicrosecond )->Arg( 100 );
-BENCHMARK_TEMPLATE( eigenIterator, Eigen::RowMajor )->Unit( benchmark::kMicrosecond )->Arg( 10000 );
-BENCHMARK_TEMPLATE( eigenIterator, Eigen::ColMajor )->Unit( benchmark::kMicrosecond )->Arg( 10000 );
+BENCHMARK_TEMPLATE( eigenIteratorFunction, Eigen::RowMajor )->Unit( benchmark::kMicrosecond )->Arg( 10000 );
+BENCHMARK_TEMPLATE( eigenIteratorFunction, Eigen::ColMajor )->Unit( benchmark::kMicrosecond )->Arg( 10000 );
 BENCHMARK_TEMPLATE( eigenValueIteratorClass, Eigen::RowMajor )
     ->Unit( benchmark::kMicrosecond )
     ->Arg( 10000 );

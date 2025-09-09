@@ -74,15 +74,15 @@ TYPED_TEST( IteratorTest, eigenIterator )
   using Scalar = TypeParam;
   GridMap<Scalar> map( 3, 3 );
   // clang-format off
-        map << 1, 2, 3,
-                 4, 5, 6,
-                 7, 8, 9;
+  map << 1, 2, 3,
+         4, 5, 6,
+         7, 8, 9;
   // clang-format on
   GridMap<Scalar> expected_map( 3, 3 );
   // clang-format off
-        expected_map << 1, 2, 3,
-                        4, 5, 6,
-                        7, 8, 9;
+  expected_map << 1, 2, 3,
+                  4, 5, 6,
+                  7, 8, 9;
   // clang-format on
   GridMap<Scalar> actual_map( 3, 3 );
 
@@ -105,6 +105,48 @@ TYPED_TEST( IteratorTest, eigenIterator )
   expected_map.fill( 1 );
   actual_map.fill( 0 );
   for ( const auto &[row, col] : EigenIndexIterator( map ) ) { actual_map( row, col )++; }
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) );
+
+  expected_map = GridMap<Scalar>( 6, 4 );
+  expected_map.fill( 1 );
+  actual_map = GridMap<Scalar>::Zero( 6, 4 );
+  for ( const auto &[row, col] : EigenIndexIterator<GridMap<Scalar>>( BlockIndices{ 0, 0, 6, 4 } ) ) {
+    ASSERT_TRUE( 0 <= row && row < 6 ) << row;
+    ASSERT_TRUE( 0 <= col && col < 4 ) << col;
+    actual_map( row, col )++;
+  }
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) );
+
+  expected_map.bottomRows( 1 ).setZero();
+  expected_map.rightCols( 1 ).setZero();
+  actual_map.setZero();
+  for ( const auto &[row, col] : EigenIndexIterator<GridMap<Scalar>>( BlockIndices{ 0, 0, 5, 3 } ) ) {
+    ASSERT_TRUE( 0 <= row && row < 6 ) << row;
+    ASSERT_TRUE( 0 <= col && col < 4 ) << col;
+    actual_map( row, col )++;
+  }
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) );
+
+  expected_map.topRows( 1 ).setZero();
+  expected_map.leftCols( 1 ).setZero();
+  actual_map.setZero();
+  for ( const auto &[row, col] : EigenIndexIterator<GridMap<Scalar>>( BlockIndices{ 1, 1, 4, 2 } ) ) {
+    ASSERT_TRUE( 0 <= row && row < 6 ) << row;
+    ASSERT_TRUE( 0 <= col && col < 4 ) << col;
+    actual_map( row, col )++;
+  }
+  EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) );
+
+  expected_map.bottomRows( 1 ).fill( 1 );
+  expected_map.rightCols( 1 ).fill( 1 );
+  expected_map.topRows( 1 ).fill( 0 );
+  expected_map.leftCols( 1 ).fill( 0 );
+  actual_map.setZero();
+  for ( const auto &[row, col] : EigenIndexIterator<GridMap<Scalar>>( BlockIndices{ 1, 1, 5, 3 } ) ) {
+    ASSERT_TRUE( 0 <= row && row < 6 ) << row;
+    ASSERT_TRUE( 0 <= col && col < 4 ) << col;
+    actual_map( row, col )++;
+  }
   EXPECT_TRUE( EIGEN_MATRIX_EQUAL( expected_map, actual_map ) );
 }
 

@@ -26,21 +26,26 @@ class EigenIndexIterator
 public:
   using Scalar = typename Eigen::DenseBase<Derived>::Scalar;
 
-  explicit EigenIndexIterator( const Eigen::DenseBase<Derived> &map ) : map_( map ) { }
+  explicit EigenIndexIterator( const Eigen::DenseBase<Derived> &map )
+      : block_( 0, 0, map.rows(), map.cols() )
+  {
+  }
+
+  explicit EigenIndexIterator( const BlockIndices &block ) : block_( block ) { }
 
   struct iterator;
 
-  iterator begin() { return iterator( map_, 0, 0 ); }
+  iterator begin() { return iterator( block_, block_.x0, block_.y0 ); }
   iterator end()
   {
     if constexpr ( Eigen::DenseBase<Derived>::IsRowMajor ) {
-      return iterator( map_, map_.rows(), 0 );
+      return iterator( block_, block_.x0 + block_.rows, block_.y0 );
     }
-    return iterator( map_, 0, map_.cols() );
+    return iterator( block_, block_.x0, block_.y0 + block_.cols );
   }
 
 private:
-  const Eigen::DenseBase<Derived> &map_;
+  const BlockIndices block_;
 };
 
 //! Convenience iterator to efficiently iterate over all values in a Eigen matrix or array in a for each loop.
@@ -89,8 +94,8 @@ void iterateDenseBase( const Eigen::DenseBase<Derived> &map, Functor functor )
 
 template<typename Derived>
 struct EigenIndexIterator<Derived>::iterator {
-  iterator( const Eigen::DenseBase<Derived> &map, Eigen::Index row, Eigen::Index col )
-      : index( row, col ), map_( map )
+  iterator( const BlockIndices &block, Eigen::Index row, Eigen::Index col )
+      : index( row, col ), block_( block )
   {
   }
 
@@ -106,13 +111,13 @@ struct EigenIndexIterator<Derived>::iterator {
   iterator operator++()
   {
     if constexpr ( Eigen::DenseBase<Derived>::IsRowMajor ) {
-      if ( ++index.col >= map_.cols() ) {
-        index.col = 0;
+      if ( ++index.col >= block_.y0 + block_.cols ) {
+        index.col = block_.y0;
         ++index.row;
       }
     } else {
-      if ( ++index.row >= map_.rows() ) {
-        index.row = 0;
+      if ( ++index.row >= block_.x0 + block_.rows ) {
+        index.row = block_.x0;
         ++index.col;
       }
     }
@@ -120,7 +125,7 @@ struct EigenIndexIterator<Derived>::iterator {
   }
 
 private:
-  const Eigen::DenseBase<Derived> &map_;
+  const BlockIndices block_;
 };
 
 template<typename Derived>
