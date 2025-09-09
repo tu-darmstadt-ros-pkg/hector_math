@@ -102,6 +102,12 @@ struct BlockIndices {
   Eigen::Index rows = 0;
   Eigen::Index cols = 0;
 
+  BlockIndices() = default;
+  BlockIndices( Eigen::Index x0, Eigen::Index y0, Eigen::Index rows, Eigen::Index cols )
+      : x0( x0 ), y0( y0 ), rows( rows ), cols( cols )
+  {
+  }
+
   static BlockIndices Empty() { return { 0, 0, 0, 0 }; }
 
   [[nodiscard]] bool empty() const { return rows == 0 || cols == 0; }
