@@ -94,6 +94,11 @@ struct Index2D {
   }
 
   friend bool operator!=( const Index2D &lhs, const Index2D &rhs ) { return !( lhs == rhs ); }
+
+  Eigen::Index manhattanDistance( const Index2D &other ) const
+  {
+    return std::abs( row - other.row ) + std::abs( col - other.col );
+  }
 };
 
 struct BlockIndices {
