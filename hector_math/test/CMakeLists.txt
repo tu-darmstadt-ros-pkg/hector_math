@@ -33,3 +33,7 @@ gtest_discover_tests(test_quaternion_binning)
 add_executable(test_ring_buffer test_ring_buffer.cpp)
 target_link_libraries(test_ring_buffer GTest::gtest_main ${PROJECT_NAME})
 gtest_discover_tests(test_ring_buffer)
+
+add_executable(test_search test_search.cpp)
+target_link_libraries(test_search GTest::gtest_main ${PROJECT_NAME})
+gtest_discover_tests(test_search)
