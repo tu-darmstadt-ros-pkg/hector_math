@@ -120,6 +120,13 @@ public:
 
   Eigen::Rotation2D<Scalar> rotation() const { return Eigen::Rotation2D<Scalar>( orientation_ ); }
 
+  bool isApprox( const Pose2D<Scalar> &other,
+                 Scalar epsilon = Eigen::NumTraits<Scalar>::dummy_precision() ) const
+  {
+    return translation_.isApprox( other.translation_, epsilon ) &&
+           std::abs( orientation_ - other.orientation_ ) <= epsilon;
+  }
+
   // ================= Mathematical Operations =================
 
   void normalize() { orientation_.normalize(); }

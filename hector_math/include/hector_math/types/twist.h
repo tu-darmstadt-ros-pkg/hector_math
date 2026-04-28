@@ -36,6 +36,12 @@ public:
 
   bool allFinite() const { return linear_.allFinite() && angular_.allFinite(); }
 
+  bool isApprox( const Twist<Scalar> &other,
+                 Scalar epsilon = Eigen::NumTraits<Scalar>::dummy_precision() ) const
+  {
+    return linear_.isApprox( other.linear_, epsilon ) && angular_.isApprox( other.angular_, epsilon );
+  }
+
 private:
   Vector3<Scalar> linear_;
   Vector3<Scalar> angular_;

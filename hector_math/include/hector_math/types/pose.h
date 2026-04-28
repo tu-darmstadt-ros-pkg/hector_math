@@ -134,6 +134,13 @@ public:
     return Pose2D<Scalar>( translation_.x(), translation_.y(), 2 * std::acos( yaw.w() ) );
   }
 
+  bool isApprox( const Pose<Scalar> &other,
+                 Scalar epsilon = Eigen::NumTraits<Scalar>::dummy_precision() ) const
+  {
+    return translation_.isApprox( other.translation_, epsilon ) &&
+           orientation_.isApprox( other.orientation_, epsilon );
+  }
+
   // ================= Mathematical Operations =================
 
   void normalize() { orientation_.normalize(); }
