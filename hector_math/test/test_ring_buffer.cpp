@@ -254,6 +254,61 @@ TEST( RingBufferTest, read_front )
   ASSERT_ANY_THROW( ringBuffer.read_and_pop_front() );
 }
 
+namespace
+{
+struct LifecycleTracker {
+  static inline int live_count = 0;
+  int value = 0;
+
+  LifecycleTracker() { ++live_count; }
+  explicit LifecycleTracker( int v ) : value( v ) { ++live_count; }
+  LifecycleTracker( const LifecycleTracker &o ) : value( o.value ) { ++live_count; }
+  LifecycleTracker( LifecycleTracker &&o ) noexcept : value( o.value ) { ++live_count; }
+  LifecycleTracker &operator=( const LifecycleTracker &o ) = default;
+  LifecycleTracker &operator=( LifecycleTracker &&o ) noexcept = default;
+  ~LifecycleTracker() { --live_count; }
+};
+} // namespace
+
+TEST( RingBufferTest, popFrontDoesNotDestroySlots )
+{
+  constexpr size_t N = 8;
+  LifecycleTracker::live_count = 0;
+  {
+    RingBuffer<LifecycleTracker, N> rb;
+    ASSERT_EQ( LifecycleTracker::live_count, static_cast<int>( N ) );
+    for ( int i = 0; i < static_cast<int>( N ); ++i ) rb.push_back( LifecycleTracker( i ) );
+    ASSERT_EQ( LifecycleTracker::live_count, static_cast<int>( N ) );
+    for ( size_t i = 0; i < 5; ++i ) rb.pop_front();
+    // All N slots must remain constructed; previous code destroyed them in-place,
+    // leaving dead objects that the next push_back wraparound would assign into.
+    ASSERT_EQ( LifecycleTracker::live_count, static_cast<int>( N ) );
+    // Wraparound write into a previously-popped slot must hit a live object.
+    for ( int i = 0; i < 5; ++i ) rb.push_back( LifecycleTracker( 100 + i ) );
+    ASSERT_EQ( LifecycleTracker::live_count, static_cast<int>( N ) );
+    ASSERT_EQ( rb.back().value, 104 );
+  }
+  ASSERT_EQ( LifecycleTracker::live_count, 0 );
+}
+
+TEST( RingBufferTest, clearKeepsSlotsAlive )
+{
+  constexpr size_t N = 8;
+  LifecycleTracker::live_count = 0;
+  {
+    RingBuffer<LifecycleTracker, N> rb;
+    for ( int i = 0; i < static_cast<int>( N ); ++i ) rb.push_back( LifecycleTracker( i ) );
+    rb.clear();
+    ASSERT_TRUE( rb.empty() );
+    ASSERT_EQ( LifecycleTracker::live_count, static_cast<int>( N ) );
+    for ( int i = 0; i < static_cast<int>( N ); ++i ) rb.push_back( LifecycleTracker( 100 + i ) );
+    ASSERT_EQ( LifecycleTracker::live_count, static_cast<int>( N ) );
+    ASSERT_EQ( rb.front().value, 100 );
+    ASSERT_EQ( rb.back().value, 107 );
+  }
+  ASSERT_EQ( LifecycleTracker::live_count, 0 );
+}
+
 int main( int argc, char **argv )
 {
   testing::InitGoogleTest( &argc, argv );

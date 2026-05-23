@@ -62,7 +62,7 @@ public:
   void pop_front()
   {
     if ( size_ > 0 ) {
-      front().~value_type(); // front is last element -> oldest element
+      front() = value_type{};
       removed_element_at_head_adapt_indices();
     }
   }
