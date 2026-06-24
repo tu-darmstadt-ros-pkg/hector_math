@@ -20,12 +20,19 @@
 
 namespace hector_math
 {
-
-struct PlaneEstimationResult {
+struct ZPlane {
   // The z value of the plane in the center of the map.
   float center_plane_z;
   float gradient_x;
   float gradient_y;
+
+  float getZ( const float x, const float y ) const
+  {
+    return center_plane_z + gradient_x * x + gradient_y * y;
+  }
+};
+
+struct PlaneEstimationResult : public ZPlane {
   //! The percentage of known values during estimation.
   float percentage_known;
 };
@@ -38,12 +45,11 @@ struct PlaneEstimationResult {
 template<typename Derived, bool ( *is_valid_fn )( typename Eigen::DenseBase<Derived>::Scalar ) = std::isfinite>
 PlaneEstimationResult fitPlaneXY( const Eigen::DenseBase<Derived> &map, const double resolution = 1.0 )
 {
-  using Scalar = typename Eigen::DenseBase<Derived>::Scalar;
-  Scalar row_squared_sum = 0;
-  Scalar row_sum = 0;
-  Scalar col_squared_sum = 0;
-  Scalar row_col_sum = 0;
-  Scalar col_sum = 0;
+  double row_squared_sum = 0;
+  double row_sum = 0;
+  double col_squared_sum = 0;
+  double row_col_sum = 0;
+  double col_sum = 0;
   long count = 0;
   Vector3d z = Vector3d::Zero();
   for ( const auto &[row, col] : EigenIndexIterator( map ) ) {
@@ -130,8 +136,9 @@ bool fitPlaneXYRobust( const Eigen::DenseBase<Derived> &map, PlaneEstimationResu
   long coarse_valid = 0;
 
   // ---- Pass 1: collect gradient samples (no per-sample storage).
-  auto run_with_buffers = [&]( Scratch *g_x, Scratch *g_y, size_t *g_x_count_out,
-                               size_t *g_y_count_out ) {
+  auto run_with_buffers = [&]( Scratch *__restrict__ g_x, Scratch *__restrict__ g_y,
+                               size_t *__restrict__ g_x_count_out,
+                               size_t *__restrict__ g_y_count_out ) {
     size_t g_x_count = 0;
     size_t g_y_count = 0;
     const auto collect = [&]( const Eigen::Index row, const Eigen::Index col ) {
@@ -143,23 +150,25 @@ bool fitPlaneXYRobust( const Eigen::DenseBase<Derived> &map, PlaneEstimationResu
       const double dv = static_cast<double>( v );
       if ( row + step_r < rows ) {
         const auto &v1 = map( row + step_r, col );
-        if ( is_valid_fn( v1 ) )
+        if ( is_valid_fn( v1 ) ) {
           g_x[g_x_count++] = static_cast<Scratch>( ( static_cast<double>( v1 ) - dv ) * inv_full_r );
-      }
-      if ( half_r != step_r && row + half_r < rows ) {
-        const auto &v1 = map( row + half_r, col );
-        if ( is_valid_fn( v1 ) )
-          g_x[g_x_count++] = static_cast<Scratch>( ( static_cast<double>( v1 ) - dv ) * inv_half_r );
+        } else if ( half_r != step_r ) {
+          const auto &v_half = map( row + half_r, col );
+          if ( is_valid_fn( v_half ) )
+            g_x[g_x_count++] =
+                static_cast<Scratch>( ( static_cast<double>( v_half ) - dv ) * inv_half_r );
+        }
       }
       if ( col + step_c < cols ) {
         const auto &v1 = map( row, col + step_c );
-        if ( is_valid_fn( v1 ) )
+        if ( is_valid_fn( v1 ) ) {
           g_y[g_y_count++] = static_cast<Scratch>( ( static_cast<double>( v1 ) - dv ) * inv_full_c );
-      }
-      if ( half_c != step_c && col + half_c < cols ) {
-        const auto &v1 = map( row, col + half_c );
-        if ( is_valid_fn( v1 ) )
-          g_y[g_y_count++] = static_cast<Scratch>( ( static_cast<double>( v1 ) - dv ) * inv_half_c );
+        } else if ( half_c != step_c ) {
+          const auto &v_half = map( row, col + half_c );
+          if ( is_valid_fn( v_half ) )
+            g_y[g_y_count++] =
+                static_cast<Scratch>( ( static_cast<double>( v_half ) - dv ) * inv_half_c );
+        }
       }
     };
     if constexpr ( Eigen::DenseBase<Derived>::IsRowMajor ) {
@@ -245,115 +254,11 @@ bool fitPlaneXYRobust( const Eigen::DenseBase<Derived> &map, PlaneEstimationResu
     intercept = static_cast<double>( findMedianUpper( buf.begin(), buf.begin() + n ) );
   }
 
-  const long approx_count_valid =
-      coarse_total == 0
-          ? 0
-          : static_cast<long>( static_cast<double>( coarse_valid ) /
-                               static_cast<double>( coarse_total ) * static_cast<double>( rows ) *
-                               static_cast<double>( cols ) );
   result.gradient_x = static_cast<float>( gradient_x );
   result.gradient_y = static_cast<float>( gradient_y );
   result.center_plane_z = static_cast<float>( intercept );
   result.percentage_known =
-      static_cast<float>( static_cast<double>( approx_count_valid ) /
-                          ( static_cast<double>( rows ) * static_cast<double>( cols ) ) );
-  return true;
-}
-
-/*!
- * @brief Robust plane fit using block medians on a fixed subsampling grid.
- *        Slower than fitPlaneXYRobust but the most accurate of the robust
- *        variants and continues to produce useful results at extreme NaN
- *        fractions where fitPlaneXYRobust degrades.
- * @param map The 2D array of height values this plane is fitted to.
- * @param resolution The resolution of the map. Used to scale the gradient.
- */
-template<typename Derived, bool ( *is_valid_fn )( typename Eigen::DenseBase<Derived>::Scalar ) = std::isfinite>
-bool fitPlaneXYRobustBlockMedian( const Eigen::DenseBase<Derived> &map,
-                                  PlaneEstimationResult &result, const double resolution = 1.0 )
-{
-  constexpr int kSubsamplingFactor = 4;
-  if ( map.rows() == 0 || map.cols() == 0 ) {
-    result = {};
-    return false;
-  }
-
-  double row_squared_sum = 0.0;
-  double row_sum = 0.0;
-  double col_squared_sum = 0.0;
-  double row_col_sum = 0.0;
-  double col_sum = 0.0;
-  long count_valid = 0;
-  long sample_count = 0;
-  Vector3d z = Vector3d::Zero();
-  std::array<double, kSubsamplingFactor * kSubsamplingFactor> block_values{};
-
-  for ( Eigen::Index row_start = 0; row_start < map.rows(); row_start += kSubsamplingFactor ) {
-    const Eigen::Index row_end = std::min<Eigen::Index>( row_start + kSubsamplingFactor, map.rows() );
-    for ( Eigen::Index col_start = 0; col_start < map.cols(); col_start += kSubsamplingFactor ) {
-      const Eigen::Index col_end =
-          std::min<Eigen::Index>( col_start + kSubsamplingFactor, map.cols() );
-      size_t block_count = 0;
-      for ( Eigen::Index row = row_start; row < row_end; ++row ) {
-        for ( Eigen::Index col = col_start; col < col_end; ++col ) {
-          const auto &value = map( row, col );
-          if ( !is_valid_fn( value ) ) {
-            continue;
-          }
-          ++count_valid;
-          block_values[block_count++] = static_cast<double>( value );
-        }
-      }
-      if ( block_count == 0 ) {
-        continue;
-      }
-
-      const double row =
-          ( static_cast<double>( row_start ) + static_cast<double>( row_end ) - 1.0 ) / 2.0;
-      const double col =
-          ( static_cast<double>( col_start ) + static_cast<double>( col_end ) - 1.0 ) / 2.0;
-      const double median = findMedian( block_values.begin(), block_values.begin() + block_count );
-      row_squared_sum += row * row;
-      row_sum += row;
-      col_squared_sum += col * col;
-      col_sum += col;
-      row_col_sum += row * col;
-      ++sample_count;
-      z += Vector3d( row * median, col * median, median );
-    }
-  }
-
-  if ( sample_count < 3 || count_valid < 3 ) {
-    result = {};
-    return false;
-  }
-
-  Eigen::Matrix3d X;
-  // clang-format off
-  X << row_squared_sum, row_col_sum,     row_sum,
-       row_col_sum,     col_squared_sum, col_sum,
-       row_sum,         col_sum,         sample_count;
-  // clang-format on
-
-  Eigen::FullPivLU<Eigen::Matrix3d> decomposition( X );
-  if ( !decomposition.isInvertible() ) {
-    result = {};
-    return false;
-  }
-
-  const Vector3d abc = decomposition.solve( z );
-  if ( !abc.allFinite() ) {
-    result = {};
-    return false;
-  }
-
-  result.gradient_x = static_cast<float>( abc( 0 ) / resolution );
-  result.gradient_y = static_cast<float>( abc( 1 ) / resolution );
-  result.center_plane_z = static_cast<float>( abc( 2 ) + abc( 0 ) * ( map.rows() - 1 ) / 2.0 +
-                                              abc( 1 ) * ( map.cols() - 1 ) / 2.0 );
-  result.percentage_known =
-      static_cast<float>( static_cast<double>( count_valid ) /
-                          ( static_cast<double>( map.rows() ) * static_cast<double>( map.cols() ) ) );
+      coarse_total == 0 ? 0 : static_cast<float>( coarse_valid ) / static_cast<float>( coarse_total );
   return true;
 }
 

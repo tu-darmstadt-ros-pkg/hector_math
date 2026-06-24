@@ -136,38 +136,9 @@ static void fitPlaneRobustHalfUnknown( benchmark::State &state )
   }
 }
 
-static void fitPlaneRobustBlockMedian( benchmark::State &state )
-{
-  std::vector<GridMapf> maps = GridMapGenerator().createGridmaps( state.range() );
-  size_t i = 0;
-  for ( auto _ : state ) {
-    PlaneEstimationResult result;
-    hector_math::fitPlaneXYRobustBlockMedian( maps[i], result );
-    benchmark::DoNotOptimize( result );
-    if ( ++i == maps.size() )
-      i = 0;
-  }
-}
-
-static void fitPlaneRobustBlockMedianHalfUnknown( benchmark::State &state )
-{
-  std::vector<GridMapf> maps = GridMapGenerator().createGridmaps( state.range() );
-  halfNan( maps );
-  size_t i = 0;
-  for ( auto _ : state ) {
-    PlaneEstimationResult result;
-    hector_math::fitPlaneXYRobustBlockMedian( maps[i], result );
-    benchmark::DoNotOptimize( result );
-    if ( ++i == maps.size() )
-      i = 0;
-  }
-}
-
 BENCHMARK( fitPlane )->Arg( 100 )->Arg( 1000 )->Unit( benchmark::kMicrosecond );
 BENCHMARK( fitPlaneHalfUnknown )->Arg( 100 )->Arg( 1000 )->Unit( benchmark::kMicrosecond );
 BENCHMARK( fitPlaneRobust )->Arg( 100 )->Arg( 1000 )->Unit( benchmark::kMicrosecond );
 BENCHMARK( fitPlaneRobustHalfUnknown )->Arg( 100 )->Arg( 1000 )->Unit( benchmark::kMicrosecond );
-BENCHMARK( fitPlaneRobustBlockMedian )->Arg( 100 )->Arg( 1000 )->Unit( benchmark::kMicrosecond );
-BENCHMARK( fitPlaneRobustBlockMedianHalfUnknown )->Arg( 100 )->Arg( 1000 )->Unit( benchmark::kMicrosecond );
 
 BENCHMARK_MAIN();

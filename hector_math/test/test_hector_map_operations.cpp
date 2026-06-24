@@ -196,6 +196,17 @@ TYPED_TEST( MapOperations, fitPlane )
   EXPECT_NEAR( result.percentage_known, 1, 1e-4 );
   if ( this->HasFailure() )
     FAIL();
+
+  // Large clean map: regression guard against float-precision roundoff in the
+  // normal-equation accumulators. With float accumulators a 100x100 map
+  // produces ~1e-4 grad error on an exact plane; double accumulators bring it
+  // well below 1e-6.
+  map = createMap<Scalar>( 100, 100, Scalar( 0.3 ), Scalar( -0.2 ) );
+  result = fitPlaneXY( map );
+  EXPECT_NEAR( result.gradient_x, 0.3, 1e-6 );
+  EXPECT_NEAR( result.gradient_y, -0.2, 1e-6 );
+  EXPECT_NEAR( result.center_plane_z, 0.3 * 49.5 - 0.2 * 49.5, 1e-4 );
+  EXPECT_NEAR( result.percentage_known, 1, 1e-6 );
 }
 
 int main( int argc, char **argv )
