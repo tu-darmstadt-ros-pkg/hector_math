@@ -113,11 +113,6 @@ Eigen::AlignedBox<Scalar, 3> UrdfRobotModel<Scalar>::computeAxisAlignedBoundingB
   return computeAxisAlignedBoundingBox( link_tree_, Isometry3<Scalar>::Identity() );
 }
 
-template<typename Scalar>
-void UrdfRobotModel<Scalar>::onJointStatesUpdated()
-{
-}
-
 namespace impl
 {
 template<typename Scalar>
@@ -157,6 +152,7 @@ typename UrdfRobotModel<Scalar>::LinkTree
 UrdfRobotModel<Scalar>::buildLinkTree( const urdf::LinkSharedPtr &root, Scalar &mass )
 {
   LinkTree result;
+  result.name = root->name;
   result.inertial_mass = root->inertial != nullptr ? root->inertial->mass : 0;
   if ( result.inertial_mass > 0 ) {
     result.inertial_origin = urdfToEigenVector<Scalar>( root->inertial->origin.position );

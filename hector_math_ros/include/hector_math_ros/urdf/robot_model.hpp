@@ -76,6 +76,7 @@ public:
     std::vector<Joint, Eigen::aligned_allocator<Joint>> children;
     std::vector<LinkGeometry, Eigen::aligned_allocator<LinkGeometry>> geometries;
 #endif
+    std::string name; //!< URDF link name, so consumers can filter geometries per link.
     Vector3<Scalar> inertial_origin;
     double inertial_mass;
 #if __cplusplus < 201703L
@@ -121,8 +122,6 @@ protected:
   computeAxisAlignedBoundingBox( const LinkTree &root, const Isometry3<Scalar> &transform ) const;
 
   Eigen::AlignedBox<Scalar, 3> computeAxisAlignedBoundingBox() const override;
-
-  void onJointStatesUpdated() override;
 
   Isometry3<Scalar> transformForJoint( const Joint &joint ) const;
 
