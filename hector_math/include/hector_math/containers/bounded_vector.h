@@ -7,10 +7,17 @@
 #include <array>
 #include <cassert>
 #include <stdexcept>
+#include <string>
+#include <type_traits>
+#include <utility>
 
 namespace hector_math
 {
 
+//! Fixed-capacity vector storing its elements inline in a std::array.
+//! All MaxSize elements are alive for the entire lifetime of the container, hence T has to be
+//! default constructible. Removed elements are reset to a value-initialized T so they release any
+//! resources they hold.
 template<typename T, int MaxSize>
 class BoundedVector
 {
@@ -26,34 +33,59 @@ public:
   [[nodiscard]] bool full() const { return size_ == MaxSize; }
 
   // push and pop
-  void push_back( T val )
+  void push_back( const T &val )
   {
     if ( size_ == MaxSize )
       throw std::length_error( "Maximum size reached!" );
     items_[size_++] = val;
   }
 
-  template<typename... Args>
-  void emplace_back( Args... args )
+  void push_back( T &&val )
   {
     if ( size_ == MaxSize )
       throw std::length_error( "Maximum size reached!" );
-    items_[size_++] = T( args... );
+    items_[size_++] = std::move( val );
+  }
+
+  template<typename... Args>
+  void emplace_back( Args &&...args )
+  {
+    if ( size_ == MaxSize )
+      throw std::length_error( "Maximum size reached!" );
+    if constexpr ( sizeof...( Args ) == 1 && ( std::is_same_v<std::decay_t<Args>, T> && ... ) )
+      items_[size_++] = ( std::forward<Args>( args ), ... );
+    else
+      items_[size_++] = T( std::forward<Args>( args )... );
+  }
+
+  iterator insert( const_iterator position, const T &val )
+  {
+    assert( position >= begin() );
+    assert( position - begin() <= (long)( size_ ) );
+    if ( size_ == MaxSize )
+      throw std::length_error( "Maximum size reached!" );
+    T tmp = val;
+    for ( iterator it = end(); it != position; --it ) *it = std::move( *( it - 1 ) );
+    auto dst = begin() + ( position - begin() ); // remove the const
+    *dst = std::move( tmp );
+    ++size_;
+    return dst;
   }
 
   void pop_back()
   {
     assert( size_ > 0 );
-    back().~T();
+    reset( size_ - 1, size_ );
     --size_;
   }
 
   void erase( const_iterator position )
   {
+    assert( position >= begin() );
     assert( position - begin() < (long)( size_ ) );
-    position->~T();
-    iterator start = begin() + ( position - begin() );
-    for ( auto it = position + 1; it != end(); ++it, ++start ) *start = std::move( *it );
+    iterator dst = begin() + ( position - begin() );
+    for ( iterator src = dst + 1; src != end(); ++src, ++dst ) *dst = std::move( *src );
+    reset( size_ - 1, size_ );
     --size_;
   }
 
@@ -63,19 +95,18 @@ public:
     assert( last - begin() <= (long)( size_ ) );
     if ( first >= last )
       return;
-    iterator start = begin() + ( first - begin() );
-    for ( auto it = start; it != last; ++it ) it->~T();
-    for ( auto it = last; it != end(); ++it, ++start ) *start = std::move( *it );
-    size_ -= ( last - first );
+    iterator dst = begin() + ( first - begin() );
+    for ( iterator src = begin() + ( last - begin() ); src != end(); ++src, ++dst )
+      *dst = std::move( *src );
+    const std::size_t count = last - first;
+    reset( size_ - count, size_ );
+    size_ -= count;
   }
 
   void clear()
   {
-    if constexpr ( std::is_trivially_destructible_v<T> ) {
-      size_ = 0;
-    } else {
-      while ( size_ > 0 ) pop_back();
-    }
+    reset( 0, size_ );
+    size_ = 0;
   }
 
   // front
@@ -114,25 +145,27 @@ public:
     (void)size;
   }
 
+  //! Elements added by growing the container are value-initialized.
   void resize( std::size_t size )
   {
     if ( size > MaxSize )
       throw std::length_error( std::to_string( size ) +
                                " is greater than maximum size: " + std::to_string( MaxSize ) );
-    if constexpr ( !std::is_trivially_constructible_v<T> ) {
-      if ( size > size_ ) {
-        for ( std::size_t i = size_; i < size; ++i ) { ::new ( items_.data() + i ) T(); }
-      }
-    }
-    if constexpr ( !std::is_trivially_destructible_v<T> ) {
-      if ( size < size_ ) {
-        for ( std::size_t i = size; i < size_; ++i ) { pop_back(); }
-      }
-    }
+    for ( std::size_t i = size_; i < size; ++i ) items_[i] = T();
+    reset( size, size_ );
     size_ = size;
   }
 
 private:
+  //! Resets the elements in [first, last) to release the resources they hold.
+  //! Does nothing for types that do not own resources.
+  void reset( std::size_t first, std::size_t last )
+  {
+    if constexpr ( !std::is_trivially_destructible_v<T> ) {
+      for ( std::size_t i = first; i < last; ++i ) items_[i] = T();
+    }
+  }
+
   std::array<T, MaxSize> items_;
   std::size_t size_ = 0;
 };
