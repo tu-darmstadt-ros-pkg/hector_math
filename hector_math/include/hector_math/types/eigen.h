@@ -7,6 +7,7 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include <Eigen/StdVector>
+#include <limits>
 #include <vector>
 
 namespace hector_math
@@ -108,6 +109,7 @@ struct BlockIndices {
   Eigen::Index cols = 0;
 
   BlockIndices() = default;
+
   BlockIndices( Eigen::Index x0, Eigen::Index y0, Eigen::Index rows, Eigen::Index cols )
       : x0( x0 ), y0( y0 ), rows( rows ), cols( cols )
   {
@@ -199,6 +201,28 @@ struct BlockIndices {
                                         Eigen::Index cols ) const
   {
     return intersect( { x0, y0, rows, cols } );
+  }
+
+  [[nodiscard]] Eigen::Index manhattanDistance( const BlockIndices &other ) const
+  {
+    if ( empty() || other.empty() )
+      return std::numeric_limits<Eigen::Index>::max();
+    const Eigen::Index dx = std::max<Eigen::Index>(
+        0, std::max( x0, other.x0 ) - std::min( x0 + rows, other.x0 + other.rows ) + 1 );
+    const Eigen::Index dy = std::max<Eigen::Index>(
+        0, std::max( y0, other.y0 ) - std::min( y0 + cols, other.y0 + other.cols ) + 1 );
+    return dx + dy;
+  }
+
+  [[nodiscard]] Eigen::Index manhattanDistance( Eigen::Index x, Eigen::Index y ) const
+  {
+    if ( empty() )
+      return std::numeric_limits<Eigen::Index>::max();
+    const Eigen::Index dx =
+        std::max<Eigen::Index>( 0, std::max( x0, x ) - std::min( x0 + rows, x + 1 ) + 1 );
+    const Eigen::Index dy =
+        std::max<Eigen::Index>( 0, std::max( y0, y ) - std::min( y0 + cols, y + 1 ) + 1 );
+    return dx + dy;
   }
 };
 } // namespace hector_math
