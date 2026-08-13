@@ -6,6 +6,7 @@
 
 #include "hector_math/robot/robot_model.h"
 
+#include <cmath>
 #include <mutex>
 #include <rclcpp/node.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
@@ -89,14 +90,21 @@ public:
     updateJointPositions();
   }
 
+  //! The minimum difference in joint position before the model is updated.
+  //! This is used to avoid unnecessary updates due to position noise.
+  Scalar minJointPositionChange() const { return min_joint_position_change_; }
+
+  //! @copydoc minJointPositionChange
+  void setMinJointPositionChange( Scalar value ) { min_joint_position_change_ = value; }
+
 private:
   void onJointStateMessage( const sensor_msgs::msg::JointState::ConstSharedPtr &msg )
   {
     {
-      std::lock_guard<std::mutex> lock( update_mutex_ );
+      std::lock_guard lock( update_mutex_ );
       for ( size_t i = 0; i < msg->name.size(); ++i ) {
         auto it = indexes_.find( msg->name[i] );
-        if ( it == indexes_.end() )
+        if ( it == indexes_.end() || msg->position.size() <= i )
           continue;
         positions_[it->second] = msg->position[i];
         updated_[it->second] = true;
@@ -109,9 +117,19 @@ private:
 
   void updateJointPositions()
   {
-    std::lock_guard<std::mutex> lock( update_mutex_ );
-    model_->updateJointPositions( positions_ );
+    std::lock_guard lock( update_mutex_ );
+    bool changed = false;
+    const auto &current_positions = model_->jointPositions();
+    for ( size_t i = 0; i < positions_.size(); ++i ) {
+      if ( std::abs( current_positions[i] - positions_[i] ) >= min_joint_position_change_ ) {
+        changed = true;
+        break;
+      }
+    }
     updated_.assign( updated_.size(), false );
+    if ( !changed )
+      return;
+    model_->updateJointPositions( positions_ );
   }
 
   typename RobotModel<Scalar>::Ptr model_;
@@ -124,6 +142,7 @@ private:
   std::mutex update_mutex_;
   std::atomic<bool> paused_{ false };
   std::atomic<bool> waiting_for_set_{ false };
+  std::atomic<Scalar> min_joint_position_change_{ 1E-4 };
 };
 } // namespace hector_math
 

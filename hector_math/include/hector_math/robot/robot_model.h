@@ -23,7 +23,7 @@ public:
       : joint_names_( std::move( joint_names ) ), joint_positions_( std::move( joint_positions ) )
   {
     // Ensure joint positions has the same length as joint names
-    joint_positions.resize( joint_names_.size(), 0 );
+    joint_positions_.resize( joint_names_.size(), 0 );
   }
 
   explicit RobotModel( std::unordered_map<std::string, Scalar> joint_states )
@@ -35,6 +35,13 @@ public:
       joint_positions_.push_back( it.second );
     }
   }
+
+  virtual ~RobotModel() = default;
+
+  RobotModel( const RobotModel & ) = default;
+  RobotModel( RobotModel && ) = default;
+  RobotModel &operator=( const RobotModel & ) = default;
+  RobotModel &operator=( RobotModel && ) = default;
 
   //! Updates the joint positions of the robot model with the given values for the corresponding
   //! joint name.
@@ -75,6 +82,8 @@ public:
   //! The names of the joints represented in this robot model.
   const std::vector<std::string> &jointNames() const { return joint_names_; }
 
+  //! The positions of the joints.
+  //! The order of the positions corresponds to the order of the names in jointNames().
   const std::vector<Scalar> &jointPositions() const { return joint_positions_; }
 
   Scalar getJointPosition( const std::string &name ) const
@@ -117,6 +126,9 @@ public:
     footprint_valid_ = true;
     return footprint_;
   }
+  //! An integer id that is incremented every time the joint states are updated.
+  //! Can be used to check if the joint states have changed since the last time they were checked.
+  uint32_t stateId() const { return state_id_; }
 
 protected:
   //! Use to invalidate footprint and center of mass.
@@ -126,6 +138,7 @@ protected:
     center_of_mass_valid_ = false;
     axis_aligned_bounding_box_valid_ = false;
     footprint_valid_ = false;
+    ++state_id_;
   }
 
   virtual Vector3<Scalar> computeCenterOfMass() const = 0;
@@ -139,6 +152,7 @@ protected:
   mutable Polygon<Scalar> footprint_;
   mutable Eigen::AlignedBox<Scalar, 3> axis_aligned_bounding_box_;
   mutable Vector3<Scalar> center_of_mass_;
+  uint32_t state_id_{ 0 };
   mutable bool footprint_valid_ = false;
   mutable bool axis_aligned_bounding_box_valid_ = false;
   mutable bool center_of_mass_valid_ = false;
