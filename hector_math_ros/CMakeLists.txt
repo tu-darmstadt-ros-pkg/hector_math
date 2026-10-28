@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.16)
 project(hector_math_ros VERSION 1.0.0)
 set(CMAKE_CXX_STANDARD 17)
 
@@ -24,7 +24,11 @@ target_include_directories(hector_math_ros INTERFACE
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
-ament_target_dependencies(hector_math_ros INTERFACE hector_math rclcpp sensor_msgs urdf)
+target_link_libraries(hector_math_ros INTERFACE
+                      hector_math::hector_math
+                      rclcpp::rclcpp
+                      sensor_msgs::sensor_msgs
+                      urdf::urdf)
 target_link_libraries(hector_math_ros INTERFACE hector_math::hector_math rclcpp::rclcpp urdf::urdf)
 
 if (BUILD_TESTING)

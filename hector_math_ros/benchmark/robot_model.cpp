@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #include "hector_math_ros/urdf/robot_model.hpp"
-#include <ament_index_cpp/get_package_share_directory.hpp>
+#include <ament_index_cpp/get_package_share_path.hpp>
 #include <benchmark/benchmark.h>
 #include <fstream>
 
@@ -10,7 +10,7 @@ using namespace hector_math;
 
 urdf::ModelSharedPtr loadUrdf()
 {
-  std::string package_path = ament_index_cpp::get_package_share_directory( "hector_math_ros" );
+  std::string package_path = ament_index_cpp::get_package_share_path("hector_math_ros").string();
   // Inefficient, doesn't matter here but don't copy this approach
   std::ifstream urdf_stream( package_path + "/benchmark/pr2.urdf" );
   std::string urdf( ( std::istreambuf_iterator<char>( urdf_stream ) ),
