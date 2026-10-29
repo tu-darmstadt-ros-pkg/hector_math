@@ -6,6 +6,7 @@
 
 #include "hector_math/robot/robot_model.h"
 
+#include <algorithm>
 #include <cmath>
 #include <mutex>
 #include <rclcpp/node.hpp>

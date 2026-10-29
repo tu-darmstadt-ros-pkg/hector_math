@@ -6,6 +6,7 @@
 
 #include "hector_math/containers/bounded_vector.h"
 #include "hector_math/types.h"
+#include <algorithm>
 #include <vector>
 
 namespace hector_math

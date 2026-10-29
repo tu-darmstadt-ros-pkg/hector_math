@@ -1,5 +1,6 @@
 #include "hector_math/containers/ring_buffer.h"
 
+#include <algorithm>
 #include <gtest/gtest.h>
 
 using namespace hector_math;

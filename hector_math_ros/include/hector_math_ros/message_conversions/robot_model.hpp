@@ -7,6 +7,7 @@
 // You will need to depend on moveit and moveit_msgs if you use this header.
 
 #include "hector_math/robot/robot_model.h"
+#include <algorithm>
 #include <moveit/robot_model_loader/robot_model_loader.hpp>
 #include <moveit/robot_state/conversions.hpp>
 #include <moveit/robot_state/robot_state.hpp>

@@ -7,6 +7,7 @@
 #include "hector_math_ros/urdf/conversions.hpp"
 #include "hector_math_ros/urdf/robot_model.hpp"
 #include <hector_math/shapes/bounding_box.h>
+#include <algorithm>
 
 namespace hector_math
 {

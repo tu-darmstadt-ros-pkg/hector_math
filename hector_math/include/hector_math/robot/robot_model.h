@@ -5,6 +5,7 @@
 #define HECTOR_MATH_ROBOT_MODEL_H
 
 #include "hector_math/types.h"
+#include <algorithm>
 #include <memory>
 #include <unordered_map>
 #include <vector>
